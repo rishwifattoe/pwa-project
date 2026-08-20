@@ -42,7 +42,7 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--text-muted);
       margin-bottom: 0.5rem;
       padding: 0 0.25rem;
@@ -148,7 +148,6 @@
 <body>
 
   <header>
-    <!-- Gregorian (Left) and Hijri (Right) Date Display -->
     <div class="date-bar">
       <span id="gregorian-date">--</span>
       <span id="hijri-date"><strong>--</strong></span>
@@ -189,7 +188,6 @@
   </section>
 
   <script>
-    // Configuration & State
     let currentDhikr = localStorage.getItem('tasbih_dhikr') || 'Istighfar';
     let count = parseInt(localStorage.getItem('tasbih_session_count') || '0');
     let target = parseInt(localStorage.getItem('tasbih_target') || '33');
@@ -208,49 +206,47 @@
 
     presetSelect.value = currentDhikr;
 
-    // Format & Render Gregorian and Hijri Dates
+    // Robust Hijri Date Formatter
+    function getHijriString(date) {
+      const locales = ['en-u-ca-islamic-nu-latn', 'en-US-u-ca-islamic', 'ar-SA'];
+      for (let loc of locales) {
+        try {
+          const fmt = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'long', year: 'numeric' });
+          const str = fmt.format(date);
+          if (str && str !== 'Invalid Date') return str;
+        } catch (e) {}
+      }
+      return null;
+    }
+
     function renderDates() {
       const now = new Date();
 
-      // Adjust date to Islamic day if past Maghrib (6:00 PM)
+      // Advance to next Islamic day after 6:00 PM (Maghrib)
       const islamicDate = new Date(now);
       if (now.getHours() >= 18) {
         islamicDate.setDate(islamicDate.getDate() + 1);
       }
 
-      // Gregorian Date (Left): e.g., "Thu, 20 Aug 2026"
-      const gregOptions = { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' };
+      // Gregorian Format (Left)
+      const gregOptions = { weekday: 'short', day: 'numeric', month: 'short' };
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
-      // Hijri Date (Right): e.g., "7 Safar 1448 AH"
-      try {
-        const hijriFormatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-uma', {
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric'
-        });
-        hijriDateEl.innerHTML = `<strong>${hijriFormatter.format(islamicDate)} AH</strong>`;
-      } catch (e) {
-        // Fallback for older browsers
-        const fallbackFormatter = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
-          day: 'numeric',
-          month: 'short',
-          year: 'numeric'
-        });
-        hijriDateEl.innerHTML = `<strong>${fallbackFormatter.format(islamicDate)}</strong>`;
+      // Hijri Format (Right)
+      const hijriStr = getHijriString(islamicDate);
+      if (hijriStr) {
+        hijriDateEl.innerHTML = `<strong>${hijriStr}</strong>`;
+      } else {
+        hijriDateEl.innerHTML = `<strong>Hijri Active</strong>`;
       }
     }
 
-    // Helper: Get Current Islamic Date Key (Day changes at 6:00 PM / 18:00)
     function getIslamicDateKey(date = new Date()) {
       const d = new Date(date);
-      if (d.getHours() >= 18) {
-        d.setDate(d.getDate() + 1);
-      }
+      if (d.getHours() >= 18) d.setDate(d.getDate() + 1);
       return d.toISOString().split('T')[0];
     }
 
-    // Helper: Get Current Islamic Week Key (Friday to Thursday Cycle)
     function getIslamicWeekKey(date = new Date()) {
       const d = new Date(date);
       if (d.getHours() >= 18) d.setDate(d.getDate() + 1);
