@@ -30,27 +30,36 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1.25rem 1.5rem;
+      padding: 1.25rem 1rem;
       gap: 1rem;
     }
     header, main, section {
       width: 100%;
-      max-width: 400px;
+      max-width: 420px;
     }
-    .date-bar {
+    /* Full Dates Banner */
+    .full-date-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1rem;
+      border: 1px solid #334155;
+      text-align: center;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      width: 100%;
-      font-size: 0.85rem;
+      flex-direction: column;
+      gap: 0.3rem;
+      margin-bottom: 0.75rem;
+    }
+    .gregorian-text {
+      font-size: 0.95rem;
       color: var(--text-muted);
-      margin-bottom: 0.5rem;
-      padding: 0 0.25rem;
+      font-weight: 500;
     }
-    .date-bar strong {
+    .hijri-text {
+      font-size: 1.1rem;
       color: var(--accent-hover);
+      font-weight: bold;
     }
-    select {
+    select, input[type="date"] {
       width: 100%;
       padding: 0.75rem;
       border-radius: 12px;
@@ -132,11 +141,12 @@
       color: var(--accent-hover);
       display: flex;
       justify-content: space-between;
+      align-items: center;
     }
     .stat-row {
       display: flex;
       justify-content: space-between;
-      padding: 0.4rem 0;
+      padding: 0.5rem 0;
       font-size: 0.9rem;
       border-bottom: 1px solid #334155;
     }
@@ -148,11 +158,13 @@
 <body>
 
   <header>
-    <div class="date-bar">
-      <span id="gregorian-date">--</span>
-      <span id="hijri-date"><strong>--</strong></span>
+    <!-- Full Dates Display -->
+    <div class="full-date-card">
+      <div class="gregorian-text" id="gregorian-date">Loading date...</div>
+      <div class="hijri-text" id="hijri-date">Loading Hijri...</div>
     </div>
 
+    <!-- Dhikr Type Selector -->
     <select id="preset-select">
       <option value="Istighfar">Astaghfirullah (Istighfar)</option>
       <option value="SubhanAllah">SubhanAllah</option>
@@ -172,18 +184,29 @@
     </div>
   </main>
 
+  <!-- Lifetime Totals Section -->
   <section class="stats-card">
     <div class="stats-title">
-      <span>Today's Total</span>
-      <span id="today-dhikr-name">Istighfar</span>
+      <span>Total Cumulative Dhikr</span>
+    </div>
+    <div id="lifetime-list"></div>
+  </section>
+
+  <!-- Look Back / History Section -->
+  <section class="stats-card">
+    <div class="stats-title">
+      <span>Look Back at History</span>
+    </div>
+    <div style="margin-bottom: 0.75rem;">
+      <input type="date" id="history-date-picker">
     </div>
     <div class="stat-row">
-      <span>Today (Islamic Day):</span>
-      <strong id="stat-today">0</strong>
+      <span>Selected Dhikr (<span id="history-dhikr-label">Istighfar</span>):</span>
+      <strong id="history-count-selected">0</strong>
     </div>
     <div class="stat-row">
-      <span>This Islamic Week (Fri-Thu):</span>
-      <strong id="stat-week">0</strong>
+      <span>All Dhikr Total on this Date:</span>
+      <strong id="history-count-total">0</strong>
     </div>
   </section>
 
@@ -192,107 +215,124 @@
     let count = parseInt(localStorage.getItem('tasbih_session_count') || '0');
     let target = parseInt(localStorage.getItem('tasbih_target') || '33');
 
+    const DHIKR_LIST = [
+      'Istighfar',
+      'SubhanAllah',
+      'Alhamdulillah',
+      'Allahu Akbar',
+      'La ilaha illallah'
+    ];
+
     const presetSelect = document.getElementById('preset-select');
     const countEl = document.getElementById('count');
     const targetEl = document.getElementById('target-count');
     const tapBtn = document.getElementById('tap-btn');
     const resetBtn = document.getElementById('reset-btn');
     const targetBtn = document.getElementById('target-btn');
-    const todayDhikrNameEl = document.getElementById('today-dhikr-name');
-    const statTodayEl = document.getElementById('stat-today');
-    const statWeekEl = document.getElementById('stat-week');
     const gregorianDateEl = document.getElementById('gregorian-date');
     const hijriDateEl = document.getElementById('hijri-date');
+    const lifetimeListEl = document.getElementById('lifetime-list');
+    const historyDatePicker = document.getElementById('history-date-picker');
+    const historyDhikrLabel = document.getElementById('history-dhikr-label');
+    const historyCountSelected = document.getElementById('history-count-selected');
+    const historyCountTotal = document.getElementById('history-count-total');
 
     presetSelect.value = currentDhikr;
 
-    // Robust Hijri Date Formatter
-    function getHijriString(date) {
-      const locales = ['en-u-ca-islamic-nu-latn', 'en-US-u-ca-islamic', 'ar-SA'];
-      for (let loc of locales) {
-        try {
-          const fmt = new Intl.DateTimeFormat(loc, { day: 'numeric', month: 'long', year: 'numeric' });
-          const str = fmt.format(date);
-          if (str && str !== 'Invalid Date') return str;
-        } catch (e) {}
-      }
-      return null;
-    }
+    // Set Date Picker default to Today (YYYY-MM-DD)
+    const todayStr = new Date().toISOString().split('T')[0];
+    historyDatePicker.value = todayStr;
 
+    // Render Full Gregorian & Hijri Dates
     function renderDates() {
       const now = new Date();
 
-      // Advance to next Islamic day after 6:00 PM (Maghrib)
-      const islamicDate = new Date(now);
-      if (now.getHours() >= 18) {
-        islamicDate.setDate(islamicDate.getDate() + 1);
-      }
-
-      // Gregorian Format (Left)
-      const gregOptions = { weekday: 'short', day: 'numeric', month: 'short' };
+      // Full Gregorian: e.g., "Thursday, 20 August 2026"
+      const gregOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
-      // Hijri Format (Right)
-      const hijriStr = getHijriString(islamicDate);
-      if (hijriStr) {
-        hijriDateEl.innerHTML = `<strong>${hijriStr}</strong>`;
-      } else {
-        hijriDateEl.innerHTML = `<strong>Hijri Active</strong>`;
+      // Full Hijri
+      try {
+        const hijriFormatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-uma', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+        hijriDateEl.textContent = `${hijriFormatter.format(now)} AH`;
+      } catch (e) {
+        const fallback = new Intl.DateTimeFormat('en-US-u-ca-islamic', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+        hijriDateEl.textContent = fallback.format(now);
       }
-    }
-
-    function getIslamicDateKey(date = new Date()) {
-      const d = new Date(date);
-      if (d.getHours() >= 18) d.setDate(d.getDate() + 1);
-      return d.toISOString().split('T')[0];
-    }
-
-    function getIslamicWeekKey(date = new Date()) {
-      const d = new Date(date);
-      if (d.getHours() >= 18) d.setDate(d.getDate() + 1);
-      
-      const day = d.getDay();
-      const diffToFriday = (day >= 5) ? (day - 5) : (day + 2);
-      
-      const friday = new Date(d);
-      friday.setDate(d.getDate() - diffToFriday);
-      return `Week-of-${friday.toISOString().split('T')[0]}`;
     }
 
     function getLogs() {
-      return JSON.parse(localStorage.getItem('tasbih_logs') || '{}');
+      return JSON.parse(localStorage.getItem('tasbih_logs_v2') || '{}');
     }
 
     function saveTap(dhikrType) {
       const logs = getLogs();
-      const dayKey = getIslamicDateKey();
-      const weekKey = getIslamicWeekKey();
+      const dateKey = new Date().toISOString().split('T')[0];
 
-      if (!logs[dhikrType]) logs[dhikrType] = { days: {}, weeks: {} };
-      if (!logs[dhikrType].days[dayKey]) logs[dhikrType].days[dayKey] = 0;
-      if (!logs[dhikrType].weeks[weekKey]) logs[dhikrType].weeks[weekKey] = 0;
+      if (!logs[dateKey]) logs[dateKey] = {};
+      if (!logs[dateKey][dhikrType]) logs[dateKey][dhikrType] = 0;
 
-      logs[dhikrType].days[dayKey] += 1;
-      logs[dhikrType].weeks[weekKey] += 1;
+      logs[dateKey][dhikrType] += 1;
 
-      localStorage.setItem('tasbih_logs', JSON.stringify(logs));
+      localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
+    }
+
+    function updateLifetimeTotals() {
+      const logs = getLogs();
+      const totals = {};
+      DHIKR_LIST.forEach(item => totals[item] = 0);
+
+      // Sum all daily records
+      Object.keys(logs).forEach(dateKey => {
+        Object.keys(logs[dateKey]).forEach(dhikr => {
+          if (totals[dhikr] !== undefined) {
+            totals[dhikr] += logs[dateKey][dhikr];
+          }
+        });
+      });
+
+      lifetimeListEl.innerHTML = '';
+      DHIKR_LIST.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `<span>${item}</span><strong>${totals[item]}</strong>`;
+        lifetimeListEl.appendChild(row);
+      });
+    }
+
+    function updateHistoryView() {
+      const logs = getLogs();
+      const selectedDate = historyDatePicker.value;
+      historyDhikrLabel.textContent = currentDhikr;
+
+      if (logs[selectedDate]) {
+        const selectedCount = logs[selectedDate][currentDhikr] || 0;
+        let dayTotal = 0;
+        Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
+
+        historyCountSelected.textContent = selectedCount;
+        historyCountTotal.textContent = dayTotal;
+      } else {
+        historyCountSelected.textContent = '0';
+        historyCountTotal.textContent = '0';
+      }
     }
 
     function updateUI() {
       countEl.textContent = count;
       targetEl.textContent = target;
       targetBtn.textContent = `Target: ${target}`;
-      todayDhikrNameEl.textContent = currentDhikr;
 
-      const logs = getLogs();
-      const dayKey = getIslamicDateKey();
-      const weekKey = getIslamicWeekKey();
-
-      const todayTotal = logs[currentDhikr]?.days[dayKey] || 0;
-      const weekTotal = logs[currentDhikr]?.weeks[weekKey] || 0;
-
-      statTodayEl.textContent = todayTotal;
-      statWeekEl.textContent = weekTotal;
+      updateLifetimeTotals();
+      updateHistoryView();
 
       localStorage.setItem('tasbih_session_count', count);
       localStorage.setItem('tasbih_target', target);
@@ -317,7 +357,7 @@
     });
 
     resetBtn.addEventListener('click', () => {
-      if (confirm('Reset session counter? (Daily & Weekly totals remain saved)')) {
+      if (confirm('Reset active session counter?')) {
         count = 0;
         updateUI();
       }
@@ -329,6 +369,8 @@
       else target = 33;
       updateUI();
     });
+
+    historyDatePicker.addEventListener('change', updateHistoryView);
 
     renderDates();
     updateUI();
