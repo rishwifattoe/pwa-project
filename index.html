@@ -478,7 +478,6 @@
         <div class="gregorian-text" id="gregorian-date">Loading date...</div>
         <div class="hijri-text" id="hijri-date">Loading Hijri...</div>
       </div>
-      <!-- Reticle Focus Icon -->
       <button class="icon-btn" id="focus-toggle-btn" title="Focus Mode">
         <svg viewBox="0 0 24 24">
           <circle cx="12" cy="12" r="9" />
@@ -532,7 +531,6 @@
     </div>
   </section>
 
-  <!-- Settings Modal -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -603,7 +601,6 @@
     </div>
   </div>
 
-  <!-- Custom Universal Input Dialog Modal -->
   <div class="modal-overlay" id="input-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -671,7 +668,6 @@
     const unhideBtn = document.getElementById('unhide-btn');
     const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
 
-    /* Custom Pop-up Modal Controller */
     const inputModal = document.getElementById('input-modal');
     const inputModalTitle = document.getElementById('input-modal-title');
     const inputModalField = document.getElementById('input-modal-field');
@@ -842,6 +838,10 @@
       return JSON.parse(localStorage.getItem('tasbih_logs_v2') || '{}');
     }
 
+    function getManualOffsets() {
+      return JSON.parse(localStorage.getItem('tasbih_offsets') || '{}');
+    }
+
     function saveTap(dhikrType) {
       const logs = getLogs();
       const dateKey = new Date().toISOString().split('T')[0];
@@ -855,17 +855,18 @@
 
     function updateLifetimeTotals() {
       const logs = getLogs();
+      const offsets = getManualOffsets();
       const totals = {};
       const allDhikrs = [...DEFAULT_DHIKR_LIST, ...customDhikrList];
       
-      allDhikrs.forEach(item => totals[item] = 0);
+      allDhikrs.forEach(item => totals[item] = offsets[item] || 0);
 
       Object.keys(logs).forEach(dateKey => {
         Object.keys(logs[dateKey]).forEach(dhikr => {
           if (totals[dhikr] !== undefined) {
             totals[dhikr] += logs[dateKey][dhikr];
           } else {
-            totals[dhikr] = logs[dateKey][dhikr];
+            totals[dhikr] = (offsets[dhikr] || 0) + logs[dateKey][dhikr];
           }
         });
       });
@@ -883,26 +884,25 @@
       });
     }
 
-    /* Edit/Reset Lifetime Totals Function */
+    /* Fixed Offset Calculations: Preserves actual daily log history while adjusting totals */
     function editLifetimeTotal(dhikrName, currentTotal) {
       showCustomInputModal(`Edit Total for ${dhikrName}`, currentTotal, 'number', (val) => {
         const newTotal = parseInt(val, 10);
         if (isNaN(newTotal) || newTotal < 0) return;
 
         const logs = getLogs();
-        const dateKeys = Object.keys(logs);
+        let loggedSum = 0;
         
-        dateKeys.forEach(date => {
+        Object.keys(logs).forEach(date => {
           if (logs[date][dhikrName]) {
-            delete logs[date][dhikrName];
+            loggedSum += logs[date][dhikrName];
           }
         });
 
-        const todayKey = new Date().toISOString().split('T')[0];
-        if (!logs[todayKey]) logs[todayKey] = {};
-        logs[todayKey][dhikrName] = newTotal;
+        const offsets = getManualOffsets();
+        offsets[dhikrName] = newTotal - loggedSum;
+        localStorage.setItem('tasbih_offsets', JSON.stringify(offsets));
 
-        localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
         updateUI();
       });
     }
