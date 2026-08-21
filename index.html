@@ -108,7 +108,7 @@
       font-weight: 600;
     }
 
-    select, input[type="date"] {
+    select, input[type="date"], input[type="range"] {
       width: 100%;
       padding: 0.75rem;
       border-radius: 12px;
@@ -140,7 +140,6 @@
       width: 100%;
     }
 
-    /* Scaled Display */
     .counter-display {
       font-size: 6.5rem;
       font-weight: 800;
@@ -153,9 +152,10 @@
     .target-info {
       color: var(--text-muted);
       font-size: 0.85rem;
+      cursor: pointer;
+      text-decoration: underline dotted;
     }
 
-    /* Scaled Tap Area */
     .tap-area {
       width: 100%;
       display: flex;
@@ -183,13 +183,24 @@
       align-items: center;
       justify-content: center;
       touch-action: manipulation;
-      transition: transform 0.05s ease, border-width 0.05s ease;
+      transition: transform 0.05s ease, border-width 0.05s ease, box-shadow 0.2s ease;
     }
 
     .tap-btn:active {
       transform: scale(0.96);
       border-width: 8px;
       background: rgba(255, 255, 255, 0.03);
+    }
+
+    /* Feature #1: Visual Haptic Pulse Animation */
+    @keyframes visualPulse {
+      0% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
+      50% { transform: scale(1.08); box-shadow: 0 0 35px var(--accent-soft); }
+      100% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
+    }
+
+    .tap-btn.pulse {
+      animation: visualPulse 0.4s ease-out;
     }
 
     .desktop-hint {
@@ -244,6 +255,7 @@
     .stat-row {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       padding: 0.45rem 0;
       font-size: 0.85rem;
       border-bottom: 1px solid var(--border);
@@ -258,7 +270,6 @@
       border-bottom: none;
     }
 
-    /* Auto-Hiding Focus Mode Exit Button */
     .unhide-pill {
       opacity: 0;
       pointer-events: none;
@@ -304,7 +315,9 @@
       max-width: 380px;
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1rem;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .modal-header {
@@ -320,12 +333,14 @@
       justify-content: space-between;
       align-items: center;
       font-size: 0.9rem;
+      gap: 0.5rem;
     }
 
     .toggle-switch {
       position: relative;
       width: 48px;
       height: 26px;
+      flex-shrink: 0;
     }
 
     .toggle-switch input {
@@ -363,6 +378,15 @@
       transform: translateX(22px);
     }
 
+    .delete-btn {
+      background: transparent;
+      border: none;
+      color: #ef4444;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 0.2rem 0.4rem;
+    }
+
     body.focus-mode header,
     body.focus-mode section,
     body.focus-mode .controls,
@@ -391,19 +415,12 @@
       <button class="icon-btn" id="settings-open-btn" style="margin-left: 0.5rem;" title="Settings">⚙️</button>
     </div>
 
-    <select id="preset-select">
-      <option value="Istighfar">Astaghfirullah (Istighfar)</option>
-      <option value="SubhanAllah">SubhanAllah</option>
-      <option value="Alhamdulillah">Alhamdulillah</option>
-      <option value="Allahu Akbar">Allahu Akbar</option>
-      <option value="La ilaha illallah">La ilaha illallah</option>
-      <option value="__custom__">+ Add Custom Dhikr...</option>
-    </select>
+    <select id="preset-select"></select>
   </header>
 
   <main>
     <div class="main-card">
-      <div class="target-info">Target: <span id="target-count">33</span></div>
+      <div class="target-info" id="target-info-label" title="Click to set custom target">Target: <span id="target-count">33</span> ✏️</div>
       <div class="counter-display" id="count">0</div>
       
       <div class="tap-area">
@@ -455,10 +472,34 @@
         </select>
       </div>
 
+      <!-- Feature #5: Sound Alert Settings -->
       <div class="setting-item">
         <span>Target Sound Alert</span>
         <label class="toggle-switch">
           <input type="checkbox" id="sound-toggle" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-item">
+        <span>Alert Tone</span>
+        <select id="tone-select" style="width: auto; padding: 0.4rem;">
+          <option value="chime">Chime</option>
+          <option value="bell">Soft Bell</option>
+          <option value="pulse">Soft Pulse</option>
+        </select>
+      </div>
+
+      <div class="setting-item">
+        <span>Volume</span>
+        <input type="range" id="volume-range" min="0" max="1" step="0.1" value="0.3" style="width: 100px;">
+      </div>
+
+      <!-- Feature #1: Visual Haptic Toggle -->
+      <div class="setting-item">
+        <span>Visual Ring Pulse Alert</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="visual-haptic-toggle" checked>
           <span class="slider"></span>
         </label>
       </div>
@@ -478,6 +519,12 @@
           <span class="slider"></span>
         </label>
       </div>
+
+      <!-- Feature #2: Custom Dhikr Manager -->
+      <div style="border-top: 1px solid var(--border); pt: 0.5rem; margin-top: 0.5rem;">
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage Custom Dhikrs</div>
+        <div id="custom-dhikr-manager-list"></div>
+      </div>
     </div>
   </div>
 
@@ -494,6 +541,9 @@
     let target = parseInt(localStorage.getItem('tasbih_target') || '33');
     let soundEnabled = localStorage.getItem('tasbih_sound') !== 'false';
     let vibeEnabled = localStorage.getItem('tasbih_vibe') !== 'false';
+    let visualHapticEnabled = localStorage.getItem('tasbih_visual_pulse') !== 'false';
+    let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
+    let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
     let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
     let focusMode = false;
     let unhideTimeout = null;
@@ -503,6 +553,7 @@
     const presetSelect = document.getElementById('preset-select');
     const countEl = document.getElementById('count');
     const targetEl = document.getElementById('target-count');
+    const targetInfoLabel = document.getElementById('target-info-label');
     const tapBtn = document.getElementById('tap-btn');
     const resetBtn = document.getElementById('reset-btn');
     const targetBtn = document.getElementById('target-btn');
@@ -519,10 +570,14 @@
     const settingsCloseBtn = document.getElementById('settings-close-btn');
     const themeSelect = document.getElementById('theme-select');
     const soundToggle = document.getElementById('sound-toggle');
+    const toneSelect = document.getElementById('tone-select');
+    const volumeRange = document.getElementById('volume-range');
+    const visualHapticToggle = document.getElementById('visual-haptic-toggle');
     const vibeToggle = document.getElementById('vibe-toggle');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
     const unhideBtn = document.getElementById('unhide-btn');
+    const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
 
     function renderDhikrOptions() {
       presetSelect.innerHTML = '';
@@ -547,8 +602,43 @@
       presetSelect.appendChild(customOpt);
 
       presetSelect.value = currentDhikr;
+      renderCustomManagerList();
     }
 
+    /* Feature #2: Render Manager List for Deleting Custom Dhikrs */
+    function renderCustomManagerList() {
+      customDhikrManagerList.innerHTML = '';
+      if (customDhikrList.length === 0) {
+        customDhikrManagerList.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No custom dhikrs added.</div>';
+        return;
+      }
+
+      customDhikrList.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `
+          <span>${item}</span>
+          <button class="delete-btn" title="Delete Dhikr">🗑️</button>
+        `;
+        row.querySelector('.delete-btn').addEventListener('click', () => deleteCustomDhikr(item));
+        customDhikrManagerList.appendChild(row);
+      });
+    }
+
+    function deleteCustomDhikr(dhikrToDelete) {
+      if (confirm(`Remove custom Dhikr "${dhikrToDelete}"?`)) {
+        customDhikrList = customDhikrList.filter(item => item !== dhikrToDelete);
+        localStorage.setItem('tasbih_custom_dhikr', JSON.stringify(customDhikrList));
+        if (currentDhikr === dhikrToDelete) {
+          currentDhikr = 'Istighfar';
+          count = 0;
+        }
+        renderDhikrOptions();
+        updateUI();
+      }
+    }
+
+    /* Feature #5: Audio Tone Engine */
     let audioCtx = null;
     function initAudio() {
       if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -561,15 +651,34 @@
       try {
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        
+        if (alertTone === 'bell') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+        } else if (alertTone === 'pulse') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(329.63, audioCtx.currentTime);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        }
+
+        gain.gain.setValueAtTime(alertVolume, audioCtx.currentTime);
         gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 0.8);
       } catch (e) {}
+    }
+
+    /* Feature #1: Trigger Visual Pulse */
+    function triggerVisualPulse() {
+      if (!visualHapticEnabled) return;
+      tapBtn.classList.remove('pulse');
+      void tapBtn.offsetWidth; // Trigger reflow
+      tapBtn.classList.add('pulse');
     }
 
     function triggerVibration(pattern) {
@@ -697,9 +806,22 @@
       if (count % target === 0) {
         triggerVibration([100, 50, 100, 50, 150]);
         playGoalTone();
+        triggerVisualPulse();
       }
 
       updateUI();
+    }
+
+    /* Feature #4: Custom Target Prompt */
+    function promptCustomTarget() {
+      const val = prompt('Enter custom target count:', target);
+      if (val !== null) {
+        const parsed = parseInt(val, 10);
+        if (!isNaN(parsed) && parsed > 0) {
+          target = parsed;
+          updateUI();
+        }
+      }
     }
 
     function updateUI() {
@@ -771,6 +893,8 @@
       updateUI();
     });
 
+    targetInfoLabel.addEventListener('click', promptCustomTarget);
+
     settingsOpenBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
     settingsCloseBtn.addEventListener('click', () => settingsModal.style.display = 'none');
     themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
@@ -778,6 +902,25 @@
     soundToggle.addEventListener('change', (e) => {
       soundEnabled = e.target.checked;
       localStorage.setItem('tasbih_sound', soundEnabled);
+    });
+
+    toneSelect.value = alertTone;
+    toneSelect.addEventListener('change', (e) => {
+      alertTone = e.target.value;
+      localStorage.setItem('tasbih_alert_tone', alertTone);
+      playGoalTone();
+    });
+
+    volumeRange.value = alertVolume;
+    volumeRange.addEventListener('input', (e) => {
+      alertVolume = parseFloat(e.target.value);
+      localStorage.setItem('tasbih_volume', alertVolume);
+    });
+
+    visualHapticToggle.checked = visualHapticEnabled;
+    visualHapticToggle.addEventListener('change', (e) => {
+      visualHapticEnabled = e.target.checked;
+      localStorage.setItem('tasbih_visual_pulse', visualHapticEnabled);
     });
 
     vibeToggle.addEventListener('change', (e) => {
