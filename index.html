@@ -5,47 +5,31 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Offline Tasbih</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#090d16">
+  <meta name="theme-color" content="#0a0a0a">
   <style>
-    /* Theme Variables */
     :root {
-      --bg: #090d16;
-      --card: #131a27;
-      --border: #1e293b;
-      --accent: #d97706;
-      --accent-soft: #f59e0b;
-      --text: #e2e8f0;
-      --text-muted: #64748b;
+      --bg: #0a0a0a;
+      --card: #141414;
+      --border: #262626;
+      --accent: #f59e0b;
+      --accent-soft: #fbbf24;
+      --text: #f5f5f5;
+      --text-muted: #737373;
     }
 
     [data-theme="sage"] {
-      --bg: #0b1310;
-      --card: #14221c;
-      --border: #1f352c;
       --accent: #059669;
-      --accent-soft: #10b981;
-      --text: #ecfdf5;
-      --text-muted: #6ee7b7;
+      --accent-soft: #34d399;
     }
 
     [data-theme="navy"] {
-      --bg: #0a0e1a;
-      --card: #12192c;
-      --border: #1e2942;
       --accent: #2563eb;
-      --accent-soft: #3b82f6;
-      --text: #eff6ff;
-      --text-muted: #93c5fd;
+      --accent-soft: #60a5fa;
     }
 
     [data-theme="charcoal"] {
-      --bg: #0a0a0a;
-      --card: #171717;
-      --border: #262626;
       --accent: #737373;
-      --accent-soft: #a3a3a3;
-      --text: #fafafa;
-      --text-muted: #737373;
+      --accent-soft: #d4d4d4;
     }
 
     * {
@@ -64,9 +48,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-between;
       padding: 1rem;
-      gap: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease;
+      touch-action: manipulation;
     }
 
     header, main, section {
@@ -85,8 +69,8 @@
       background: var(--card);
       border: 1px solid var(--border);
       color: var(--text);
-      width: 42px;
-      height: 42px;
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
       display: flex;
       align-items: center;
@@ -130,23 +114,34 @@
       outline: none;
     }
 
+    /* Centered Main Layout */
+    main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+    }
+
     .main-card {
       background: var(--card);
-      border-radius: 24px;
-      padding: 1.5rem 1rem;
+      border-radius: 28px;
+      padding: 1.75rem 1rem;
       text-align: center;
       border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       align-items: center;
+      width: 100%;
     }
 
     .counter-display {
-      font-size: 4.5rem;
-      font-weight: 700;
+      font-size: 5rem;
+      font-weight: 800;
       color: var(--accent-soft);
       line-height: 1;
-      margin: 0.5rem 0;
+      margin: 0.25rem 0 0.75rem 0;
       font-variant-numeric: tabular-nums;
     }
 
@@ -155,38 +150,41 @@
       font-size: 0.85rem;
     }
 
-    /* Enlarged Touch Zone Tap Button */
+    /* Extra Large Tap Button */
     .tap-area {
       width: 100%;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 1rem 0;
+      margin: 1.25rem 0;
     }
 
     .tap-btn {
-      width: 220px;
-      height: 220px;
+      width: 260px;
+      height: 260px;
+      max-width: 70vw;
+      max-height: 70vw;
       border-radius: 50%;
-      border: 4px solid var(--accent-soft);
+      border: 5px solid var(--accent-soft);
       background: transparent;
       color: var(--accent-soft);
-      font-size: 1.5rem;
-      font-weight: 600;
-      letter-spacing: 2px;
+      font-size: 1.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
       cursor: pointer;
-      transition: all 0.1s ease;
       outline: none;
       -webkit-tap-highlight-color: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
+      touch-action: manipulation;
+      transition: transform 0.05s ease, border-width 0.05s ease;
     }
 
     .tap-btn:active {
-      transform: scale(0.95);
-      background: rgba(255, 255, 255, 0.05);
-      border-width: 6px;
+      transform: scale(0.96);
+      border-width: 7px;
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .controls {
@@ -197,7 +195,7 @@
 
     .control-btn {
       flex: 1;
-      padding: 0.65rem;
+      padding: 0.75rem;
       border-radius: 12px;
       border: 1px solid var(--border);
       background: transparent;
@@ -215,6 +213,7 @@
       border-radius: 16px;
       padding: 1rem 1.25rem;
       border: 1px solid var(--border);
+      margin-top: 1rem;
     }
 
     .stats-title {
@@ -241,14 +240,30 @@
       border-bottom: none;
     }
 
-    /* Settings Modal */
+    /* Floating Unhide Pill for Focus Mode */
+    .unhide-pill {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--accent-soft);
+      color: var(--accent-soft);
+      padding: 0.5rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+
+    /* Modal Styling */
     .modal-overlay {
       position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0,0,0,0.7);
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
       display: none;
       justify-content: center;
       align-items: center;
@@ -324,7 +339,7 @@
       transform: translateX(22px);
     }
 
-    /* Focus Mode - Hide Non-Essential Elements */
+    /* Focus Mode UI State */
     body.focus-mode header,
     body.focus-mode section,
     body.focus-mode .controls,
@@ -333,24 +348,20 @@
       display: none !important;
     }
 
+    body.focus-mode .unhide-pill {
+      display: block;
+    }
+
     body.focus-mode .main-card {
       border: none;
       background: transparent;
-      box-shadow: none;
-      padding: 0;
-    }
-
-    body.focus-mode .top-bar {
-      width: 100%;
-      justify-content: flex-end;
-    }
-
-    body.focus-mode .full-date-card {
-      display: none;
     }
   </style>
 </head>
 <body>
+
+  <!-- Focus Mode Unhide Floating Pill -->
+  <button class="unhide-pill" id="unhide-btn">👁️ Exit Focus Mode</button>
 
   <header>
     <div class="top-bar">
@@ -372,17 +383,19 @@
     </select>
   </header>
 
-  <main class="main-card">
-    <div class="target-info">Target: <span id="target-count">33</span></div>
-    <div class="counter-display" id="count">0</div>
-    
-    <div class="tap-area">
-      <button class="tap-btn" id="tap-btn">TAP</button>
-    </div>
+  <main>
+    <div class="main-card">
+      <div class="target-info">Target: <span id="target-count">33</span></div>
+      <div class="counter-display" id="count">0</div>
+      
+      <div class="tap-area">
+        <button class="tap-btn" id="tap-btn">TAP</button>
+      </div>
 
-    <div class="controls">
-      <button class="control-btn" id="reset-btn">Reset</button>
-      <button class="control-btn" id="target-btn">Target: 33</button>
+      <div class="controls">
+        <button class="control-btn" id="reset-btn">Reset</button>
+        <button class="control-btn" id="target-btn">Target: 33</button>
+      </div>
     </div>
   </main>
 
@@ -417,7 +430,7 @@
       </div>
 
       <div class="setting-item">
-        <span>Theme Palette</span>
+        <span>Accent Theme</span>
         <select id="theme-select" style="width: auto; padding: 0.4rem;">
           <option value="amber">Amber Warmth</option>
           <option value="sage">Sage Calm</option>
@@ -484,7 +497,7 @@
     const historyCountSelected = document.getElementById('history-count-selected');
     const historyCountTotal = document.getElementById('history-count-total');
     
-    // Settings Elements
+    // Settings & Focus Elements
     const settingsModal = document.getElementById('settings-modal');
     const settingsOpenBtn = document.getElementById('settings-open-btn');
     const settingsCloseBtn = document.getElementById('settings-close-btn');
@@ -493,36 +506,53 @@
     const vibeToggle = document.getElementById('vibe-toggle');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
+    const unhideBtn = document.getElementById('unhide-btn');
 
-    // Audio Context Setup for Goal Sound
+    // Mobile-Compliant Audio System
     let audioCtx = null;
-    function playGoalTone() {
-      if (!soundEnabled) return;
-      try {
-        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5 Note
-        gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.6);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.6);
-      } catch (e) {
-        console.log("Audio not allowed yet");
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
       }
     }
 
-    // Apply Theme
+    function playGoalTone() {
+      if (!soundEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(587.33, audioCtx.currentTime); // D5
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      } catch (e) {
+        console.log("Audio failed to play");
+      }
+    }
+
+    function triggerVibration(pattern) {
+      if (vibeEnabled && 'vibrate' in navigator) {
+        try {
+          navigator.vibrate(pattern);
+        } catch (e) {}
+      }
+    }
+
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       themeSelect.value = theme;
       localStorage.setItem('tasbih_theme', theme);
     }
 
-    // Date Renderer with Proper Hijri Names
     function renderDates() {
       const now = new Date();
       const gregOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
@@ -607,11 +637,24 @@
       focusToggleSetting.checked = focusMode;
       if (focusMode) {
         document.body.classList.add('focus-mode');
-        focusToggleBtn.textContent = '👁️‍🗨️';
       } else {
         document.body.classList.remove('focus-mode');
-        focusToggleBtn.textContent = '👁️';
       }
+    }
+
+    function handleTapAction() {
+      initAudio();
+      count++;
+      saveTap(currentDhikr);
+
+      triggerVibration(30);
+
+      if (count % target === 0) {
+        triggerVibration([100, 50, 100, 50, 150]);
+        playGoalTone();
+      }
+
+      updateUI();
     }
 
     function updateUI() {
@@ -627,25 +670,18 @@
       localStorage.setItem('tasbih_dhikr', currentDhikr);
     }
 
-    // Tap Event
-    tapBtn.addEventListener('click', () => {
-      count++;
-      saveTap(currentDhikr);
+    // Tap & Keyboard Listeners
+    tapBtn.addEventListener('pointerdown', (e) => {
+      e.preventDefault();
+      handleTapAction();
+    });
 
-      // Tap Feedback Vibration
-      if (vibeEnabled && 'vibrate' in navigator) {
-        navigator.vibrate(25);
+    // Keyboard Spacebar Support for Desktop
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && settingsModal.style.display !== 'flex') {
+        e.preventDefault();
+        handleTapAction();
       }
-
-      // Goal Reached Condition
-      if (count % target === 0) {
-        if (vibeEnabled && 'vibrate' in navigator) {
-          navigator.vibrate([100, 50, 100, 50, 150]);
-        }
-        playGoalTone();
-      }
-
-      updateUI();
     });
 
     presetSelect.addEventListener('change', (e) => {
@@ -684,13 +720,14 @@
       localStorage.setItem('tasbih_vibe', vibeEnabled);
     });
 
-    focusToggleBtn.addEventListener('click', () => toggleFocusMode(!focusMode));
+    focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
+    unhideBtn.addEventListener('click', () => toggleFocusMode(false));
     focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
 
     historyDatePicker.value = new Date().toISOString().split('T')[0];
     historyDatePicker.addEventListener('change', updateHistoryView);
 
-    // Initial State Load
+    // Initial Load
     soundToggle.checked = soundEnabled;
     vibeToggle.checked = vibeEnabled;
     applyTheme(currentTheme);
