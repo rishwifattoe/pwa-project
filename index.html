@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Offline Tasbih</title>
   
-  <!-- Dynamic PWA Web App Manifest -->
   <link id="manifest-placeholder" rel="manifest">
   <meta name="theme-color" content="#0a0a0a">
   <meta name="mobile-web-app-capable" content="yes">
@@ -78,7 +77,7 @@
     }
 
     .brand-logo-card {
-      background: var(--card);
+      background: #000000;
       border: 1px solid var(--border);
       border-radius: 12px;
       width: 44px;
@@ -90,9 +89,8 @@
     }
 
     .brand-logo-card svg {
-      width: 24px;
-      height: 24px;
-      fill: var(--accent-soft);
+      width: 28px;
+      height: 28px;
     }
 
     .icon-btn {
@@ -188,6 +186,12 @@
       line-height: 1;
       margin: 0.25rem 0 0.5rem 0;
       font-variant-numeric: tabular-nums;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    .counter-display:active {
+      opacity: 0.7;
     }
 
     .target-info {
@@ -510,12 +514,26 @@
 
   <header>
     <div class="top-bar">
-      <!-- Islamic Crescent & Star Logo Icon -->
       <div class="brand-logo-card" title="Offline Tasbih">
-        <svg viewBox="0 0 24 24">
-          <path d="M12 2a10 10 0 1 0 10 10 10.011 10.011 0 0 0-10-10zm0 18a8 8 0 1 1 8-8 8.009 8.009 0 0 1-8 8z"/>
-          <path d="M11.5 5a7 7 0 1 0 5.83 3.1 8 8 0 1 1-5.83-3.1z"/>
-          <polygon points="17.5,6.5 18.3,8.2 20.2,8.4 18.8,9.7 19.2,11.5 17.5,10.6 15.8,11.5 16.2,9.7 14.8,8.4 16.7,8.2"/>
+        <svg viewBox="0 0 512 512">
+          <g fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2">
+            <circle cx="256" cy="140" r="18"/>
+            <circle cx="310" cy="155" r="18"/>
+            <circle cx="355" cy="190" r="18"/>
+            <circle cx="380" cy="240" r="18"/>
+            <circle cx="380" cy="295" r="18"/>
+            <circle cx="355" cy="345" r="18"/>
+            <circle cx="310" cy="380" r="18"/>
+            <circle cx="256" cy="395" r="18"/>
+            <circle cx="202" cy="380" r="18"/>
+            <circle cx="157" cy="345" r="18"/>
+            <circle cx="132" cy="295" r="18"/>
+            <circle cx="132" cy="240" r="18"/>
+            <circle cx="157" cy="190" r="18"/>
+            <circle cx="202" cy="155" r="18"/>
+          </g>
+          <path d="M 256 122 L 256 70" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="256" cy="65" r="10" fill="#FFFFFF"/>
         </svg>
       </div>
 
@@ -544,7 +562,7 @@
   <main>
     <div class="main-card">
       <div class="target-info" id="target-info-label" title="Click to set custom target">Target: <span id="target-count">33</span> ✏️</div>
-      <div class="counter-display" id="count">0</div>
+      <div class="counter-display" id="count" title="Tap to set count directly">0</div>
       
       <div class="tap-area">
         <button class="tap-btn" id="tap-btn">TAP</button>
@@ -565,6 +583,12 @@
 
   <section class="stats-card">
     <div class="stats-title">Look Back at History</div>
+    
+    <div class="stat-row" style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.75rem;">
+      <span style="font-weight: 600;">All-Time Cumulative Dhikr:</span>
+      <strong id="history-all-time-total" style="font-size: 1.1rem; color: var(--accent-soft);">0</strong>
+    </div>
+
     <div style="margin-bottom: 0.75rem;">
       <input type="date" id="history-date-picker">
     </div>
@@ -578,7 +602,6 @@
     </div>
   </section>
 
-  <!-- Settings Modal -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -652,13 +675,12 @@
       </div>
 
       <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
-        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage Custom Dhikrs</div>
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage All Dhikrs</div>
         <div id="custom-dhikr-manager-list"></div>
       </div>
     </div>
   </div>
 
-  <!-- Custom Input Modal -->
   <div class="modal-overlay" id="input-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -675,7 +697,6 @@
     </div>
   </div>
 
-  <!-- Custom Confirm Modal -->
   <div class="modal-overlay" id="confirm-modal">
     <div class="modal-card">
       <div class="modal-header">
@@ -703,7 +724,7 @@
         background_color: "#0a0a0a",
         theme_color: "#0a0a0a",
         icons: [{
-          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230a0a0a'/><circle cx='50' cy='50' r='35' fill='none' stroke='%23d4d4d4' stroke-width='8'/></svg>",
+          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='256' cy='140' r='18'/><circle cx='310' cy='155' r='18'/><circle cx='355' cy='190' r='18'/><circle cx='380' cy='240' r='18'/><circle cx='380' cy='295' r='18'/><circle cx='355' cy='345' r='18'/><circle cx='310' cy='380' r='18'/><circle cx='256' cy='395' r='18'/><circle cx='202' cy='380' r='18'/><circle cx='157' cy='345' r='18'/><circle cx='132' cy='295' r='18'/><circle cx='132' cy='240' r='18'/><circle cx='157' cy='190' r='18'/><circle cx='202' cy='155' r='18'/></g></svg>",
           sizes: "192x192 512x512",
           type: "image/svg+xml"
         }]
@@ -714,7 +735,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'tasbih-v2';
+          const CACHE_NAME = 'tasbih-v3';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -737,8 +758,20 @@
       "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
     ];
 
-    let customDhikrList = JSON.parse(localStorage.getItem('tasbih_custom_dhikr') || '[]');
-    let currentDhikr = localStorage.getItem('tasbih_dhikr') || 'Istighfar';
+    const DEFAULT_DHIKRS = ['Istighfar', 'SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah'];
+
+    // Initialize full dhikr list in LocalStorage if first run
+    function getStoredDhikrs() {
+      const stored = localStorage.getItem('tasbih_all_dhikrs');
+      if (!stored) {
+        localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(DEFAULT_DHIKRS));
+        return DEFAULT_DHIKRS;
+      }
+      return JSON.parse(stored);
+    }
+
+    let allDhikrList = getStoredDhikrs();
+    let currentDhikr = localStorage.getItem('tasbih_dhikr') || allDhikrList[0] || 'Istighfar';
     let count = parseInt(localStorage.getItem('tasbih_session_count') || '0');
     let target = parseInt(localStorage.getItem('tasbih_target') || '33');
     let soundEnabled = localStorage.getItem('tasbih_sound') !== 'false';
@@ -750,9 +783,6 @@
     let focusMode = false;
     let unhideTimeout = null;
 
-    const DEFAULT_DHIKR_LIST = ['Istighfar', 'SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah'];
-
-    // URL Clean/Router Helper
     function setCleanURL(dhikrName) {
       if (window.history && window.history.replaceState) {
         const cleanSlug = encodeURIComponent(dhikrName.toLowerCase().replace(/\s+/g, '-'));
@@ -774,6 +804,7 @@
     const historyDhikrLabel = document.getElementById('history-dhikr-label');
     const historyCountSelected = document.getElementById('history-count-selected');
     const historyCountTotal = document.getElementById('history-count-total');
+    const historyAllTimeTotal = document.getElementById('history-all-time-total');
     
     const settingsModal = document.getElementById('settings-modal');
     const settingsOpenBtn = document.getElementById('settings-open-btn');
@@ -850,14 +881,7 @@
     function renderDhikrOptions() {
       presetSelect.innerHTML = '';
       
-      DEFAULT_DHIKR_LIST.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        opt.textContent = item;
-        presetSelect.appendChild(opt);
-      });
-
-      customDhikrList.forEach(item => {
+      allDhikrList.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item;
         opt.textContent = item;
@@ -869,6 +893,10 @@
       customOpt.textContent = '+ Add Custom Dhikr...';
       presetSelect.appendChild(customOpt);
 
+      if (!allDhikrList.includes(currentDhikr)) {
+        currentDhikr = allDhikrList[0] || 'Istighfar';
+      }
+
       presetSelect.value = currentDhikr;
       renderCustomManagerList();
       setCleanURL(currentDhikr);
@@ -876,32 +904,33 @@
 
     function renderCustomManagerList() {
       customDhikrManagerList.innerHTML = '';
-      if (customDhikrList.length === 0) {
-        customDhikrManagerList.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No custom dhikrs added.</div>';
+      if (allDhikrList.length === 0) {
+        customDhikrManagerList.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No dhikrs available.</div>';
         return;
       }
 
-      customDhikrList.forEach(item => {
+      allDhikrList.forEach(item => {
         const row = document.createElement('div');
         row.className = 'stat-row';
         row.innerHTML = `
           <span>${item}</span>
           <button class="delete-btn" title="Delete Dhikr">🗑️</button>
         `;
-        row.querySelector('.delete-btn').addEventListener('click', () => deleteCustomDhikr(item));
+        row.querySelector('.delete-btn').addEventListener('click', () => deleteDhikr(item));
         customDhikrManagerList.appendChild(row);
       });
     }
 
-    function deleteCustomDhikr(dhikrToDelete) {
+    function deleteDhikr(dhikrToDelete) {
       showCustomConfirmModal(
-        'Delete Custom Dhikr',
+        'Delete Dhikr',
         `Are you sure you want to remove "${dhikrToDelete}"?`,
         () => {
-          customDhikrList = customDhikrList.filter(item => item !== dhikrToDelete);
-          localStorage.setItem('tasbih_custom_dhikr', JSON.stringify(customDhikrList));
+          allDhikrList = allDhikrList.filter(item => item !== dhikrToDelete);
+          localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
+          
           if (currentDhikr === dhikrToDelete) {
-            currentDhikr = 'Istighfar';
+            currentDhikr = allDhikrList[0] || 'Istighfar';
             count = 0;
           }
           renderDhikrOptions();
@@ -1010,9 +1039,8 @@
       const logs = getLogs();
       const offsets = getManualOffsets();
       const totals = {};
-      const allDhikrs = [...DEFAULT_DHIKR_LIST, ...customDhikrList];
       
-      allDhikrs.forEach(item => totals[item] = offsets[item] || 0);
+      allDhikrList.forEach(item => totals[item] = offsets[item] || 0);
 
       Object.keys(logs).forEach(dateKey => {
         Object.keys(logs[dateKey]).forEach(dhikr => {
@@ -1025,7 +1053,10 @@
       });
 
       lifetimeListEl.innerHTML = '';
+      let grandTotal = 0;
+
       Object.keys(totals).forEach(item => {
+        grandTotal += totals[item];
         const row = document.createElement('div');
         row.className = 'stat-row';
         row.innerHTML = `
@@ -1035,6 +1066,10 @@
         row.querySelector('.edit-icon-btn').addEventListener('click', () => editLifetimeTotal(item, totals[item]));
         lifetimeListEl.appendChild(row);
       });
+
+      if (historyAllTimeTotal) {
+        historyAllTimeTotal.textContent = grandTotal.toLocaleString();
+      }
     }
 
     function editLifetimeTotal(dhikrName, currentTotal) {
@@ -1056,6 +1091,16 @@
         localStorage.setItem('tasbih_offsets', JSON.stringify(offsets));
 
         updateUI();
+      });
+    }
+
+    function editCurrentCounter() {
+      showCustomInputModal(`Edit Current Session Count`, count, 'number', (val) => {
+        const parsed = parseInt(val, 10);
+        if (!isNaN(parsed) && parsed >= 0) {
+          count = parsed;
+          updateUI();
+        }
       });
     }
 
@@ -1141,8 +1186,8 @@
       const exportObject = {
         logs: getLogs(),
         offsets: getManualOffsets(),
-        customDhikrs: customDhikrList,
-        version: 2
+        allDhikrs: allDhikrList,
+        version: 3
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -1164,9 +1209,9 @@
           const data = JSON.parse(event.target.result);
           if (data.logs) localStorage.setItem('tasbih_logs_v2', JSON.stringify(data.logs));
           if (data.offsets) localStorage.setItem('tasbih_offsets', JSON.stringify(data.offsets));
-          if (data.customDhikrs) {
-            customDhikrList = data.customDhikrs;
-            localStorage.setItem('tasbih_custom_dhikr', JSON.stringify(customDhikrList));
+          if (data.allDhikrs) {
+            allDhikrList = data.allDhikrs;
+            localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
           }
           renderDhikrOptions();
           updateUI();
@@ -1179,6 +1224,8 @@
     });
 
     // --- Listeners ---
+    countEl.addEventListener('click', editCurrentCounter);
+
     document.addEventListener('pointerdown', (e) => {
       if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
         revealUnhideButton();
@@ -1203,9 +1250,9 @@
         showCustomInputModal('Add Custom Dhikr Phrase', '', 'text', (input) => {
           if (input && input.trim().length > 0) {
             const formatted = input.trim();
-            if (!customDhikrList.includes(formatted)) {
-              customDhikrList.push(formatted);
-              localStorage.setItem('tasbih_custom_dhikr', JSON.stringify(customDhikrList));
+            if (!allDhikrList.includes(formatted)) {
+              allDhikrList.push(formatted);
+              localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
             }
             currentDhikr = formatted;
           }
@@ -1220,7 +1267,6 @@
       }
     });
 
-    // Custom Reset Confirmation Modal Trigger
     resetBtn.addEventListener('click', () => {
       showCustomConfirmModal(
         'Reset Session',
