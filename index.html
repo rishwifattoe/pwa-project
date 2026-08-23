@@ -1,502 +1,1072 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tasbih PWA</title>
-  <meta name="theme-color" content="#000000">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Digital Tasbih</title>
   <style>
     :root {
+      --bg-color: #121212;
+      --card-bg: #1e1e1e;
+      --accent-color: #00e676;
+      --text-color: #ffffff;
+      --subtext-color: #a0a0a0;
+      --border-color: #333333;
+      --button-active: #00c853;
+      --modal-bg: rgba(0, 0, 0, 0.85);
+    }
+
+    [data-theme="oled"] {
       --bg-color: #000000;
-      --card-bg: #121212;
+      --card-bg: #0d0d0d;
+      --accent-color: #00e676;
+      --text-color: #ffffff;
+      --subtext-color: #888888;
+      --border-color: #222222;
+      --button-active: #00c853;
+    }
+
+    [data-theme="light"] {
+      --bg-color: #f4f6f8;
+      --card-bg: #ffffff;
       --accent-color: #10b981;
-      --accent-glow: #34d399;
-      --text-main: #ffffff;
-      --text-muted: #a3a3a3;
-      --border-color: #262626;
+      --text-color: #1f2937;
+      --subtext-color: #6b7280;
+      --border-color: #e5e7eb;
+      --button-active: #059669;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
       user-select: none;
+      -webkit-user-select: none;
     }
 
     body {
       background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: var(--text-color);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-between;
+      padding: 1rem;
+      transition: background-color 0.3s ease;
     }
 
-    /* App Header */
     header {
       width: 100%;
       max-width: 480px;
-      padding: 16px 24px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid var(--border-color);
+      padding: 0.5rem 0;
     }
 
-    .brand {
+    .date-display {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .gregorian-date {
+      font-size: 0.85rem;
+      color: var(--subtext-color);
+    }
+
+    .hijri-date {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--accent-color);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      font-size: 1.2rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: center;
     }
 
-    .brand svg {
-      width: 36px;
-      height: 36px;
-    }
-
-    .brand h1 {
-      font-size: 1.25rem;
-      font-weight: 600;
-      letter-spacing: 0.5px;
-    }
-
-    /* Navigation Tabs */
-    nav {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nav-btn {
-      background: none;
-      border: 1px solid var(--border-color);
-      color: var(--text-muted);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.875rem;
-      cursor: pointer;
-    }
-
-    .nav-btn.active {
-      background: var(--accent-color);
-      color: #000000;
-      border-color: var(--accent-color);
-      font-weight: 600;
-    }
-
-    /* Main Container */
     main {
       width: 100%;
       max-width: 480px;
-      flex: 1;
       display: flex;
       flex-direction: column;
-      padding: 24px;
+      align-items: center;
+      gap: 1.5rem;
+      flex-grow: 1;
+      justify-content: center;
     }
 
-    .view {
-      display: none;
-      flex-direction: column;
+    .selector-container {
       width: 100%;
-      height: 100%;
-    }
-
-    .view.active {
       display: flex;
+      gap: 0.5rem;
     }
 
-    /* Home View Elements */
-    .lifetime-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 16px;
-      padding: 20px;
-      text-align: center;
-      margin-bottom: 24px;
-    }
-
-    .lifetime-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-
-    .lifetime-value {
-      font-size: 2.25rem;
-      font-weight: 700;
-      color: var(--accent-glow);
-      margin-top: 4px;
-    }
-
-    .dhikr-selector {
-      width: 100%;
-      padding: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      border-radius: 12px;
-      font-size: 1rem;
-      margin-bottom: 24px;
+    select, button, input {
       outline: none;
     }
 
-    /* Count Area */
-    .counter-area {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
+    .dhikr-select {
+      flex-grow: 1;
+      background: var(--card-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      font-size: 1rem;
     }
 
-    .count-button {
-      width: 220px;
-      height: 220px;
-      border-radius: 50%;
-      background: radial-gradient(circle, #064e3b 0%, #000000 100%);
-      border: 4px solid var(--accent-color);
-      color: var(--text-main);
-      font-size: 3.5rem;
-      font-weight: 700;
+    .counter-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      width: 100%;
+      border-radius: 24px;
+      padding: 2rem 1rem;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
+      position: relative;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    }
+
+    .counter-display {
+      font-size: 5rem;
+      font-weight: 700;
+      line-height: 1;
+      margin: 1rem 0;
+      color: var(--text-color);
       cursor: pointer;
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.2);
-      transition: transform 0.05s ease;
-      outline: none;
     }
 
-    .count-button:active {
+    .target-info {
+      font-size: 0.9rem;
+      color: var(--subtext-color);
+      cursor: pointer;
+    }
+
+    .tap-button {
+      width: 200px;
+      height: 200px;
+      border-radius: 50%;
+      background: var(--accent-color);
+      border: none;
+      color: #000;
+      font-size: 1.5rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin: 1rem 0;
+      box-shadow: 0 6px 20px rgba(0,230,118,0.3);
+      transition: transform 0.05s ease, background-color 0.2s ease;
+      touch-action: manipulation;
+    }
+
+    .tap-button:active {
       transform: scale(0.95);
+      background: var(--button-active);
     }
 
-    /* History View Elements */
-    .history-header {
+    .tap-button.pulse {
+      animation: visualPulse 0.4s ease-out;
+    }
+
+    @keyframes visualPulse {
+      0% { box-shadow: 0 0 0 0px rgba(0, 230, 118, 0.8); }
+      100% { box-shadow: 0 0 0 30px rgba(0, 230, 118, 0); }
+    }
+
+    .controls-row {
       display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 20px;
+      gap: 1rem;
+      width: 100%;
+      justify-content: space-between;
     }
 
-    .date-picker {
-      width: 100%;
-      padding: 12px;
+    .btn {
       background: var(--card-bg);
       border: 1px solid var(--border-color);
-      color: var(--text-main);
+      color: var(--text-color);
+      padding: 0.75rem 1.25rem;
       border-radius: 12px;
-      font-size: 1rem;
-      color-scheme: dark;
+      font-weight: 600;
+      cursor: pointer;
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
     }
 
-    .daily-summary-card {
+    .stats-container {
+      width: 100%;
+      max-width: 480px;
       background: var(--card-bg);
       border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 20px;
-      text-align: center;
+      padding: 1rem;
+      margin-top: 1rem;
     }
 
-    .daily-summary-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
+    .stats-header {
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--subtext-color);
+      margin-bottom: 0.5rem;
       text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .daily-summary-value {
-      font-size: 2rem;
-      font-weight: 700;
-      color: var(--accent-color);
-      margin-top: 4px;
-    }
-
-    .breakdown-title {
-      font-size: 1rem;
-      margin: 20px 0 12px 0;
-      color: var(--text-muted);
-    }
-
-    .history-list {
-      list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .history-item {
-      background: var(--card-bg);
-      border: 1px solid var(--border-color);
-      padding: 16px;
-      border-radius: 12px;
+    .stat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      padding: 0.4rem 0;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 0.95rem;
     }
 
-    .dhikr-name {
-      font-weight: 500;
+    .stat-row:last-child {
+      border-bottom: none;
     }
 
-    .dhikr-count {
+    .edit-icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 0.85rem;
+      margin-left: 0.4rem;
+      opacity: 0.7;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: var(--modal-bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      padding: 1rem;
+    }
+
+    .modal {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 400px;
+      padding: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       font-weight: 700;
-      color: var(--accent-glow);
+      font-size: 1.2rem;
     }
 
-    .empty-state {
-      text-align: center;
-      color: var(--text-muted);
-      padding: 30px 0;
+    .setting-group {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+    }
+
+    .setting-input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .toggle-switch {
+      position: relative;
+      width: 50px;
+      height: 26px;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border-color);
+      transition: .3s;
+      border-radius: 34px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .3s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--accent-color);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(24px);
+    }
+
+    body.focus-mode header,
+    body.focus-mode .selector-container,
+    body.focus-mode .controls-row,
+    body.focus-mode .stats-container,
+    body.focus-mode .target-info {
+      display: none !important;
+    }
+
+    body.focus-mode main {
+      justify-content: center;
+    }
+
+    body.focus-mode .counter-card {
+      border: none;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    .unhide-btn {
+      position: fixed;
+      bottom: 2rem;
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      color: var(--text-color);
+      padding: 0.5rem 1rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      display: none;
+      z-index: 100;
+    }
+
+    body.focus-mode .unhide-btn.visible {
+      display: block;
     }
   </style>
 </head>
 <body>
 
   <header>
-    <div class="brand">
-      <svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
-        <rect width="512" height="512" rx="110" fill="#050d0a"/>
-        <circle cx="256" cy="300" r="100" fill="none" stroke="#064e3b" stroke-width="12" stroke-dasharray="1 28" stroke-linecap="round"/>
-        <circle cx="256" cy="400" r="22" fill="#059669"/>
-        <path d="M 256 378 L 256 190" stroke="#10b981" stroke-width="16" stroke-linecap="round"/>
-        <path d="M 256 220 C 190 200, 170 130, 256 110 C 342 130, 322 200, 256 220 Z" fill="#34d399"/>
-        <path d="M 256 220 C 256 170, 256 130, 256 110" stroke="#059669" stroke-width="6" fill="none"/>
-      </svg>
-      <h1>Tasbih</h1>
+    <div class="date-display">
+      <span class="hijri-date" id="hijri-date">Loading...</span>
+      <span class="gregorian-date" id="gregorian-date">Loading...</span>
     </div>
-    <nav>
-      <button class="nav-btn active" id="tab-home">Counter</button>
-      <button class="nav-btn" id="tab-history">History</button>
-    </nav>
+    <div class="header-actions">
+      <button class="icon-btn" id="focus-toggle-btn" title="Toggle Focus Mode">👁️</button>
+      <button class="icon-btn" id="settings-open-btn" title="Settings">⚙️</button>
+    </div>
   </header>
 
   <main>
-    <!-- HOME / COUNTER VIEW -->
-    <section id="view-home" class="view active">
-      <div class="lifetime-card">
-        <div class="lifetime-label">Lifetime Dhikr Count</div>
-        <div id="lifetime-total-display" class="lifetime-value">0</div>
-      </div>
+    <div class="selector-container">
+      <select id="dhikr-preset-select" class="dhikr-select"></select>
+    </div>
 
-      <select id="dhikr-select" class="dhikr-selector">
-        <option value="subhanallah">SubhanAllah</option>
-        <option value="alhamdulillah">Alhamdulillah</option>
-        <option value="allahu_akbar">Allahu Akbar</option>
-        <option value="astaghfirullah">Astaghfirullah</option>
-      </select>
-
-      <div class="counter-area">
-        <button id="main-counter-btn" class="count-button">0</button>
-      </div>
-    </section>
-
-    <!-- HISTORY LOOK-BACK VIEW -->
-    <section id="view-history" class="view">
-      <div class="history-header">
-        <input type="date" id="history-date-picker" class="date-picker">
-        
-        <div class="daily-summary-card">
-          <div class="daily-summary-label">Total Dhikr For Selected Day</div>
-          <div id="daily-total-display" class="daily-summary-value">0</div>
-        </div>
-      </div>
-
-      <h2 class="breakdown-title">Daily Breakdown</h2>
-      <ul id="history-breakdown-list" class="history-list">
-        <!-- Dynamic Items Render Here -->
-      </ul>
-    </section>
-  </main>
-  
-  <script>
-    // --- DATA & STORAGE ENGINE ---
-    const STORAGE_KEY = 'tasbih_pwa_data';
-
-    // Retrieve global data or initialize default state
-    function getAppData() {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (!raw) {
-        return {
-          history: {},      // Format: { "YYYY-MM-DD": { "subhanallah": 33, ... } }
-          sessionCounts: {},// Format: { "subhanallah": 0, ... }
-          lifetimeTotal: 0
-        };
-      }
-      return JSON.parse(raw);
-    }
-
-    // Save state object back to localStorage
-    function saveAppData(data) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-    }
-
-    // Helper: Formats Date object to YYYY-MM-DD string
-    function formatDateKey(dateObj) {
-      const year = dateObj.getFullYear();
-      const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-      const day = String(dateObj.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    }
-
-    // Increment dhikr count for both daily history and global lifetime total
-    function recordDhikr(dhikrId) {
-      const data = getAppData();
-      const today = formatDateKey(new Date());
-
-      // Ensure today's history object exists
-      if (!data.history[today]) {
-        data.history[today] = {};
-      }
-
-      // Increment today's count for selected dhikr
-      data.history[today][dhikrId] = (data.history[today][dhikrId] || 0) + 1;
-
-      // Increment active session counter for selected dhikr
-      if (!data.sessionCounts) data.sessionCounts = {};
-      data.sessionCounts[dhikrId] = (data.sessionCounts[dhikrId] || 0) + 1;
-
-      // Increment total count since day one
-      data.lifetimeTotal = (data.lifetimeTotal || 0) + 1;
-
-      saveAppData(data);
-      return data;
-    }
-
-    // Retrieve stats breakdown for any target date string (YYYY-MM-DD)
-    function getHistoryForDate(dateKey) {
-      const data = getAppData();
-      const dayRecord = data.history[dateKey] || {};
-
-      // Compute total dhikrs recorded on that specific date
-      const dailyTotal = Object.values(dayRecord).reduce((sum, val) => sum + val, 0);
-
-      return {
-        date: dateKey,
-        dailyTotal: dailyTotal,
-        breakdown: dayRecord
-      };
-    }
-
-    // Get current lifetime count
-    function getLifetimeTotal() {
-      return getAppData().lifetimeTotal || 0;
-    }
-
-    // Get current active session count for selected dhikr
-    function getSessionCount(dhikrId) {
-      const data = getAppData();
-      return (data.sessionCounts && data.sessionCounts[dhikrId]) || 0;
-    }
-
-  // --- UI CONTROLLER & NAVIGATION ---
-    
-    // DOM Elements
-    const tabHome = document.getElementById('tab-home');
-    const tabHistory = document.getElementById('tab-history');
-    const viewHome = document.getElementById('view-home');
-    const viewHistory = document.getElementById('view-history');
-
-    const lifetimeDisplay = document.getElementById('lifetime-total-display');
-    const dhikrSelect = document.getElementById('dhikr-select');
-    const mainCounterBtn = document.getElementById('main-counter-btn');
-
-    const datePicker = document.getElementById('history-date-picker');
-    const dailyTotalDisplay = document.getElementById('daily-total-display');
-    const historyList = document.getElementById('history-breakdown-list');
-
-    // Initialize UI on startup
-    function init() {
-      // Set date picker default to today
-      const todayString = formatDateKey(new Date());
-      datePicker.value = todayString;
-
-      // Update counters
-      refreshHomeUI();
-      refreshHistoryUI(todayString);
-
-      // Event Listeners
-      tabHome.addEventListener('click', () => switchView('home'));
-      tabHistory.addEventListener('click', () => switchView('history'));
-
-      dhikrSelect.addEventListener('change', () => {
-        refreshHomeUI();
-      });
-
-      mainCounterBtn.addEventListener('click', () => {
-        const selectedDhikr = dhikrSelect.value;
-        recordDhikr(selectedDhikr);
-        
-        // Trigger subtle visual feedback/haptic
-        if (navigator.vibrate) navigator.vibrate(40);
-        
-        refreshHomeUI();
-        refreshHistoryUI(datePicker.value);
-      });
-
-      datePicker.addEventListener('change', (e) => {
-        refreshHistoryUI(e.target.value);
-      });
-    }
-
-    // Switch between Counter and History tabs
-    function switchView(target) {
-      if (target === 'home') {
-        tabHome.classList.add('active');
-        tabHistory.classList.remove('active');
-        viewHome.classList.add('active');
-        viewHistory.classList.remove('active');
-        refreshHomeUI();
-      } else {
-        tabHistory.classList.add('active');
-        tabHome.classList.remove('active');
-        viewHistory.classList.add('active');
-        viewHome.classList.remove('active');
-        refreshHistoryUI(datePicker.value);
-      }
-    }
-
-    // Update Home View numbers
-    function refreshHomeUI() {
-      lifetimeDisplay.textContent = getLifetimeTotal().toLocaleString();
-      const currentDhikr = dhikrSelect.value;
-      mainCounterBtn.textContent = getSessionCount(currentDhikr).toLocaleString();
-    }
-
-    // Render History Look-back View
-    function refreshHistoryUI(dateKey) {
-      if (!dateKey) return;
+    <div class="counter-card">
+      <div class="target-info" id="target-info-label">Target: 33</div>
+      <div class="counter-display" id="count-display">0</div>
+      <button class="tap-button" id="tap-btn">TAP</button>
       
-      const stats = getHistoryForDate(dateKey);
-      dailyTotalDisplay.textContent = stats.dailyTotal.toLocaleString();
+      <div class="controls-row">
+        <button class="btn" id="reset-btn">🔄 Reset</button>
+        <button class="btn" id="target-btn">🎯 Target: 33</button>
+      </div>
+    </div>
 
-      historyList.innerHTML = '';
-      const entries = Object.entries(stats.breakdown);
+    <div class="stats-container">
+      <div class="stats-header">Daily History Log</div>
+      <div class="setting-group" style="margin-bottom: 0.5rem;">
+        <input type="date" id="history-date-picker" class="dhikr-select" style="padding: 0.4rem;">
+      </div>
+      <div class="stat-row">
+        <span>Selected Phrase Log:</span>
+        <strong id="history-count-selected">0</strong>
+      </div>
+      <div class="stat-row">
+        <span>Day Grand Total:</span>
+        <strong id="history-count-total">0</strong>
+      </div>
+    </div>
 
-      if (entries.length === 0) {
-        historyList.innerHTML = '<li class="empty-state">No dhikr recorded for this date.</li>';
-        return;
+    <div class="stats-container">
+      <div class="stats-header">Lifetime Totals (All-Time)</div>
+      <div id="lifetime-list"></div>
+      <div class="stat-row" style="margin-top: 0.5rem; font-weight: bold; border-top: 1px solid var(--border-color);">
+        <span>Grand Total:</span>
+        <strong id="history-all-time-total">0</strong>
+      </div>
+    </div>
+  </main>
+
+  <button class="unhide-btn" id="unhide-btn">Exit Focus Mode</button>
+
+  <!-- Settings Modal -->
+  <div class="modal-overlay" id="settings-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span>Settings</span>
+        <button class="icon-btn" id="settings-close-btn">✕</button>
+      </div>
+      
+      <div class="setting-group">
+        <span>Theme</span>
+        <select id="theme-select" class="dhikr-select" style="width: 120px;">
+          <option value="dark">Dark</option>
+          <option value="oled">OLED Charcoal</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <span>Audio Feedback</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sound-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-group">
+        <span>Goal Alert Tone</span>
+        <select id="tone-select" class="dhikr-select" style="width: 120px;">
+          <option value="chime">Chime</option>
+          <option value="bell">Bell Ramp</option>
+          <option value="pulse">Pulse Tone</option>
+        </select>
+      </div>
+
+      <div class="setting-group">
+        <span>Alert Volume</span>
+        <input type="range" id="volume-range" min="0" max="1" step="0.1" style="width: 120px;">
+      </div>
+
+      <div class="setting-group">
+        <span>Vibration Feedback</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="vibe-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-group">
+        <span>Visual Pulse Alert</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="visual-haptic-toggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-group">
+        <span>Focus Mode</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="focus-toggle-setting">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="setting-group" style="flex-direction: column; align-items: stretch; gap: 0.5rem; margin-top: 0.5rem;">
+        <button class="btn" id="export-data-btn">📤 Export Backup Data</button>
+        <button class="btn" id="import-data-btn">📥 Import Backup Data</button>
+        <input type="file" id="import-file-input" accept=".json" style="display: none;">
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Input Modal -->
+  <div class="modal-overlay" id="input-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span id="input-modal-title">Input</span>
+      </div>
+      <div class="setting-input-group">
+        <input type="text" id="input-modal-field" class="dhikr-select" style="width: 100%;">
+      </div>
+      <div class="controls-row">
+        <button class="btn" id="input-modal-cancel">Cancel</button>
+        <button class="btn" id="input-modal-confirm" style="background: var(--accent-color); color: #000;">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom Confirmation Modal -->
+  <div class="modal-overlay" id="confirm-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <span id="confirm-modal-title">Confirm</span>
+      </div>
+      <p id="confirm-modal-message" style="color: var(--subtext-color); font-size: 0.95rem;"></p>
+      <div class="controls-row">
+        <button class="btn" id="confirm-modal-cancel">Cancel</button>
+        <button class="btn" id="confirm-modal-ok" style="background: var(--accent-color); color: #000;">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Constants & Defaults ---
+    const DEFAULT_DHIKR_LIST = ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Astaghfirullah', 'La ilaha illa Allah'];
+    const HIJRI_MONTHS = ["Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani", "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban", "Ramadan", "Shawwal", "Dhu al-Qa'dah", "Dhu al-Hijjah"];
+
+    // --- State Variables ---
+    let allDhikrList = JSON.parse(localStorage.getItem('tasbih_all_dhikrs')) || DEFAULT_DHIKR_LIST;
+    let currentDhikr = localStorage.getItem('tasbih_dhikr') || allDhikrList[0];
+    let count = parseInt(localStorage.getItem('tasbih_session_count'), 10) || 0;
+    let target = parseInt(localStorage.getItem('tasbih_target'), 10) || 33;
+    let soundEnabled = localStorage.getItem('tasbih_sound') === 'true';
+    let vibeEnabled = localStorage.getItem('tasbih_vibe') !== 'false';
+    let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
+    let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.5');
+    let visualHapticEnabled = localStorage.getItem('tasbih_visual_pulse') !== 'false';
+    let focusMode = false;
+    let currentTheme = localStorage.getItem('tasbih_theme') || 'dark';
+    let unhideTimeout = null;
+
+    // --- DOM Elements ---
+    const countEl = document.getElementById('count-display');
+    const targetEl = document.getElementById('target-btn');
+    const targetInfoLabel = document.getElementById('target-info-label');
+    const tapBtn = document.getElementById('tap-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const targetBtn = document.getElementById('target-btn');
+    const presetSelect = document.getElementById('dhikr-preset-select');
+    const gregorianDateEl = document.getElementById('gregorian-date');
+    const hijriDateEl = document.getElementById('hijri-date');
+
+    const settingsOpenBtn = document.getElementById('settings-open-btn');
+    const settingsCloseBtn = document.getElementById('settings-close-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const themeSelect = document.getElementById('theme-select');
+    const soundToggle = document.getElementById('sound-toggle');
+    const toneSelect = document.getElementById('tone-select');
+    const volumeRange = document.getElementById('volume-range');
+    const vibeToggle = document.getElementById('vibe-toggle');
+    const visualHapticToggle = document.getElementById('visual-haptic-toggle');
+    const focusToggleSetting = document.getElementById('focus-toggle-setting');
+    const focusToggleBtn = document.getElementById('focus-toggle-btn');
+    const unhideBtn = document.getElementById('unhide-btn');
+
+    const lifetimeListEl = document.getElementById('lifetime-list');
+    const historyDatePicker = document.getElementById('history-date-picker');
+    const historyCountSelected = document.getElementById('history-count-selected');
+    const historyCountTotal = document.getElementById('history-count-total');
+    const historyAllTimeTotal = document.getElementById('history-all-time-total');
+
+    const inputModal = document.getElementById('input-modal');
+    const inputModalTitle = document.getElementById('input-modal-title');
+    const inputModalField = document.getElementById('input-modal-field');
+    const inputModalCancel = document.getElementById('input-modal-cancel');
+    const inputModalConfirm = document.getElementById('input-modal-confirm');
+
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmModalTitle = document.getElementById('confirm-modal-title');
+    const confirmModalMessage = document.getElementById('confirm-modal-message');
+    const confirmModalCancel = document.getElementById('confirm-modal-cancel');
+    const confirmModalOk = document.getElementById('confirm-modal-ok');
+
+    // --- Dynamic Input Modal Helper ---
+    function showCustomInputModal(title, defaultValue, type, onConfirm) {
+      inputModalTitle.textContent = title;
+      inputModalField.type = type || 'text';
+      inputModalField.value = defaultValue || '';
+      inputModal.style.display = 'flex';
+      inputModalField.focus();
+
+      const handleConfirm = () => {
+        onConfirm(inputModalField.value);
+        closeInputModal();
+      };
+
+      const closeInputModal = () => {
+        inputModal.style.display = 'none';
+        inputModalConfirm.removeEventListener('click', handleConfirm);
+        inputModalCancel.removeEventListener('click', closeInputModal);
+      };
+
+      inputModalConfirm.addEventListener('click', handleConfirm);
+      inputModalCancel.addEventListener('click', closeInputModal);
+    }
+
+    // --- Dynamic Confirmation Modal Helper ---
+    function showCustomConfirmModal(title, message, onConfirm) {
+      confirmModalTitle.textContent = title;
+      confirmModalMessage.textContent = message;
+      confirmModal.style.display = 'flex';
+
+      const handleOk = () => {
+        onConfirm();
+        closeConfirmModal();
+      };
+
+      const closeConfirmModal = () => {
+        confirmModal.style.display = 'none';
+        confirmModalOk.removeEventListener('click', handleOk);
+        confirmModalCancel.removeEventListener('click', closeConfirmModal);
+      };
+
+      confirmModalOk.addEventListener('click', handleOk);
+      confirmModalCancel.addEventListener('click', closeConfirmModal);
+    }
+
+    // --- App Options Setup ---
+    function renderDhikrOptions() {
+      presetSelect.innerHTML = '';
+      allDhikrList.forEach(item => {
+        const opt = document.createElement('option');
+        opt.value = item;
+        opt.textContent = item;
+        if (item === currentDhikr) opt.selected = true;
+        presetSelect.appendChild(opt);
+      });
+
+      const customOpt = document.createElement('option');
+      customOpt.value = '__custom__';
+      customOpt.textContent = '➕ Add Custom Dhikr...';
+      presetSelect.appendChild(customOpt);
+    }
+
+    function deleteDhikr(dhikrToDelete) {
+      showCustomConfirmModal(
+        'Delete Dhikr',
+        `Are you sure you want to remove "${dhikrToDelete}"?`,
+        () => {
+          allDhikrList = allDhikrList.filter(item => item !== dhikrToDelete);
+          localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
+          
+          if (currentDhikr === dhikrToDelete) {
+            currentDhikr = allDhikrList[0] || 'Istighfar';
+            count = 0;
+          }
+          renderDhikrOptions();
+          updateUI();
+        }
+      );
+    }
+
+    let audioCtx = null;
+    function initAudio() {
+      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
+    function playGoalTone() {
+      if (!soundEnabled) return;
+      initAudio();
+      try {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        
+        if (alertTone === 'bell') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
+        } else if (alertTone === 'pulse') {
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(329.63, audioCtx.currentTime);
+        } else {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        }
+
+        gain.gain.setValueAtTime(alertVolume, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.8);
+      } catch (e) {}
+    }
+
+    function triggerVisualPulse() {
+      if (!visualHapticEnabled) return;
+      tapBtn.classList.remove('pulse');
+      void tapBtn.offsetWidth;
+      tapBtn.classList.add('pulse');
+    }
+
+    function triggerVibration(pattern) {
+      if (vibeEnabled && 'vibrate' in navigator) {
+        try { navigator.vibrate(pattern); } catch (e) {}
       }
+    }
 
-      entries.forEach(([id, count]) => {
-        const li = document.createElement('li');
-        li.className = 'history-item';
-        li.innerHTML = `
-          <span class="dhikr-name">${formatDhikrLabel(id)}</span>
-          <span class="dhikr-count">${count.toLocaleString()}</span>
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      themeSelect.value = theme;
+      localStorage.setItem('tasbih_theme', theme);
+    }
+
+    function renderDates() {
+      const now = new Date();
+      const gregOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+      gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
+
+      try {
+        const parts = new Intl.DateTimeFormat('en-u-ca-islamic-num', {
+          day: 'numeric', month: 'numeric', year: 'numeric'
+        }).formatToParts(now);
+
+        let day = '', monthIdx = 0, year = '';
+        parts.forEach(p => {
+          if (p.type === 'day') day = p.value;
+          if (p.type === 'month') monthIdx = parseInt(p.value, 10) - 1;
+          if (p.type === 'year') year = p.value;
+        });
+
+        const monthName = HIJRI_MONTHS[monthIdx] || "Hijri";
+        hijriDateEl.textContent = `${day} ${monthName} ${year} AH`;
+      } catch (e) {
+        hijriDateEl.textContent = now.toLocaleDateString();
+      }
+    }
+
+    function getLogs() {
+      return JSON.parse(localStorage.getItem('tasbih_logs_v2') || '{}');
+    }
+
+    function getManualOffsets() {
+      return JSON.parse(localStorage.getItem('tasbih_offsets') || '{}');
+    }
+
+    function saveTap(dhikrType) {
+      const logs = getLogs();
+      const dateKey = new Date().toISOString().split('T')[0];
+
+      if (!logs[dateKey]) logs[dateKey] = {};
+      if (!logs[dateKey][dhikrType]) logs[dateKey][dhikrType] = 0;
+
+      logs[dateKey][dhikrType] += 1;
+      localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
+    }
+
+    function updateLifetimeTotals() {
+      const logs = getLogs();
+      const offsets = getManualOffsets();
+      const totals = {};
+      
+      allDhikrList.forEach(item => totals[item] = offsets[item] || 0);
+
+      Object.keys(logs).forEach(dateKey => {
+        Object.keys(logs[dateKey]).forEach(dhikr => {
+          if (totals[dhikr] !== undefined) {
+            totals[dhikr] += logs[dateKey][dhikr];
+          } else {
+            totals[dhikr] = (offsets[dhikr] || 0) + logs[dateKey][dhikr];
+          }
+        });
+      });
+
+      lifetimeListEl.innerHTML = '';
+      let grandTotal = 0;
+
+      Object.keys(totals).forEach(item => {
+        grandTotal += totals[item];
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        row.innerHTML = `
+          <span>${item} <button class="edit-icon-btn" title="Edit or Reset Total">✏️</button></span>
+          <strong>${totals[item]}</strong>
         `;
-        historyList.appendChild(li);
+        row.querySelector('.edit-icon-btn').addEventListener('click', () => editLifetimeTotal(item, totals[item]));
+        lifetimeListEl.appendChild(row);
+      });
+
+      if (historyAllTimeTotal) {
+        historyAllTimeTotal.textContent = grandTotal.toLocaleString();
+      }
+    }
+
+    function editLifetimeTotal(dhikrName, currentTotal) {
+      showCustomInputModal(`Edit Total for ${dhikrName}`, currentTotal, 'number', (val) => {
+        const newTotal = parseInt(val, 10);
+        if (isNaN(newTotal) || newTotal < 0) return;
+
+        const logs = getLogs();
+        let loggedSum = 0;
+        
+        Object.keys(logs).forEach(date => {
+          if (logs[date][dhikrName]) {
+            loggedSum += logs[date][dhikrName];
+          }
+        });
+
+        const offsets = getManualOffsets();
+        offsets[dhikrName] = newTotal - loggedSum;
+        localStorage.setItem('tasbih_offsets', JSON.stringify(offsets));
+
+        updateUI();
       });
     }
 
-    // Utility: Format internal keys to readable text
-    function formatDhikrLabel(id) {
-      return id.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+    function editCurrentCounter() {
+      showCustomInputModal(`Edit Current Session Count`, count, 'number', (val) => {
+        const parsed = parseInt(val, 10);
+        if (!isNaN(parsed) && parsed >= 0) {
+          count = parsed;
+          updateUI();
+        }
+      });
     }
 
-    // Run on page load
-    document.addEventListener('DOMContentLoaded', init);
+    function updateHistoryView() {
+      const logs = getLogs();
+      const selectedDate = historyDatePicker.value;
+
+      if (logs[selectedDate]) {
+        const selectedCount = logs[selectedDate][currentDhikr] || 0;
+        let dayTotal = 0;
+        Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
+
+        historyCountSelected.textContent = selectedCount;
+        historyCountTotal.textContent = dayTotal;
+      } else {
+        historyCountSelected.textContent = '0';
+        historyCountTotal.textContent = '0';
+      }
+    }
+
+    function toggleFocusMode(state) {
+      focusMode = state;
+      focusToggleSetting.checked = focusMode;
+      if (focusMode) {
+        document.body.classList.add('focus-mode');
+      } else {
+        document.body.classList.remove('focus-mode');
+        unhideBtn.classList.remove('visible');
+      }
+    }
+
+    function revealUnhideButton() {
+      if (!focusMode) return;
+      unhideBtn.classList.add('visible');
+      clearTimeout(unhideTimeout);
+      unhideTimeout = setTimeout(() => {
+        unhideBtn.classList.remove('visible');
+      }, 3000);
+    }
+
+    function handleTapAction() {
+      initAudio();
+      count++;
+      saveTap(currentDhikr);
+
+      triggerVibration(30);
+
+      if (count % target === 0) {
+        triggerVibration([100, 50, 100, 50, 150]);
+        playGoalTone();
+        triggerVisualPulse();
+      }
+
+      updateUI();
+    }
+
+    function promptCustomTarget() {
+      showCustomInputModal('Set Custom Target Count', target, 'number', (val) => {
+        const parsed = parseInt(val, 10);
+        if (!isNaN(parsed) && parsed > 0) {
+          target = parsed;
+          updateUI();
+        }
+      });
+    }
+
+    function updateUI() {
+      countEl.textContent = count;
+      targetEl.textContent = `Target: ${target}`;
+      targetInfoLabel.textContent = `Target: ${target}`;
+
+      updateLifetimeTotals();
+      updateHistoryView();
+
+      localStorage.setItem('tasbih_session_count', count);
+      localStorage.setItem('tasbih_target', target);
+      localStorage.setItem('tasbih_dhikr', currentDhikr);
+    }
+
+    // --- Data Export & Import ---
+    document.getElementById('export-data-btn').addEventListener('click', () => {
+      const exportObject = {
+        logs: getLogs(),
+        offsets: getManualOffsets(),
+        allDhikrs: allDhikrList,
+        version: 3
+      };
+      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+    });
+
+    const importFileInput = document.getElementById('import-file-input');
+    document.getElementById('import-data-btn').addEventListener('click', () => importFileInput.click());
+
+    importFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          if (data.logs) localStorage.setItem('tasbih_logs_v2', JSON.stringify(data.logs));
+          if (data.offsets) localStorage.setItem('tasbih_offsets', JSON.stringify(data.offsets));
+          if (data.allDhikrs) {
+            allDhikrList = data.allDhikrs;
+            localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
+          }
+          renderDhikrOptions();
+          updateUI();
+          alert('Backup restored successfully!');
+        } catch (err) {
+          alert('Invalid backup file format.');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // --- Listeners ---
+    countEl.addEventListener('click', editCurrentCounter);
+
+    document.addEventListener('pointerdown', (e) => {
+      if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
+        revealUnhideButton();
+      }
+    });
+
+    tapBtn.addEventListener('pointerdown', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      handleTapAction();
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && settingsModal.style.display !== 'flex' && inputModal.style.display !== 'flex' && confirmModal.style.display !== 'flex') {
+        e.preventDefault();
+        handleTapAction();
+      }
+    });
+
+    presetSelect.addEventListener('change', (e) => {
+      if (e.target.value === '__custom__') {
+        showCustomInputModal('Add Custom Dhikr Phrase', '', 'text', (input) => {
+          if (input && input.trim().length > 0) {
+            const formatted = input.trim();
+            if (!allDhikrList.includes(formatted)) {
+              allDhikrList.push(formatted);
+              localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
+            }
+            currentDhikr = formatted;
+          }
+          renderDhikrOptions();
+          updateUI();
+        });
+      } else {
+        currentDhikr = e.target.value;
+        count = 0;
+        renderDhikrOptions();
+        updateUI();
+      }
+    });
+
+    resetBtn.addEventListener('click', () => {
+      showCustomConfirmModal(
+        'Reset Session',
+        'Reset active session counter for this dhikr?',
+        () => {
+          count = 0;
+          updateUI();
+        }
+      );
+    });
+
+    targetBtn.addEventListener('click', () => {
+      if (target === 33) target = 100;
+      else if (target === 100) target = 1000;
+      else target = 33;
+      updateUI();
+    });
+
+    targetInfoLabel.addEventListener('click', promptCustomTarget);
+
+    settingsOpenBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
+    settingsCloseBtn.addEventListener('click', () => settingsModal.style.display = 'none');
+    themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
+    
+    soundToggle.addEventListener('change', (e) => {
+      soundEnabled = e.target.checked;
+      localStorage.setItem('tasbih_sound', soundEnabled);
+    });
+
+    toneSelect.value = alertTone;
+    toneSelect.addEventListener('change', (e) => {
+      alertTone = e.target.value;
+      localStorage.setItem('tasbih_alert_tone', alertTone);
+      playGoalTone();
+    });
+
+    volumeRange.value = alertVolume;
+    volumeRange.addEventListener('input', (e) => {
+      alertVolume = parseFloat(e.target.value);
+      localStorage.setItem('tasbih_volume', alertVolume);
+    });
+
+    visualHapticToggle.checked = visualHapticEnabled;
+    visualHapticToggle.addEventListener('change', (e) => {
+      visualHapticEnabled = e.target.checked;
+      localStorage.setItem('tasbih_visual_pulse', visualHapticEnabled);
+    });
+
+    vibeToggle.addEventListener('change', (e) => {
+      vibeEnabled = e.target.checked;
+      localStorage.setItem('tasbih_vibe', vibeEnabled);
+    });
+
+    focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
+    unhideBtn.addEventListener('click', () => toggleFocusMode(false));
+    focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
+
+    historyDatePicker.value = new Date().toISOString().split('T')[0];
+    historyDatePicker.addEventListener('change', updateHistoryView);
+
+    soundToggle.checked = soundEnabled;
+    vibeToggle.checked = vibeEnabled;
+    renderDhikrOptions();
+    applyTheme(currentTheme);
+    renderDates();
+    updateUI();
   </script>
 </body>
 </html>
-    
