@@ -157,6 +157,11 @@
       color: #f5f5f5;
     }
 
+    input[type="date"].has-data {
+      border-color: var(--accent-soft);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
     main {
       flex-grow: 1;
       display: flex;
@@ -600,7 +605,7 @@
     </div>
 
     <div class="stat-row">
-      <span>Selected Dhikr (<span id="history-dhikr-label">Istighfar</span>):</span>
+      <span>Selected Dhikr (<span id="history-dhikr-label">All Dhikrs</span>):</span>
       <strong id="history-count-selected">0</strong>
     </div>
     <div class="stat-row">
@@ -767,7 +772,6 @@
 
     const DEFAULT_DHIKRS = ['Istighfar', 'SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah'];
 
-    // Initialize full dhikr list in LocalStorage if first run
     function getStoredDhikrs() {
       const stored = localStorage.getItem('tasbih_all_dhikrs');
       if (!stored) {
@@ -887,9 +891,17 @@
     confirmModalClose.addEventListener('click', hideCustomConfirmModal);
 
     function renderDhikrOptions() {
+      const prevHistorySelection = historyDhikrSelect.value;
+      
       presetSelect.innerHTML = '';
       historyDhikrSelect.innerHTML = '';
-      
+
+      // Option to View All Dhikrs Combined
+      const allOpt = document.createElement('option');
+      allOpt.value = '__all__';
+      allOpt.textContent = '── All Dhikrs Combined ──';
+      historyDhikrSelect.appendChild(allOpt);
+
       allDhikrList.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item;
@@ -912,7 +924,13 @@
       }
 
       presetSelect.value = currentDhikr;
-      historyDhikrSelect.value = currentDhikr;
+      
+      if (prevHistorySelection && (prevHistorySelection === '__all__' || allDhikrList.includes(prevHistorySelection))) {
+        historyDhikrSelect.value = prevHistorySelection;
+      } else {
+        historyDhikrSelect.value = '__all__';
+      }
+
       renderCustomManagerList();
       setCleanURL(currentDhikr);
     }
@@ -1122,17 +1140,31 @@
     function updateHistoryView() {
       const logs = getLogs();
       const selectedDate = historyDatePicker.value;
-      const selectedDhikr = historyDhikrSelect.value || currentDhikr;
-      historyDhikrLabel.textContent = selectedDhikr;
+      const selectedDhikr = historyDhikrSelect.value || '__all__';
+
+      // Visual Highlight indicator if selected date has recorded activity
+      const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
+      if (hasActivityOnDate) {
+        historyDatePicker.classList.add('has-data');
+      } else {
+        historyDatePicker.classList.remove('has-data');
+      }
 
       if (logs[selectedDate]) {
-        const selectedCount = logs[selectedDate][selectedDhikr] || 0;
         let dayTotal = 0;
         Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
 
-        historyCountSelected.textContent = selectedCount;
-        historyCountTotal.textContent = dayTotal;
+        if (selectedDhikr === '__all__') {
+          historyDhikrLabel.textContent = 'All Dhikrs Combined';
+          historyCountSelected.textContent = dayTotal.toLocaleString();
+        } else {
+          const selectedCount = logs[selectedDate][selectedDhikr] || 0;
+          historyDhikrLabel.textContent = selectedDhikr;
+          historyCountSelected.textContent = selectedCount.toLocaleString();
+        }
+        historyCountTotal.textContent = dayTotal.toLocaleString();
       } else {
+        historyDhikrLabel.textContent = (selectedDhikr === '__all__') ? 'All Dhikrs Combined' : selectedDhikr;
         historyCountSelected.textContent = '0';
         historyCountTotal.textContent = '0';
       }
