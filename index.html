@@ -299,6 +299,9 @@
       font-weight: 600;
       margin-bottom: 0.6rem;
       color: var(--accent-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .stat-row {
@@ -582,7 +585,10 @@
   </main>
 
   <section class="stats-card">
-    <div class="stats-title">Total Cumulative Dhikr</div>
+    <div class="stats-title">
+      <span>Total Cumulative Dhikr</span>
+      <button class="btn-secondary" id="open-offsets-btn" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Adjustments Log</button>
+    </div>
     <div id="lifetime-list"></div>
   </section>
 
@@ -605,13 +611,15 @@
     </div>
 
     <div class="stat-row">
-      <span>Selected Dhikr (<span id="history-dhikr-label">All Dhikrs</span>):</span>
+      <span>Selected Dhikr (<span id="history-dhikr-label">Dhikr</span>):</span>
       <strong id="history-count-selected">0</strong>
     </div>
     <div class="stat-row">
       <span>All Dhikr Total on this Date:</span>
       <strong id="history-count-total">0</strong>
     </div>
+
+    <button class="btn-danger" id="reset-today-btn" style="width:100%; margin-top:0.75rem; font-size:0.8rem; padding:0.5rem;">Reset Today's Logged Data</button>
   </section>
 
   <div class="modal-overlay" id="settings-modal">
@@ -690,6 +698,27 @@
         <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage All Dhikrs</div>
         <div id="custom-dhikr-manager-list"></div>
       </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: #ef4444;">Master Reset</div>
+        <button class="btn-danger" id="master-reset-btn" style="width:100%; font-size:0.8rem;">Clear All Lifetime Data & Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="offsets-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <span>Manual Adjustments Log</span>
+        <button class="icon-btn" id="offsets-close-btn" style="border:none; background:transparent;">✕</button>
+      </div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        Below are manual count adjustments applied to balance cumulative totals:
+      </div>
+      <div id="offsets-modal-list"></div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="clear-offsets-btn" style="color: #ef4444; border-color: #ef4444;">Reset Adjustments</button>
+      </div>
     </div>
   </div>
 
@@ -747,7 +776,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'tasbih-v3';
+          const CACHE_NAME = 'tasbih-v4';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -817,6 +846,7 @@
     const historyCountSelected = document.getElementById('history-count-selected');
     const historyCountTotal = document.getElementById('history-count-total');
     const historyAllTimeTotal = document.getElementById('history-all-time-total');
+    const resetTodayBtn = document.getElementById('reset-today-btn');
     
     const settingsModal = document.getElementById('settings-modal');
     const settingsOpenBtn = document.getElementById('settings-open-btn');
@@ -831,8 +861,16 @@
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
     const unhideBtn = document.getElementById('unhide-btn');
     const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
+    const masterResetBtn = document.getElementById('master-reset-btn');
 
-    // Modals
+    // Adjustments Log Modal
+    const offsetsModal = document.getElementById('offsets-modal');
+    const openOffsetsBtn = document.getElementById('open-offsets-btn');
+    const offsetsCloseBtn = document.getElementById('offsets-close-btn');
+    const offsetsModalList = document.getElementById('offsets-modal-list');
+    const clearOffsetsBtn = document.getElementById('clear-offsets-btn');
+
+    // Dynamic Input & Confirm Modals
     const inputModal = document.getElementById('input-modal');
     const inputModalTitle = document.getElementById('input-modal-title');
     const inputModalField = document.getElementById('input-modal-field');
@@ -896,12 +934,6 @@
       presetSelect.innerHTML = '';
       historyDhikrSelect.innerHTML = '';
 
-      // Option to View All Dhikrs Combined
-      const allOpt = document.createElement('option');
-      allOpt.value = '__all__';
-      allOpt.textContent = '── All Dhikrs Combined ──';
-      historyDhikrSelect.appendChild(allOpt);
-
       allDhikrList.forEach(item => {
         const opt = document.createElement('option');
         opt.value = item;
@@ -925,10 +957,10 @@
 
       presetSelect.value = currentDhikr;
       
-      if (prevHistorySelection && (prevHistorySelection === '__all__' || allDhikrList.includes(prevHistorySelection))) {
+      if (prevHistorySelection && allDhikrList.includes(prevHistorySelection)) {
         historyDhikrSelect.value = prevHistorySelection;
       } else {
-        historyDhikrSelect.value = '__all__';
+        historyDhikrSelect.value = currentDhikr;
       }
 
       renderCustomManagerList();
@@ -1137,10 +1169,33 @@
       });
     }
 
+    function renderOffsetsList() {
+      const offsets = getManualOffsets();
+      offsetsModalList.innerHTML = '';
+      
+      const keys = Object.keys(offsets).filter(k => offsets[k] !== 0);
+      if (keys.length === 0) {
+        offsetsModalList.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem 0;">No manual adjustments recorded.</div>';
+        return;
+      }
+
+      keys.forEach(dhikr => {
+        const row = document.createElement('div');
+        row.className = 'stat-row';
+        const val = offsets[dhikr];
+        const sign = val > 0 ? '+' : '';
+        row.innerHTML = `
+          <span>${dhikr}</span>
+          <strong style="color:${val >= 0 ? 'var(--accent-soft)' : '#ef4444'}">${sign}${val}</strong>
+        `;
+        offsetsModalList.appendChild(row);
+      });
+    }
+
     function updateHistoryView() {
       const logs = getLogs();
       const selectedDate = historyDatePicker.value;
-      const selectedDhikr = historyDhikrSelect.value || '__all__';
+      const selectedDhikr = historyDhikrSelect.value || currentDhikr;
 
       // Visual Highlight indicator if selected date has recorded activity
       const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
@@ -1154,20 +1209,57 @@
         let dayTotal = 0;
         Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
 
-        if (selectedDhikr === '__all__') {
-          historyDhikrLabel.textContent = 'All Dhikrs Combined';
-          historyCountSelected.textContent = dayTotal.toLocaleString();
-        } else {
-          const selectedCount = logs[selectedDate][selectedDhikr] || 0;
-          historyDhikrLabel.textContent = selectedDhikr;
-          historyCountSelected.textContent = selectedCount.toLocaleString();
-        }
+        const selectedCount = logs[selectedDate][selectedDhikr] || 0;
+        historyDhikrLabel.textContent = selectedDhikr;
+        historyCountSelected.textContent = selectedCount.toLocaleString();
         historyCountTotal.textContent = dayTotal.toLocaleString();
       } else {
-        historyDhikrLabel.textContent = (selectedDhikr === '__all__') ? 'All Dhikrs Combined' : selectedDhikr;
+        historyDhikrLabel.textContent = selectedDhikr;
         historyCountSelected.textContent = '0';
         historyCountTotal.textContent = '0';
       }
+    }
+
+    function resetTodayLogs() {
+      const todayKey = new Date().toISOString().split('T')[0];
+      showCustomConfirmModal(
+        'Reset Today\'s Logs',
+        `Are you sure you want to clear all recorded dhikrs for today (${todayKey})?`,
+        () => {
+          const logs = getLogs();
+          if (logs[todayKey]) {
+            delete logs[todayKey];
+            localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
+          }
+          count = 0;
+          updateUI();
+        }
+      );
+    }
+
+    function performMasterReset() {
+      showCustomConfirmModal(
+        'Master Reset',
+        'WARNING: This will permanently delete ALL recorded dhikr history, custom phrases, manual adjustments, and local settings. Are you completely sure?',
+        () => {
+          localStorage.clear();
+          allDhikrList = DEFAULT_DHIKRS;
+          currentDhikr = DEFAULT_DHIKRS[0];
+          count = 0;
+          target = 33;
+          soundEnabled = true;
+          vibeEnabled = true;
+          visualHapticEnabled = true;
+          alertTone = 'chime';
+          alertVolume = 0.3;
+          currentTheme = 'charcoal';
+
+          renderDhikrOptions();
+          applyTheme('charcoal');
+          updateUI();
+          settingsModal.style.display = 'none';
+        }
+      );
     }
 
     function toggleFocusMode(state) {
@@ -1235,7 +1327,7 @@
         logs: getLogs(),
         offsets: getManualOffsets(),
         allDhikrs: allDhikrList,
-        version: 3
+        version: 4
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -1271,7 +1363,26 @@
       reader.readAsText(file);
     });
 
-    // --- Listeners ---
+    // --- Adjustments Log Modal Controls ---
+    openOffsetsBtn.addEventListener('click', () => {
+      renderOffsetsList();
+      offsetsModal.style.display = 'flex';
+    });
+    offsetsCloseBtn.addEventListener('click', () => offsetsModal.style.display = 'none');
+
+    clearOffsetsBtn.addEventListener('click', () => {
+      showCustomConfirmModal(
+        'Reset Adjustments',
+        'Are you sure you want to clear all manual adjustments? Your lifetime total will reflect pure logged counts only.',
+        () => {
+          localStorage.removeItem('tasbih_offsets');
+          renderOffsetsList();
+          updateUI();
+        }
+      );
+    });
+
+    // --- Main Event Listeners ---
     countEl.addEventListener('click', editCurrentCounter);
 
     document.addEventListener('pointerdown', (e) => {
@@ -1287,7 +1398,7 @@
     });
 
     window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && settingsModal.style.display !== 'flex' && inputModal.style.display !== 'flex' && confirmModal.style.display !== 'flex') {
+      if (e.code === 'Space' && settingsModal.style.display !== 'flex' && inputModal.style.display !== 'flex' && confirmModal.style.display !== 'flex' && offsetsModal.style.display !== 'flex') {
         e.preventDefault();
         handleTapAction();
       }
@@ -1371,6 +1482,9 @@
     focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
     unhideBtn.addEventListener('click', () => toggleFocusMode(false));
     focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
+
+    resetTodayBtn.addEventListener('click', resetTodayLogs);
+    masterResetBtn.addEventListener('click', performMasterReset);
 
     historyDatePicker.value = new Date().toISOString().split('T')[0];
     historyDatePicker.addEventListener('change', updateHistoryView);
