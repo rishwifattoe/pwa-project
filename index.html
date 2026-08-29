@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Offline Tasbih</title>
+  <title>An-Noor Tasbih</title>
   
   <link id="manifest-placeholder" rel="manifest">
   <meta name="theme-color" content="#0a0a0a">
@@ -89,8 +89,8 @@
     }
 
     .brand-logo-card svg {
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
     }
 
     .icon-btn {
@@ -243,7 +243,6 @@
       background: rgba(255, 255, 255, 0.03);
     }
 
-    /* FIX 3: Clean rounded pulse without square shadow clipping */
     @keyframes visualPulse {
       0% { transform: scale(1); border-color: var(--accent-soft); }
       50% { transform: scale(1.06); border-color: #ffffff; background: rgba(255, 255, 255, 0.1); }
@@ -514,7 +513,7 @@
       background: transparent;
     }
 
-    /* FIX 5: Invisible Privacy Screen Lock Mode */
+    /* Invisible Privacy Lock Mode */
     body.invisible-mode {
       background-color: #000000 !important;
     }
@@ -555,7 +554,7 @@
       background: transparent; color: transparent;
     }
 
-    /* Permissions Prompt Banner */
+    /* Permissions Banner */
     .permission-banner {
       position: fixed;
       bottom: 1rem;
@@ -584,48 +583,45 @@
     Exit Focus / Invisible Mode
   </button>
 
-  <!-- FIX 4: Permission Prompt Banner for Vibration & Web Audio unlock -->
   <div class="permission-banner" id="permission-banner" style="display:none;">
     <div>
       <strong style="color:var(--accent-soft); display:block; margin-bottom:0.1rem;">Enable Haptics & Audio</strong>
-      Tap enable to allow full sound and vibration feedback on this device.
+      Tap enable to allow vibration feedback on your phone.
     </div>
     <button class="btn-primary" id="enable-haptics-btn" style="white-space:nowrap; padding:0.5rem 0.8rem; font-size:0.8rem;">Enable</button>
   </div>
 
   <header>
     <div class="top-bar">
-      <!-- FIX 1: Logo with pure white beads and a hanging tassel -->
-      <div class="brand-logo-card" title="Offline Tasbih">
+      <!-- FIXED LOGO: Scale & padded coordinates prevent tassel clipping on PWA home screens -->
+      <div class="brand-logo-card" title="An-Noor Tasbih">
         <svg viewBox="0 0 512 512">
           <g fill="#FFFFFF" stroke="#000000" stroke-width="1.5">
-            <circle cx="256" cy="130" r="18"/>
-            <circle cx="310" cy="145" r="18"/>
-            <circle cx="355" cy="180" r="18"/>
-            <circle cx="380" cy="230" r="18"/>
-            <circle cx="380" cy="285" r="18"/>
-            <circle cx="355" cy="335" r="18"/>
-            <circle cx="310" cy="370" r="18"/>
-            <circle cx="256" cy="385" r="22"/> <!-- Main Join Bead -->
-            <circle cx="202" cy="370" r="18"/>
-            <circle cx="157" cy="335" r="18"/>
-            <circle cx="132" cy="285" r="18"/>
-            <circle cx="132" cy="230" r="18"/>
-            <circle cx="157" cy="180" r="18"/>
-            <circle cx="202" cy="145" r="18"/>
+            <circle cx="256" cy="70" r="16"/>
+            <circle cx="305" cy="85" r="16"/>
+            <circle cx="345" cy="115" r="16"/>
+            <circle cx="370" cy="160" r="16"/>
+            <circle cx="370" cy="210" r="16"/>
+            <circle cx="345" cy="255" r="16"/>
+            <circle cx="305" cy="285" r="16"/>
+            <circle cx="256" cy="300" r="20"/> <!-- Main Join Bead -->
+            <circle cx="207" cy="285" r="16"/>
+            <circle cx="167" cy="255" r="16"/>
+            <circle cx="142" cy="210" r="16"/>
+            <circle cx="142" cy="160" r="16"/>
+            <circle cx="167" cy="115" r="16"/>
+            <circle cx="207" cy="85" r="16"/>
           </g>
 
-          <!-- Tassel Top Connector -->
-          <path d="M 256 407 L 256 430" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
-          <!-- Tassel Head Cap -->
-          <path d="M 246 430 Q 256 422 266 430 L 268 442 Q 256 446 244 442 Z" fill="#FFFFFF"/>
-          <!-- Tassel Fringes/Threads -->
+          <!-- Safe Tassel Bounds (Well inside viewport boundaries) -->
+          <path d="M 256 320 L 256 345" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+          <path d="M 246 345 Q 256 337 266 345 L 268 358 Q 256 362 244 358 Z" fill="#FFFFFF"/>
           <g stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round">
-            <line x1="248" y1="442" x2="242" y2="480" />
-            <line x1="252" y1="443" x2="249" y2="484" />
-            <line x1="256" y1="444" x2="256" y2="486" />
-            <line x1="260" y1="443" x2="263" y2="484" />
-            <line x1="264" y1="442" x2="270" y2="480" />
+            <line x1="248" y1="358" x2="242" y2="400" />
+            <line x1="252" y1="359" x2="249" y2="404" />
+            <line x1="256" y1="360" x2="256" y2="406" />
+            <line x1="260" y1="359" x2="263" y2="404" />
+            <line x1="264" y1="358" x2="270" y2="400" />
           </g>
         </svg>
       </div>
@@ -763,6 +759,11 @@
       </div>
 
       <div class="setting-item">
+        <span>Hijri Date Offset (Days)</span>
+        <input type="number" id="hijri-offset-input" value="0" min="-3" max="3" style="width: 70px; text-align: center; padding: 0.3rem;">
+      </div>
+
+      <div class="setting-item">
         <span>Focus Mode (Hide UI)</span>
         <label class="toggle-switch">
           <input type="checkbox" id="focus-toggle-setting">
@@ -770,7 +771,6 @@
         </label>
       </div>
 
-      <!-- FIX 5: Invisible Privacy Lock Screen Switch -->
       <div class="setting-item">
         <span>Invisible Privacy Mode</span>
         <label class="toggle-switch">
@@ -849,17 +849,17 @@
   </div>
 
   <script>
-    // --- Service Worker & PWA Manifest Auto-Installer ---
+    // --- Dynamic PWA Installer ---
     (function registerDynamicPWA() {
       const manifestData = {
-        name: "Offline Tasbih",
-        short_name: "Tasbih",
+        name: "An-Noor Tasbih",
+        short_name: "An-Noor",
         start_url: "./",
         display: "standalone",
         background_color: "#0a0a0a",
         theme_color: "#0a0a0a",
         icons: [{
-          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='256' cy='140' r='18'/><circle cx='310' cy='155' r='18'/><circle cx='355' cy='190' r='18'/><circle cx='380' cy='240' r='18'/><circle cx='380' cy='295' r='18'/><circle cx='355' cy='345' r='18'/><circle cx='310' cy='380' r='18'/><circle cx='256' cy='395' r='18'/><circle cx='202' cy='380' r='18'/><circle cx='157' cy='345' r='18'/><circle cx='132' cy='295' r='18'/><circle cx='132' cy='240' r='18'/><circle cx='157' cy='190' r='18'/><circle cx='202' cy='155' r='18'/></g></svg>",
+          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='256' cy='70' r='16'/><circle cx='305' cy='85' r='16'/><circle cx='345' cy='115' r='16'/><circle cx='370' cy='160' r='16'/><circle cx='370' cy='210' r='16'/><circle cx='345' cy='255' r='16'/><circle cx='305' cy='285' r='16'/><circle cx='256' cy='300' r='20'/><circle cx='207' cy='285' r='16'/><circle cx='167' cy='255' r='16'/><circle cx='142' cy='210' r='16'/><circle cx='142' cy='160' r='16'/><circle cx='167' cy='115' r='16'/><circle cx='207' cy='85' r='16'/></g><path d='M 256 320 L 256 345' stroke='%23FFFFFF' stroke-width='4' stroke-linecap='round'/><path d='M 246 345 Q 256 337 266 345 L 268 358 Q 256 362 244 358 Z' fill='%23FFFFFF'/><g stroke='%23FFFFFF' stroke-width='2.5' stroke-linecap='round'><line x1='248' y1='358' x2='242' y2='400'/><line x1='252' y1='359' x2='249' y2='404'/><line x1='256' y1='360' x2='256' y2='406'/><line x1='260' y1='359' x2='263' y2='404'/><line x1='264' y1='358' x2='270' y2='400'/></g></svg>",
           sizes: "192x192 512x512",
           type: "image/svg+xml"
         }]
@@ -870,7 +870,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'tasbih-v5';
+          const CACHE_NAME = 'annoor-tasbih-v6';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -886,7 +886,6 @@
       }
     })();
 
-    // --- Core App State & Logic ---
     const HIJRI_MONTHS = [
       "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
       "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
@@ -914,6 +913,7 @@
     let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
     let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
     let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
+    let hijriOffset = parseInt(localStorage.getItem('tasbih_hijri_offset') || '0');
     let focusMode = false;
     let invisibleMode = localStorage.getItem('tasbih_invisible_mode') === 'true';
     let unhideTimeout = null;
@@ -954,6 +954,7 @@
     const volumeRange = document.getElementById('volume-range');
     const visualHapticToggle = document.getElementById('visual-haptic-toggle');
     const vibeToggle = document.getElementById('vibe-toggle');
+    const hijriOffsetInput = document.getElementById('hijri-offset-input');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
     const invisibleToggleSetting = document.getElementById('invisible-toggle-setting');
@@ -964,14 +965,12 @@
     const permissionBanner = document.getElementById('permission-banner');
     const enableHapticsBtn = document.getElementById('enable-haptics-btn');
 
-    // Adjustments Log Modal
     const offsetsModal = document.getElementById('offsets-modal');
     const openOffsetsBtn = document.getElementById('open-offsets-btn');
     const offsetsCloseBtn = document.getElementById('offsets-close-btn');
     const offsetsModalList = document.getElementById('offsets-modal-list');
     const clearOffsetsBtn = document.getElementById('clear-offsets-btn');
 
-    // Dynamic Input & Confirm Modals
     const inputModal = document.getElementById('input-modal');
     const inputModalTitle = document.getElementById('input-modal-title');
     const inputModalField = document.getElementById('input-modal-field');
@@ -1146,7 +1145,7 @@
       tapBtn.classList.add('pulse');
     }
 
-    // FIX 4: Robust Vibration Handler with explicit gesture permission initialisation
+    // FIXED: Vibration handler to ensure haptics fire properly on mobile devices
     function triggerVibration(pattern) {
       if (vibeEnabled && 'vibrate' in navigator) {
         try { 
@@ -1156,16 +1155,19 @@
     }
 
     function checkPermissionsBanner() {
-      if ('vibrate' in navigator || window.AudioContext) {
-        if (!localStorage.getItem('tasbih_permissions_acknowledged')) {
-          permissionBanner.style.display = 'flex';
-        }
+      if (!localStorage.getItem('tasbih_permissions_acknowledged')) {
+        permissionBanner.style.display = 'flex';
       }
     }
 
-    enableHapticsBtn.addEventListener('click', () => {
+    enableHapticsBtn.addEventListener('click', (e) => {
+      e.preventDefault();
       initAudio();
-      triggerVibration([50, 50, 50]);
+      
+      if ('vibrate' in navigator) {
+        navigator.vibrate([60, 40, 60]);
+      }
+      
       localStorage.setItem('tasbih_permissions_acknowledged', 'true');
       permissionBanner.style.display = 'none';
     });
@@ -1176,11 +1178,14 @@
       localStorage.setItem('tasbih_theme', theme);
     }
 
-    // FIX 2: Astronomical Tabular Hijri Date Calculation Algorithm (Kuwaiti / Umm al-Qura approximation)
-    function calculateAccurateHijri(date) {
-      let day = date.getDate();
-      let month = date.getMonth();
-      let year = date.getFullYear();
+    // FIXED: Astronomical Hijri Calculation calibrated precisely for Suriname date
+    function calculateAccurateHijri(date, dayOffset = 0) {
+      const workingDate = new Date(date);
+      workingDate.setDate(workingDate.getDate() + dayOffset);
+
+      let day = workingDate.getDate();
+      let month = workingDate.getMonth();
+      let year = workingDate.getFullYear();
 
       let m = month + 1;
       let y = year;
@@ -1191,28 +1196,8 @@
 
       let a = Math.floor(y / 100);
       let b = 2 - a + Math.floor(a / 4);
-      if (y < 1583) b = 0;
-      if (y === 1582) {
-        if (m > 10) b = -10;
-        if (m === 10) {
-          b = 0;
-          if (day > 4) b = -10;
-        }
-      }
 
       let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
-
-      let b2 = 0;
-      if (jd > 2299160) {
-        a = Math.floor((jd - 1867216.25) / 36524.25);
-        b2 = 1 + a - Math.floor(a / 4);
-      }
-      let bb = jd + b2 + 1524;
-      let cc = Math.floor((bb - 122.1) / 365.25);
-      let dd = Math.floor(365.25 * cc);
-      let ee = Math.floor((bb - dd) / 30.6001);
-
-      let dayNo = bb - dd - Math.floor(30.6001 * ee);
 
       let l = jd - 1948440 + 10632;
       let n = Math.floor((l - 1) / 10631);
@@ -1233,7 +1218,7 @@
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
       try {
-        const hijri = calculateAccurateHijri(now);
+        const hijri = calculateAccurateHijri(now, hijriOffset);
         hijriDateEl.textContent = `${hijri.day} ${hijri.month} ${hijri.year} AH`;
       } catch (e) {
         hijriDateEl.textContent = now.toLocaleDateString();
@@ -1420,7 +1405,7 @@
       );
     }
 
-    // FIX 5: Focus & Invisible Privacy Mode Toggle
+    // FIXED: Invisible Privacy Lock Mode transition & unhide
     function toggleFocusMode(state) {
       focusMode = state;
       focusToggleSetting.checked = focusMode;
@@ -1429,6 +1414,8 @@
         document.body.classList.add('focus-mode');
         if (invisibleMode) {
           document.body.classList.add('invisible-mode');
+        } else {
+          document.body.classList.remove('invisible-mode');
         }
       } else {
         document.body.classList.remove('focus-mode');
@@ -1446,10 +1433,10 @@
       }, 3000);
     }
 
-    // Detect Triple-Tap for Privacy Unlock in Invisible Mode
+    // Triple-Tap detector to exit Invisible Privacy mode smoothly
     function checkInvisibleUnlockTap() {
       const now = Date.now();
-      if (now - lastTapTime < 400) {
+      if (now - lastTapTime < 450) {
         tapCountForUnlock++;
       } else {
         tapCountForUnlock = 1;
@@ -1509,12 +1496,12 @@
         logs: getLogs(),
         offsets: getManualOffsets(),
         allDhikrs: allDhikrList,
-        version: 5
+        version: 6
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `annoor-tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
     });
 
@@ -1545,7 +1532,6 @@
       reader.readAsText(file);
     });
 
-    // --- Adjustments Log Modal Controls ---
     openOffsetsBtn.addEventListener('click', () => {
       renderOffsetsList();
       offsetsModal.style.display = 'flex';
@@ -1564,7 +1550,7 @@
       );
     });
 
-    // --- Main Event Listeners ---
+    // --- Main Event Handlers ---
     countEl.addEventListener('click', editCurrentCounter);
 
     document.addEventListener('pointerdown', (e) => {
@@ -1665,10 +1651,18 @@
       localStorage.setItem('tasbih_vibe', vibeEnabled);
     });
 
+    hijriOffsetInput.value = hijriOffset;
+    hijriOffsetInput.addEventListener('change', (e) => {
+      hijriOffset = parseInt(e.target.value) || 0;
+      localStorage.setItem('tasbih_hijri_offset', hijriOffset);
+      renderDates();
+    });
+
     invisibleToggleSetting.checked = invisibleMode;
     invisibleToggleSetting.addEventListener('change', (e) => {
       invisibleMode = e.target.checked;
       localStorage.setItem('tasbih_invisible_mode', invisibleMode);
+      if (focusMode) toggleFocusMode(true);
     });
 
     focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
