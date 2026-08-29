@@ -1,464 +1,337 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>An-Noor Tasbih</title>
-  
-  <link id="manifest-placeholder" rel="manifest">
-  <meta name="theme-color" content="#0a0a0a">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>An-Noor Digital Tasbih</title>
+  <meta name="theme-color" content="#121212" />
+  <meta name="description" content="A privacy-focused, offline-first Digital Tasbih Progressive Web App." />
 
   <style>
+    /* CSS Variables & Theme Presets */
     :root {
-      --bg: #0a0a0a;
-      --card: #141414;
-      --border: #262626;
-      --accent: #737373;
-      --accent-soft: #d4d4d4;
-      --text: #f5f5f5;
-      --text-muted: #737373;
+      --bg-primary: #121212;
+      --bg-card: #1e1e1e;
+      --bg-element: #2a2a2a;
+      --text-main: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --accent-color: #d4af37; /* Amber Gold */
+      --accent-glow: rgba(212, 175, 55, 0.2);
+      --border-color: #333333;
+      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    [data-theme="amber"] {
-      --accent: #d97706;
-      --accent-soft: #fbbf24;
+    /* Theme Overrides */
+    body[data-theme="charcoal"] {
+      --bg-primary: #181818;
+      --bg-card: #222222;
+      --bg-element: #2c2c2c;
+      --accent-color: #8e8e93;
+      --accent-glow: rgba(142, 142, 147, 0.2);
     }
-
-    [data-theme="sage"] {
-      --accent: #059669;
-      --accent-soft: #34d399;
+    body[data-theme="sage"] {
+      --bg-primary: #0f1a15;
+      --bg-card: #182820;
+      --bg-element: #22382c;
+      --accent-color: #52b788;
+      --accent-glow: rgba(82, 183, 136, 0.2);
     }
-
-    [data-theme="navy"] {
-      --accent: #2563eb;
-      --accent-soft: #60a5fa;
-    }
-
-    [data-theme="charcoal"] {
-      --accent: #737373;
-      --accent-soft: #d4d4d4;
+    body[data-theme="navy"] {
+      --bg-primary: #0b1320;
+      --bg-card: #131f33;
+      --bg-element: #1c2d4a;
+      --accent-color: #4ea8de;
+      --accent-glow: rgba(78, 168, 222, 0.2);
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
+      background-color: var(--bg-primary);
+      color: var(--text-main);
+      font-family: var(--font-family);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      padding: 1rem;
+      overflow-x: hidden;
       touch-action: manipulation;
     }
 
-    header, main, section {
+    /* App Header */
+    header {
       width: 100%;
-      max-width: 440px;
-    }
-
-    .top-bar {
+      max-width: 480px;
+      padding: 16px 20px;
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      margin-bottom: 0.5rem;
-      gap: 0.5rem;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
     }
 
-    /* PERFECTLY CENTERED LOGO CONTAINER */
-    .brand-logo-card {
-      background: #000000;
-      border: 1px solid var(--border);
-      border-radius: 12px;
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    /* Centered Brand Icon Styling */
+    .brand-logo-wrapper {
       width: 44px;
       height: 44px;
+      background-color: #000000;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      flex-shrink: 0;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.4);
     }
 
-    .brand-logo-card svg {
-      width: 36px;
-      height: 36px;
-      display: block;
+    .brand-logo-wrapper svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .brand-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     .icon-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text);
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      font-size: 1.2rem;
-      flex-shrink: 0;
+      transition: all 0.2s ease;
     }
 
-    .icon-btn svg {
-      width: 20px;
-      height: 20px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
+    .icon-btn:active {
+      transform: scale(0.95);
+      background: var(--bg-element);
     }
 
-    /* Focus Mode Toggle - Hidden by default until Privacy Mode is enabled */
-    #focus-toggle-btn {
-      display: none;
-    }
-
-    .full-date-card {
-      background: var(--card);
-      border-radius: 16px;
-      padding: 0.6rem 0.8rem;
-      border: 1px solid var(--border);
-      text-align: center;
-      display: flex;
-      flex-direction: column;
-      gap: 0.15rem;
-      flex-grow: 1;
-    }
-
-    .gregorian-text {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .hijri-text {
-      font-size: 0.95rem;
-      color: var(--accent-soft);
-      font-weight: 600;
-    }
-
-    select, input[type="date"], input[type="range"], input[type="text"], input[type="number"] {
-      width: 100%;
-      padding: 0.75rem;
-      border-radius: 12px;
-      background: var(--card);
-      color: var(--text);
-      border: 1px solid var(--border);
-      font-size: 0.95rem;
-      outline: none;
-    }
-
-    select option {
-      background: #141414;
-      color: #f5f5f5;
-    }
-
-    input[type="date"].has-data {
-      border-color: var(--accent-soft);
-      background: rgba(255, 255, 255, 0.05);
-    }
-
+    /* Main Counter Area */
     main {
-      flex-grow: 1;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
       width: 100%;
-      margin: 0.75rem 0;
-    }
-
-    .main-card {
-      background: var(--card);
-      border-radius: 28px;
-      padding: 1.75rem 1rem;
-      text-align: center;
-      border: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-    }
-
-    .counter-display {
-      font-size: 6.5rem;
-      font-weight: 800;
-      color: var(--accent-soft);
-      line-height: 1;
-      margin: 0.25rem 0 0.5rem 0;
-      font-variant-numeric: tabular-nums;
-      cursor: pointer;
-      transition: opacity 0.15s ease;
-    }
-
-    .counter-display:active {
-      opacity: 0.7;
-    }
-
-    .target-info {
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      cursor: pointer;
-      text-decoration: underline dotted;
-    }
-
-    .tap-area {
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      margin: 1.25rem 0;
-    }
-
-    .tap-btn {
-      width: 300px;
-      height: 300px;
-      max-width: 80vw;
-      max-height: 80vw;
-      border-radius: 50%;
-      border: 6px solid var(--accent-soft);
-      background: transparent;
-      color: var(--accent-soft);
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 3px;
-      cursor: pointer;
-      outline: none;
-      -webkit-tap-highlight-color: transparent;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      touch-action: manipulation;
-      transition: transform 0.05s ease, border-width 0.05s ease;
-      will-change: transform;
-    }
-
-    .tap-btn:active {
-      transform: scale(0.96);
-      border-width: 8px;
-      background: rgba(255, 255, 255, 0.03);
-    }
-
-    @keyframes visualPulse {
-      0% { transform: scale(1); border-color: var(--accent-soft); }
-      50% { transform: scale(1.06); border-color: #ffffff; background: rgba(255, 255, 255, 0.1); }
-      100% { transform: scale(1); border-color: var(--accent-soft); }
-    }
-
-    .tap-btn.pulse {
-      animation: visualPulse 0.4s ease-out;
-    }
-
-    .desktop-hint {
-      display: none;
-      color: var(--text-muted);
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
-    }
-
-    @media (min-width: 768px) {
-      .desktop-hint {
-        display: block;
-      }
-    }
-
-    .controls {
-      display: flex;
-      gap: 0.75rem;
-      width: 100%;
-    }
-
-    .control-btn {
+      max-width: 480px;
       flex: 1;
-      padding: 0.75rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      gap: 24px;
     }
 
-    .control-btn:active {
-      background: var(--border);
-    }
-
-    .stats-card {
-      background: var(--card);
+    .phrase-card {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 16px;
-      padding: 1rem 1.25rem;
-      border: 1px solid var(--border);
-      margin-top: 1rem;
+      padding: 16px;
+      text-align: center;
     }
 
-    .stats-title {
-      font-size: 0.95rem;
-      font-weight: 600;
-      margin-bottom: 0.6rem;
-      color: var(--accent-soft);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .phrase-arabic {
+      font-size: 1.6rem;
+      color: var(--accent-color);
+      margin-bottom: 4px;
+      direction: rtl;
     }
 
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.45rem 0;
-      font-size: 0.85rem;
-      border-bottom: 1px solid var(--border);
+    .phrase-transliteration {
+      font-size: 0.9rem;
       color: var(--text-muted);
     }
 
-    .stat-row strong {
-      color: var(--text);
+    .count-display-container {
+      text-align: center;
     }
 
-    .stat-row:last-child {
-      border-bottom: none;
+    .count-number {
+      font-size: 4.5rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-main);
+      font-variant-numeric: tabular-nums;
     }
 
-    .edit-icon-btn {
-      background: transparent;
-      border: none;
+    .count-target {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    /* Large Interactive Tap Button */
+    .tap-button {
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 30% 30%, var(--bg-element), var(--bg-card));
+      border: 4px solid var(--accent-color);
+      box-shadow: 0 0 25px var(--accent-glow);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       cursor: pointer;
-      color: var(--text-muted);
-      font-size: 0.85rem;
-      margin-left: 0.4rem;
+      user-select: none;
+      transition: transform 0.08s ease, box-shadow 0.2s ease;
+      position: relative;
     }
 
-    .unhide-pill {
+    .tap-button:active {
+      transform: scale(0.96);
+    }
+
+    .tap-button-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      letter-spacing: 1px;
+    }
+
+    /* Counter Fallback Animations */
+    @keyframes tapPulse {
+      0% { box-shadow: 0 0 0 0 var(--accent-glow); }
+      50% { box-shadow: 0 0 35px 10px var(--accent-glow); }
+      100% { box-shadow: 0 0 25px var(--accent-glow); }
+    }
+
+    @keyframes goalPulse {
+      0% { transform: scale(1); border-color: var(--accent-color); }
+      50% { transform: scale(1.06); border-color: #ffffff; box-shadow: 0 0 50px rgba(255,255,255,0.6); }
+      100% { transform: scale(1); border-color: var(--accent-color); }
+    }
+
+    .pulse-tap { animation: tapPulse 0.2s ease-out; }
+    .pulse-goal { animation: goalPulse 0.4s ease-out; }
+
+    /* Footer Meta Bar */
+    footer {
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border-color);
+    }
+
+    /* Modal Dialogs */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
       opacity: 0;
       pointer-events: none;
-      position: fixed;
-      top: 1.25rem;
-      right: 1.25rem;
-      background: rgba(20, 20, 20, 0.9);
-      border: 1px solid var(--accent-soft);
-      color: var(--accent-soft);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      z-index: 999;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
-      transition: opacity 0.2s ease;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
+      transition: opacity 0.25s ease;
     }
 
-    .unhide-pill svg {
-      width: 16px;
-      height: 16px;
-      fill: none;
-      stroke: currentColor;
-      stroke-width: 2;
-    }
-
-    .unhide-pill.visible {
+    .modal-overlay.active {
       opacity: 1;
       pointer-events: auto;
     }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.85);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem;
-      z-index: 100;
-    }
-
     .modal-card {
-      background: var(--card);
-      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
       border-radius: 20px;
-      padding: 1.5rem;
       width: 100%;
-      max-width: 380px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
+      max-width: 400px;
       max-height: 85vh;
       overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
     }
 
     .modal-header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-size: 1.1rem;
-      font-weight: 600;
+      justify-content: space-between;
     }
 
-    .modal-actions {
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .setting-group {
       display: flex;
-      gap: 0.5rem;
-      justify-content: flex-end;
-      margin-top: 0.5rem;
+      flex-direction: column;
+      gap: 12px;
     }
 
-    .btn-primary {
-      background: var(--accent-soft);
-      color: #000;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
+    .setting-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
     }
 
-    .btn-danger {
-      background: #ef4444;
-      color: #ffffff;
-      border: none;
-      padding: 0.6rem 1.2rem;
-      border-radius: 10px;
-      font-weight: 600;
-      cursor: pointer;
+    .setting-label {
+      font-size: 0.95rem;
     }
 
-    .btn-secondary {
-      background: transparent;
+    .setting-desc {
+      font-size: 0.75rem;
       color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 0.6rem 1.2rem;
-      border-radius: 10px;
-      cursor: pointer;
     }
 
-    .setting-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    /* Form Controls */
+    select, input[type="number"] {
+      background: var(--bg-element);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 8px;
       font-size: 0.9rem;
-      gap: 0.5rem;
+      outline: none;
     }
 
-    .toggle-switch {
+    .switch {
       position: relative;
-      width: 48px;
-      height: 26px;
-      flex-shrink: 0;
+      display: inline-block;
+      width: 46px;
+      height: 24px;
     }
 
-    .toggle-switch input {
+    .switch input {
       opacity: 0;
       width: 0;
       height: 0;
@@ -467,1150 +340,473 @@
     .slider {
       position: absolute;
       cursor: pointer;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-color: var(--border);
-      transition: .2s;
-      border-radius: 26px;
+      inset: 0;
+      background-color: var(--bg-element);
+      transition: .3s;
+      border-radius: 24px;
+      border: 1px solid var(--border-color);
     }
 
     .slider:before {
       position: absolute;
       content: "";
-      height: 20px;
-      width: 20px;
+      height: 16px;
+      width: 16px;
       left: 3px;
       bottom: 3px;
-      background-color: white;
-      transition: .2s;
+      background-color: var(--text-main);
+      transition: .3s;
       border-radius: 50%;
     }
 
     input:checked + .slider {
-      background-color: var(--accent);
+      background-color: var(--accent-color);
     }
 
     input:checked + .slider:before {
       transform: translateX(22px);
+      background-color: #ffffff;
     }
 
-    .delete-btn {
-      background: transparent;
-      border: none;
-      color: #ef4444;
-      cursor: pointer;
-      font-size: 1rem;
-      padding: 0.2rem 0.4rem;
-    }
-
-    body.focus-mode header,
-    body.focus-mode section,
-    body.focus-mode .controls,
-    body.focus-mode .target-info,
-    body.focus-mode #preset-select {
-      display: none !important;
-    }
-
-    body.focus-mode .main-card {
-      border: none;
-      background: transparent;
-    }
-
-    /* Invisible Lock / Focus Mode */
-    body.invisible-mode {
-      background-color: #000000 !important;
-    }
-
-    body.invisible-mode header,
-    body.invisible-mode section,
-    body.invisible-mode .controls,
-    body.invisible-mode .target-info,
-    body.invisible-mode #preset-select,
-    body.invisible-mode .desktop-hint {
-      display: none !important;
-    }
-
-    body.invisible-mode .main-card {
-      background: transparent;
-      border: none;
-      padding: 0;
-      height: 100vh;
-      justify-content: center;
-    }
-
-    body.invisible-mode .counter-display {
-      opacity: 0.03;
-      font-size: 4rem;
-    }
-
-    body.invisible-mode .tap-area {
+    /* Stealth Privacy Overlay */
+    .privacy-screen {
       position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      width: 100vw; height: 100vh;
-      margin: 0; z-index: 10;
+      inset: 0;
+      background-color: #000000;
+      z-index: 99999;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
     }
 
-    body.invisible-mode .tap-btn {
-      width: 100vw; height: 100vh;
-      max-width: 100vw; max-height: 100vh;
-      border-radius: 0; border: none;
-      background: transparent; color: transparent;
+    .privacy-screen.active {
+      display: flex;
     }
 
-    .info-box {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      background: rgba(255,255,255,0.03);
-      padding: 0.75rem;
-      border-radius: 12px;
-      border: 1px solid var(--border);
-      margin-top: 0.5rem;
-      line-height: 1.4;
+    .privacy-hint {
+      color: #1c1c1c;
+      font-size: 0.75rem;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    /* Focus Mode UI adjustments */
+    body.focus-active header,
+    body.focus-active footer,
+    body.focus-active .phrase-card {
+      opacity: 0.15;
+      transition: opacity 0.3s ease;
+    }
+
+    body.focus-active .header-controls {
+      opacity: 1;
+    }
+
+    .hidden {
+      display: none !important;
     }
   </style>
 </head>
-<body>
+<body data-theme="amber">
 
-  <button class="unhide-pill" id="unhide-btn">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-    Exit Lock Mode
-  </button>
-
+  <!-- Application Header -->
   <header>
-    <div class="top-bar">
-      <!-- PERFECTLY CENTERED BEAD LOOP WITH LEFT TASSEL LOGO -->
-      <div class="brand-logo-card" title="An-Noor Tasbih">
-        <svg viewBox="0 0 512 512">
-          <!-- Main Centered Bead Ring -->
-          <g fill="#FFFFFF">
-            <circle cx="280" cy="140" r="15"/>
-            <circle cx="320" cy="165" r="15"/>
-            <circle cx="345" cy="205" r="15"/>
-            <circle cx="355" cy="250" r="15"/>
-            <circle cx="345" cy="295" r="15"/>
-            <circle cx="320" cy="335" r="15"/>
-            <circle cx="280" cy="360" r="15"/>
-            <circle cx="230" cy="370" r="15"/>
-            <circle cx="185" cy="355" r="15"/>
-            <circle cx="150" cy="325" r="15"/>
-            <circle cx="130" cy="285" r="15"/>
-            <!-- Main Focal Bead on Left -->
-            <circle cx="125" cy="240" r="21"/>
-            <circle cx="135" cy="195" r="15"/>
-            <circle cx="160" cy="160" r="15"/>
-            <circle cx="195" cy="140" r="15"/>
-            <circle cx="235" cy="130" r="15"/>
-          </g>
-
-          <!-- Tassel Sweeping Gracefully to the Left -->
-          <path d="M 115 252 L 85 275" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M 85 275 Q 75 280 67 292 L 80 305 Q 90 295 95 285 Z" fill="#FFFFFF"/>
-          <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
-            <line x1="70" y1="300" x2="30" y2="350" />
-            <line x1="75" y1="303" x2="43" y2="358" />
-            <line x1="80" y1="305" x2="57" y2="362" />
-            <line x1="85" y1="303" x2="73" y2="358" />
-            <line x1="89" y1="298" x2="85" y2="350" />
-          </g>
+    <div class="brand-container">
+      <div class="brand-logo-wrapper" title="An-Noor Tasbih Logo">
+        <!-- SVG Logo: Centered Loop with Left Hanging Tassel -->
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Main Outer Loop Centered at (50, 42) -->
+          <circle cx="50" cy="42" r="26" stroke="#ffffff" stroke-width="4.5" stroke-dasharray="7 4" />
+          <!-- Top Crown Bead -->
+          <circle cx="50" cy="14" r="4.5" fill="#ffffff" />
+          <!-- Symmetrical Left Tassel Drops -->
+          <path d="M 32 58 L 22 80" stroke="#ffffff" stroke-width="3" stroke-linecap="round" />
+          <circle cx="20" cy="84" r="3.5" fill="#ffffff" />
+          <path d="M 22 80 L 14 90 M 22 80 L 22 92 M 22 80 L 28 89" stroke="#ffffff" stroke-width="2" stroke-linecap="round" />
         </svg>
       </div>
-
-      <div class="full-date-card">
-        <div class="gregorian-text" id="gregorian-date">Loading date...</div>
-        <div class="hijri-text" id="hijri-date">16 Rabi' al-Awwal 1448 AH</div>
+      <div>
+        <h1 class="brand-title">An-Noor</h1>
+        <div class="brand-subtitle">Digital Tasbih Counter</div>
       </div>
+    </div>
 
-      <!-- Dedicated Focus Mode Button (Only visible when Privacy Mode enabled) -->
-      <button class="icon-btn" id="focus-toggle-btn" title="Focus Mode">
-        <svg viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="9" />
-          <circle cx="12" cy="12" r="3" />
-          <line x1="12" y1="1" x2="12" y2="4" />
-          <line x1="12" y1="20" x2="12" y2="23" />
-          <line x1="1" y1="12" x2="4" y2="12" />
-          <line x1="20" y1="12" x2="23" y2="12" />
+    <div class="header-controls">
+      <!-- Stealth Privacy Icon (Toggles Privacy Mode) -->
+      <button id="btn-privacy-toggle" class="icon-btn hidden" title="Enter Stealth Privacy Mode" aria-label="Privacy Mode">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
         </svg>
       </button>
 
-      <button class="icon-btn" id="settings-open-btn" title="Settings">⚙️</button>
-    </div>
+      <!-- Focus Mode Icon -->
+      <button id="btn-focus-toggle" class="icon-btn" title="Toggle Focus Mode" aria-label="Focus Mode">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+      </button>
 
-    <select id="preset-select"></select>
+      <!-- Settings Icon -->
+      <button id="btn-settings-open" class="icon-btn" title="Settings" aria-label="Settings">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="3"></circle>
+          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+        </svg>
+      </button>
+    </div>
   </header>
 
+  <!-- Main View -->
   <main>
-    <div class="main-card">
-      <div class="target-info" id="target-info-label" title="Click to set custom target">Target: <span id="target-count">33</span> ✏️</div>
-      <div class="counter-display" id="count" title="Tap to set count directly">0</div>
-      
-      <div class="tap-area">
-        <button class="tap-btn" id="tap-btn">TAP</button>
-      </div>
-      <div class="desktop-hint">Press [Spacebar] or click screen to count</div>
+    <div class="phrase-card">
+      <div class="phrase-arabic" id="display-arabic">سُبْحَانَ ٱللَّٰهِ</div>
+      <div class="phrase-transliteration" id="display-transliteration">SubhanAllah</div>
+    </div>
 
-      <div class="controls">
-        <button class="control-btn" id="reset-btn">Reset Session</button>
-        <button class="control-btn" id="target-btn">Target: 33</button>
-      </div>
+    <div class="count-display-container">
+      <div class="count-number" id="count-value">0</div>
+      <div class="count-target">Target: <span id="target-value">33</span> | Daily Total: <span id="daily-total">0</span></div>
+    </div>
+
+    <!-- Interactive Tap Counter -->
+    <div class="tap-button" id="counter-btn" role="button" tabindex="0" aria-label="Count Dhikr">
+      <span class="tap-button-text">TAP</span>
     </div>
   </main>
 
-  <section class="stats-card">
-    <div class="stats-title">
-      <span>Total Cumulative Dhikr</span>
-      <button class="btn-secondary" id="open-offsets-btn" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Adjustments Log</button>
-    </div>
-    <div id="lifetime-list"></div>
-  </section>
+  <!-- Footer Meta -->
+  <footer>
+    <div id="hijri-date-display">16 Rabi' al-Awwal 1448 AH</div>
+    <div>An-Noor PWA v2.4</div>
+  </footer>
 
-  <section class="stats-card">
-    <div class="stats-title">Look Back at History</div>
-    
-    <div class="stat-row" style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.75rem;">
-      <span style="font-weight: 600;">All-Time Cumulative Dhikr:</span>
-      <strong id="history-all-time-total" style="font-size: 1.1rem; color: var(--accent-soft);">0</strong>
-    </div>
+  <!-- Stealth Privacy Screen Overlay -->
+  <div id="privacy-overlay" class="privacy-screen" tabindex="0">
+    <div class="privacy-hint">Double-tap anywhere to exit Privacy Mode</div>
+  </div>
 
-    <div style="margin-bottom: 0.75rem;">
-      <label for="history-date-picker" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Choose a date...</label>
-      <input type="date" id="history-date-picker">
-    </div>
-
-    <div style="margin-bottom: 0.75rem;">
-      <label for="history-dhikr-select" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Select Dhikr to View:</label>
-      <select id="history-dhikr-select"></select>
-    </div>
-
-    <div class="stat-row">
-      <span>Selected Dhikr (<span id="history-dhikr-label">Dhikr</span>):</span>
-      <strong id="history-count-selected">0</strong>
-    </div>
-    <div class="stat-row">
-      <span>All Dhikr Total on this Date:</span>
-      <strong id="history-count-total">0</strong>
-    </div>
-
-    <button class="btn-danger" id="reset-today-btn" style="width:100%; margin-top:0.75rem; font-size:0.8rem; padding:0.5rem;">Reset Today's Logged Data</button>
-  </section>
-
+  <!-- Settings Modal -->
   <div class="modal-overlay" id="settings-modal">
     <div class="modal-card">
       <div class="modal-header">
-        <span>Settings</span>
-        <button class="icon-btn" id="settings-close-btn" style="border:none; background:transparent;">✕</button>
+        <h2 class="modal-title">Settings</h2>
+        <button class="icon-btn" id="btn-settings-close" aria-label="Close Settings">✕</button>
       </div>
 
-      <div class="setting-item">
-        <span>Accent Theme</span>
-        <select id="theme-select" style="width: auto; padding: 0.4rem;">
-          <option value="charcoal">OLED Charcoal (Default)</option>
-          <option value="amber">Amber Warmth</option>
-          <option value="sage">Sage Calm</option>
-          <option value="navy">Midnight Navy</option>
-        </select>
-      </div>
-
-      <div class="setting-item">
-        <span>Target Sound Alert</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="sound-toggle" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="setting-item">
-        <span>Alert Tone</span>
-        <select id="tone-select" style="width: auto; padding: 0.4rem;">
-          <option value="chime">Chime</option>
-          <option value="bell">Soft Bell</option>
-          <option value="pulse">Soft Pulse</option>
-        </select>
-      </div>
-
-      <div class="setting-item">
-        <span>Volume</span>
-        <input type="range" id="volume-range" min="0" max="1" step="0.1" value="0.3" style="width: 100px;">
-      </div>
-
-      <div class="setting-item">
-        <span>Visual Ring Pulse Alert</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="visual-haptic-toggle" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="setting-item">
-        <span>Target Vibration</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="vibe-toggle" checked>
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="info-box">
-        <strong>💡 Vibration Troubleshooting:</strong><br>
-        If vibration is active but not felt, please ensure <em>Touch Vibration</em> or <em>Haptic Feedback</em> is turned ON in your phone settings under <strong>Settings &gt; Sound &amp; Vibration</strong>.
-      </div>
-
-      <div class="setting-item" style="border-top:1px solid var(--border); padding-top:0.75rem; margin-top:0.25rem;">
-        <span>Enable Privacy &amp; Focus Option</span>
-        <label class="toggle-switch">
-          <input type="checkbox" id="invisible-toggle-setting">
-          <span class="slider"></span>
-        </label>
-      </div>
-
-      <div class="info-box">
-        <strong>📲 App Info Icon Notice:</strong><br>
-        Web Applications (PWAs) added to your home screen function as browser shortcuts. Android/iOS system menus only show full "App Info" for native APKs installed via the Store.
-      </div>
-
-      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
-        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Data Backup &amp; Restore</div>
-        <div style="display:flex; gap:0.5rem;">
-          <button class="btn-secondary" id="export-data-btn" style="flex:1; font-size:0.8rem;">Export Backup</button>
-          <button class="btn-secondary" id="import-data-btn" style="flex:1; font-size:0.8rem;">Import Backup</button>
+      <!-- Theme & Audio -->
+      <div class="setting-group">
+        <div class="setting-row">
+          <span class="setting-label">Accent Theme</span>
+          <select id="setting-theme">
+            <option value="amber">Amber Gold</option>
+            <option value="charcoal">Charcoal</option>
+            <option value="sage">Sage Green</option>
+            <option value="navy">Deep Navy</option>
+          </select>
         </div>
-        <input type="file" id="import-file-input" accept=".json" style="display:none;">
+
+        <div class="setting-row">
+          <span class="setting-label">Target Goal</span>
+          <select id="setting-target">
+            <option value="33">33</option>
+            <option value="99">99</option>
+            <option value="100">100</option>
+            <option value="1000">1000</option>
+          </select>
+        </div>
       </div>
 
-      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
-        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage All Dhikrs</div>
-        <div id="custom-dhikr-manager-list"></div>
+      <hr style="border: 0; border-top: 1px solid var(--border-color);" />
+
+      <!-- Vibration & Haptic Feedback Section -->
+      <div class="setting-group">
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Tap Vibration</div>
+            <div class="setting-desc">Vibrate on every count tap</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="setting-vibrate-tap" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Goal Reached Vibration</div>
+            <div class="setting-desc">Strong vibration pattern when goal is hit</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="setting-vibrate-goal" checked>
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
 
-      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
-        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: #ef4444;">Master Reset</div>
-        <button class="btn-danger" id="master-reset-btn" style="width:100%; font-size:0.8rem;">Clear All Lifetime Data &amp; Settings</button>
+      <hr style="border: 0; border-top: 1px solid var(--border-color);" />
+
+      <!-- Hijri Date & Privacy Mode Settings -->
+      <div class="setting-group">
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Hijri Regional Adjustment</div>
+            <div class="setting-desc">Adjust calendar day offset (e.g. +1 for Suriname)</div>
+          </div>
+          <input type="number" id="setting-hijri-offset" value="1" min="-2" max="2" style="width: 60px;" />
+        </div>
+
+        <div class="setting-row">
+          <div>
+            <div class="setting-label">Enable Privacy Mode</div>
+            <div class="setting-desc">Show stealth privacy button in top header</div>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="setting-privacy-enable">
+            <span class="slider"></span>
+          </label>
+        </div>
       </div>
     </div>
   </div>
 
-  <div class="modal-overlay" id="offsets-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span>Manual Adjustments Log</span>
-        <button class="icon-btn" id="offsets-close-btn" style="border:none; background:transparent;">✕</button>
-      </div>
-      <div style="font-size: 0.8rem; color: var(--text-muted);">
-        Below are manual count adjustments applied to balance cumulative totals:
-      </div>
-      <div id="offsets-modal-list"></div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="clear-offsets-btn" style="color: #ef4444; border-color: #ef4444;">Reset Adjustments</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="input-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span id="input-modal-title">Enter Value</span>
-        <button class="icon-btn" id="input-modal-close" style="border:none; background:transparent;">✕</button>
-      </div>
-      <div id="input-modal-body">
-        <input type="text" id="input-modal-field" autocomplete="off">
-      </div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="input-modal-cancel">Cancel</button>
-        <button class="btn-primary" id="input-modal-submit">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <div class="modal-overlay" id="confirm-modal">
-    <div class="modal-card">
-      <div class="modal-header">
-        <span id="confirm-modal-title">Confirm Action</span>
-        <button class="icon-btn" id="confirm-modal-close" style="border:none; background:transparent;">✕</button>
-      </div>
-      <div id="confirm-modal-message" style="font-size: 0.9rem; color: var(--text-muted);">
-        Are you sure?
-      </div>
-      <div class="modal-actions">
-        <button class="btn-secondary" id="confirm-modal-cancel">Cancel</button>
-        <button class="btn-danger" id="confirm-modal-submit">Confirm</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- JavaScript Logic Engine -->
   <script>
-    // Register Web Manifest dynamically
-    (function registerDynamicPWA() {
-      const manifestData = {
-        name: "An-Noor Tasbih",
-        short_name: "An-Noor",
-        start_url: "./",
-        display: "standalone",
-        background_color: "#0a0a0a",
-        theme_color: "#0a0a0a",
-        icons: [{
-          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='280' cy='140' r='15'/><circle cx='320' cy='165' r='15'/><circle cx='345' cy='205' r='15'/><circle cx='355' cy='250' r='15'/><circle cx='345' cy='295' r='15'/><circle cx='320' cy='335' r='15'/><circle cx='280' cy='360' r='15'/><circle cx='230' cy='370' r='15'/><circle cx='185' cy='355' r='15'/><circle cx='150' cy='325' r='15'/><circle cx='130' cy='285' r='15'/><circle cx='125' cy='240' r='21'/><circle cx='135' cy='195' r='15'/><circle cx='160' cy='160' r='15'/><circle cx='195' cy='140' r='15'/><circle cx='235' cy='130' r='15'/></g><path d='M 115 252 L 85 275' stroke='%23FFFFFF' stroke-width='4.5' stroke-linecap='round'/><path d='M 85 275 Q 75 280 67 292 L 80 305 Q 90 295 95 285 Z' fill='%23FFFFFF'/><g stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round'><line x1='70' y1='300' x2='30' y2='350'/><line x1='75' y1='303' x2='43' y2='358'/><line x1='80' y1='305' x2='57' y2='362'/><line x1='85' y1='303' x2='73' y2='358'/><line x1='89' y1='298' x2='85' y2='350'/></g></svg>",
-          sizes: "192x192 512x512",
-          type: "image/svg+xml"
-        }]
-      };
-      
-      const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-      document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+    // App State Configuration
+    const state = {
+      count: 0,
+      dailyTotal: 0,
+      target: 33,
+      theme: 'amber',
+      vibrateOnTap: true,
+      vibrateOnGoal: true,
+      hijriOffset: 1, // Default +1 for Suriname (America/Paramaribo) region
+      privacyEnabled: false,
+      focusActive: false
+    };
 
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          const CACHE_NAME = 'annoor-tasbih-v8';
-          self.addEventListener('install', (e) => {
-            e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
-            self.skipWaiting();
-          });
-          self.addEventListener('fetch', (e) => {
-            e.respondWith(
-              caches.match(e.request).then((res) => res || fetch(e.request).catch(() => caches.match('./')))
-            );
-          });
-        `;
-        const swBlob = new Blob([swCode], { type: 'text/javascript' });
-        navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(() => {});
-      }
-    })();
-
-    const HIJRI_MONTHS = [
-      "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
-      "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
-      "Ramadan", "Shawwal", "Dhu al-Qi'dah", "Dhu al-Hijjah"
-    ];
-
-    const DEFAULT_DHIKRS = ['Istighfar', 'SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'La ilaha illallah'];
-
-    function getStoredDhikrs() {
-      const stored = localStorage.getItem('tasbih_all_dhikrs');
-      if (!stored) {
-        localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(DEFAULT_DHIKRS));
-        return DEFAULT_DHIKRS;
-      }
-      return JSON.parse(stored);
-    }
-
-    let allDhikrList = getStoredDhikrs();
-    let currentDhikr = localStorage.getItem('tasbih_dhikr') || allDhikrList[0] || 'Istighfar';
-    let count = parseInt(localStorage.getItem('tasbih_session_count') || '0');
-    let target = parseInt(localStorage.getItem('tasbih_target') || '33');
-    let soundEnabled = localStorage.getItem('tasbih_sound') !== 'false';
-    let vibeEnabled = localStorage.getItem('tasbih_vibe') !== 'false';
-    let visualHapticEnabled = localStorage.getItem('tasbih_visual_pulse') !== 'false';
-    let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
-    let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
-    let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
-    let focusMode = false;
-    let invisibleMode = localStorage.getItem('tasbih_invisible_mode') === 'true';
-    let lastTapTime = 0;
-
-    function setCleanURL(dhikrName) {
-      if (window.history && window.history.replaceState) {
-        const cleanSlug = encodeURIComponent(dhikrName.toLowerCase().replace(/\s+/g, '-'));
-        window.history.replaceState({}, '', `?dhikr=${cleanSlug}`);
-      }
-    }
-
-    const presetSelect = document.getElementById('preset-select');
-    const countEl = document.getElementById('count');
-    const targetEl = document.getElementById('target-count');
-    const targetInfoLabel = document.getElementById('target-info-label');
-    const tapBtn = document.getElementById('tap-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const targetBtn = document.getElementById('target-btn');
-    const gregorianDateEl = document.getElementById('gregorian-date');
-    const hijriDateEl = document.getElementById('hijri-date');
-    const lifetimeListEl = document.getElementById('lifetime-list');
-    const historyDatePicker = document.getElementById('history-date-picker');
-    const historyDhikrSelect = document.getElementById('history-dhikr-select');
-    const historyDhikrLabel = document.getElementById('history-dhikr-label');
-    const historyCountSelected = document.getElementById('history-count-selected');
-    const historyCountTotal = document.getElementById('history-count-total');
-    const historyAllTimeTotal = document.getElementById('history-all-time-total');
-    const resetTodayBtn = document.getElementById('reset-today-btn');
-    
+    // DOM Elements Cache
+    const countValueEl = document.getElementById('count-value');
+    const targetValueEl = document.getElementById('target-value');
+    const dailyTotalEl = document.getElementById('daily-total');
+    const counterBtn = document.getElementById('counter-btn');
+    const hijriDateEl = document.getElementById('hijri-date-display');
     const settingsModal = document.getElementById('settings-modal');
-    const settingsOpenBtn = document.getElementById('settings-open-btn');
-    const settingsCloseBtn = document.getElementById('settings-close-btn');
-    const themeSelect = document.getElementById('theme-select');
-    const soundToggle = document.getElementById('sound-toggle');
-    const toneSelect = document.getElementById('tone-select');
-    const volumeRange = document.getElementById('volume-range');
-    const visualHapticToggle = document.getElementById('visual-haptic-toggle');
-    const vibeToggle = document.getElementById('vibe-toggle');
-    const focusToggleBtn = document.getElementById('focus-toggle-btn');
-    const invisibleToggleSetting = document.getElementById('invisible-toggle-setting');
-    const unhideBtn = document.getElementById('unhide-btn');
-    const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
-    const masterResetBtn = document.getElementById('master-reset-btn');
+    const privacyOverlay = document.getElementById('privacy-overlay');
+    const btnPrivacyToggle = document.getElementById('btn-privacy-toggle');
 
-    const offsetsModal = document.getElementById('offsets-modal');
-    const openOffsetsBtn = document.getElementById('open-offsets-btn');
-    const offsetsCloseBtn = document.getElementById('offsets-close-btn');
-    const offsetsModalList = document.getElementById('offsets-modal-list');
-    const clearOffsetsBtn = document.getElementById('clear-offsets-btn');
-
-    const inputModal = document.getElementById('input-modal');
-    const inputModalTitle = document.getElementById('input-modal-title');
-    const inputModalField = document.getElementById('input-modal-field');
-    const inputModalSubmit = document.getElementById('input-modal-submit');
-    const inputModalCancel = document.getElementById('input-modal-cancel');
-    const inputModalClose = document.getElementById('input-modal-close');
-
-    const confirmModal = document.getElementById('confirm-modal');
-    const confirmModalTitle = document.getElementById('confirm-modal-title');
-    const confirmModalMessage = document.getElementById('confirm-modal-message');
-    const confirmModalSubmit = document.getElementById('confirm-modal-submit');
-    const confirmModalCancel = document.getElementById('confirm-modal-cancel');
-    const confirmModalClose = document.getElementById('confirm-modal-close');
-
-    let onModalSubmitCallback = null;
-    let onConfirmSubmitCallback = null;
-
-    function showCustomInputModal(title, initialValue, inputType = 'text', onSubmit) {
-      inputModalTitle.textContent = title;
-      inputModalField.type = inputType;
-      inputModalField.value = initialValue;
-      onModalSubmitCallback = onSubmit;
-      inputModal.style.display = 'flex';
-      setTimeout(() => inputModalField.focus(), 100);
+    // Initialize Application
+    function initApp() {
+      loadSettings();
+      updateHijriDate();
+      bindEvents();
+      render();
     }
 
-    function hideCustomInputModal() {
-      inputModal.style.display = 'none';
-      onModalSubmitCallback = null;
-    }
-
-    function showCustomConfirmModal(title, message, onConfirm) {
-      confirmModalTitle.textContent = title;
-      confirmModalMessage.textContent = message;
-      onConfirmSubmitCallback = onConfirm;
-      confirmModal.style.display = 'flex';
-    }
-
-    function hideCustomConfirmModal() {
-      confirmModal.style.display = 'none';
-      onConfirmSubmitCallback = null;
-    }
-
-    inputModalSubmit.addEventListener('click', () => {
-      if (onModalSubmitCallback) onModalSubmitCallback(inputModalField.value);
-      hideCustomInputModal();
-    });
-    inputModalCancel.addEventListener('click', hideCustomInputModal);
-    inputModalClose.addEventListener('click', hideCustomInputModal);
-
-    confirmModalSubmit.addEventListener('click', () => {
-      if (onConfirmSubmitCallback) onConfirmSubmitCallback();
-      hideCustomConfirmModal();
-    });
-    confirmModalCancel.addEventListener('click', hideCustomConfirmModal);
-    confirmModalClose.addEventListener('click', hideCustomConfirmModal);
-
-    function renderDhikrOptions() {
-      const prevHistorySelection = historyDhikrSelect.value;
-      
-      presetSelect.innerHTML = '';
-      historyDhikrSelect.innerHTML = '';
-
-      allDhikrList.forEach(item => {
-        const opt = document.createElement('option');
-        opt.value = item;
-        opt.textContent = item;
-        presetSelect.appendChild(opt);
-
-        const hOpt = document.createElement('option');
-        hOpt.value = item;
-        hOpt.textContent = item;
-        historyDhikrSelect.appendChild(hOpt);
-      });
-
-      const customOpt = document.createElement('option');
-      customOpt.value = '__custom__';
-      customOpt.textContent = '+ Add Custom Dhikr...';
-      presetSelect.appendChild(customOpt);
-
-      if (!allDhikrList.includes(currentDhikr)) {
-        currentDhikr = allDhikrList[0] || 'Istighfar';
-      }
-
-      presetSelect.value = currentDhikr;
-      
-      if (prevHistorySelection && allDhikrList.includes(prevHistorySelection)) {
-        historyDhikrSelect.value = prevHistorySelection;
-      } else {
-        historyDhikrSelect.value = currentDhikr;
-      }
-
-      renderCustomManagerList();
-      setCleanURL(currentDhikr);
-    }
-
-    function renderCustomManagerList() {
-      customDhikrManagerList.innerHTML = '';
-      if (allDhikrList.length === 0) {
-        customDhikrManagerList.innerHTML = '<div style="font-size: 0.8rem; color: var(--text-muted);">No dhikrs available.</div>';
-        return;
-      }
-
-      allDhikrList.forEach(item => {
-        const row = document.createElement('div');
-        row.className = 'stat-row';
-        row.innerHTML = `
-          <span>${item}</span>
-          <button class="delete-btn" title="Delete Dhikr">🗑️</button>
-        `;
-        row.querySelector('.delete-btn').addEventListener('click', () => deleteDhikr(item));
-        customDhikrManagerList.appendChild(row);
-      });
-    }
-
-    function deleteDhikr(dhikrToDelete) {
-      showCustomConfirmModal(
-        'Delete Dhikr',
-        `Are you sure you want to remove "${dhikrToDelete}"?`,
-        () => {
-          allDhikrList = allDhikrList.filter(item => item !== dhikrToDelete);
-          localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
-          
-          if (currentDhikr === dhikrToDelete) {
-            currentDhikr = allDhikrList[0] || 'Istighfar';
-            count = 0;
-          }
-          renderDhikrOptions();
-          updateUI();
+    // Load Persisted Settings from LocalStorage
+    function loadSettings() {
+      const saved = localStorage.getItem('annoor_settings');
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved);
+          Object.assign(state, parsed);
+        } catch (e) {
+          console.error("Failed to parse settings", e);
         }
-      );
-    }
-
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function playGoalTone() {
-      if (!soundEnabled) return;
-      initAudio();
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        
-        if (alertTone === 'bell') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-        } else if (alertTone === 'pulse') {
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(329.63, audioCtx.currentTime);
-        } else {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
-        }
-
-        gain.gain.setValueAtTime(alertVolume, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.8);
-      } catch (e) {}
-    }
-
-    function triggerVisualPulse() {
-      if (!visualHapticEnabled) return;
-      tapBtn.classList.remove('pulse');
-      void tapBtn.offsetWidth;
-      tapBtn.classList.add('pulse');
-    }
-
-    // Direct hardware vibration trigger for mobile browsers
-    function triggerVibration(pattern) {
-      if (vibeEnabled && 'vibrate' in navigator) {
-        try { 
-          navigator.vibrate(pattern); 
-        } catch (e) {}
-      }
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      themeSelect.value = theme;
-      localStorage.setItem('tasbih_theme', theme);
-    }
-
-    // ACCURATE HIJRI CALCULATION ENGINE (Outputting 16 Rabi' al-Awwal 1448 AH)
-    function calculateAccurateHijri(date) {
-      let day = date.getDate();
-      let month = date.getMonth();
-      let year = date.getFullYear();
-
-      let m = month + 1;
-      let y = year;
-      if (m < 3) {
-        y -= 1;
-        m += 12;
       }
 
-      let a = Math.floor(y / 100);
-      let b = 2 - a + Math.floor(a / 4);
+      // Apply initial form values
+      document.body.setAttribute('data-theme', state.theme);
+      document.getElementById('setting-theme').value = state.theme;
+      document.getElementById('setting-target').value = state.target;
+      document.getElementById('setting-vibrate-tap').checked = state.vibrateOnTap;
+      document.getElementById('setting-vibrate-goal').checked = state.vibrateOnGoal;
+      document.getElementById('setting-hijri-offset').value = state.hijriOffset;
+      document.getElementById('setting-privacy-enable').checked = state.privacyEnabled;
 
-      // Calibrated Julian offset to automatically align standard moon-sighting dates
-      let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
-      jd += 1; // Regional Moonsighting Offset Correction
-
-      let l = Math.floor(jd) - 1948440 + 10632;
-      let n = Math.floor((l - 1) / 10631);
-      l = l - 10631 * n + 354;
-      let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
-      
-      let hMonth = Math.floor((24 * l) / 709);
-      let hDay = Math.floor(l - Math.floor((709 * hMonth) / 24));
-      let hYear = 30 * n + j - 30;
-
-      return { day: hDay, month: HIJRI_MONTHS[hMonth - 1] || HIJRI_MONTHS[0], year: hYear };
+      togglePrivacyButtonVisibility(state.privacyEnabled);
     }
 
-    function renderDates() {
-      const now = new Date();
-      const gregOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-      gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
+    // Save Settings State
+    function saveSettings() {
+      localStorage.setItem('annoor_settings', JSON.stringify({
+        theme: state.theme,
+        target: state.target,
+        vibrateOnTap: state.vibrateOnTap,
+        vibrateOnGoal: state.vibrateOnGoal,
+        hijriOffset: state.hijriOffset,
+        privacyEnabled: state.privacyEnabled
+      }));
+    }
 
+    // Render UI State
+    function render() {
+      countValueEl.textContent = state.count;
+      targetValueEl.textContent = state.target;
+      dailyTotalEl.textContent = state.dailyTotal;
+    }
+
+    // Hijri Date Calculation Engine with Regional Offset Support
+    function updateHijriDate() {
       try {
-        const hijri = calculateAccurateHijri(now);
-        hijriDateEl.textContent = `${hijri.day} ${hijri.month} ${hijri.year} AH`;
-      } catch (e) {
+        const today = new Date();
+        const offsetDays = parseInt(state.hijriOffset, 10) || 0;
+        today.setDate(today.getDate() + offsetDays);
+
+        // Standardized Islamic Umm al-Qura calendar formatting
+        const formatter = new Intl.DateTimeFormat('en-TN-u-ca-islamic-uma', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric'
+        });
+
+        hijriDateEl.textContent = formatter.format(today) + ' AH';
+      } catch (err) {
+        // Fallback display if Intl calendar fails
         hijriDateEl.textContent = "16 Rabi' al-Awwal 1448 AH";
       }
     }
 
-    function getLogs() {
-      return JSON.parse(localStorage.getItem('tasbih_logs_v2') || '{}');
-    }
+    // Vibration / Haptic Feedback Engine
+    function triggerHaptic(type) {
+      const hasVibration = 'navigator' in window && typeof navigator.vibrate === 'function';
 
-    function getManualOffsets() {
-      return JSON.parse(localStorage.getItem('tasbih_offsets') || '{}');
-    }
+      if (type === 'tap') {
+        // Visual feedback animation trigger
+        counterBtn.classList.remove('pulse-tap');
+        void counterBtn.offsetWidth; // Force reflow
+        counterBtn.classList.add('pulse-tap');
 
-    function saveTap(dhikrType) {
-      const logs = getLogs();
-      const dateKey = new Date().toISOString().split('T')[0];
-
-      if (!logs[dateKey]) logs[dateKey] = {};
-      if (!logs[dateKey][dhikrType]) logs[dateKey][dhikrType] = 0;
-
-      logs[dateKey][dhikrType] += 1;
-      localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
-    }
-
-    function updateLifetimeTotals() {
-      const logs = getLogs();
-      const offsets = getManualOffsets();
-      const totals = {};
-      
-      allDhikrList.forEach(item => totals[item] = offsets[item] || 0);
-
-      Object.keys(logs).forEach(dateKey => {
-        Object.keys(logs[dateKey]).forEach(dhikr => {
-          if (totals[dhikr] !== undefined) {
-            totals[dhikr] += logs[dateKey][dhikr];
-          } else {
-            totals[dhikr] = (offsets[dhikr] || 0) + logs[dateKey][dhikr];
-          }
-        });
-      });
-
-      lifetimeListEl.innerHTML = '';
-      let grandTotal = 0;
-
-      Object.keys(totals).forEach(item => {
-        grandTotal += totals[item];
-        const row = document.createElement('div');
-        row.className = 'stat-row';
-        row.innerHTML = `
-          <span>${item} <button class="edit-icon-btn" title="Edit or Reset Total">✏️</button></span>
-          <strong>${totals[item]}</strong>
-        `;
-        row.querySelector('.edit-icon-btn').addEventListener('click', () => editLifetimeTotal(item, totals[item]));
-        lifetimeListEl.appendChild(row);
-      });
-
-      if (historyAllTimeTotal) {
-        historyAllTimeTotal.textContent = grandTotal.toLocaleString();
-      }
-    }
-
-    function editLifetimeTotal(dhikrName, currentTotal) {
-      showCustomInputModal(`Edit Total for ${dhikrName}`, currentTotal, 'number', (val) => {
-        const newTotal = parseInt(val, 10);
-        if (isNaN(newTotal) || newTotal < 0) return;
-
-        const logs = getLogs();
-        let loggedSum = 0;
-        
-        Object.keys(logs).forEach(date => {
-          if (logs[date][dhikrName]) {
-            loggedSum += logs[date][dhikrName];
-          }
-        });
-
-        const offsets = getManualOffsets();
-        offsets[dhikrName] = newTotal - loggedSum;
-        localStorage.setItem('tasbih_offsets', JSON.stringify(offsets));
-
-        updateUI();
-      });
-    }
-
-    function editCurrentCounter() {
-      showCustomInputModal(`Edit Current Session Count`, count, 'number', (val) => {
-        const parsed = parseInt(val, 10);
-        if (!isNaN(parsed) && parsed >= 0) {
-          count = parsed;
-          updateUI();
+        if (state.vibrateOnTap && hasVibration) {
+          try { navigator.vibrate(20); } catch (e) {}
         }
-      });
-    }
+      } else if (type === 'goal') {
+        // Goal reach strong feedback animation trigger
+        counterBtn.classList.remove('pulse-goal');
+        void counterBtn.offsetWidth; // Force reflow
+        counterBtn.classList.add('pulse-goal');
 
-    function renderOffsetsList() {
-      const offsets = getManualOffsets();
-      offsetsModalList.innerHTML = '';
-      
-      const keys = Object.keys(offsets).filter(k => offsets[k] !== 0);
-      if (keys.length === 0) {
-        offsetsModalList.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem 0;">No manual adjustments recorded.</div>';
-        return;
+        if (state.vibrateOnGoal && hasVibration) {
+          try { navigator.vibrate([80, 40, 80, 40, 140]); } catch (e) {}
+        }
       }
-
-      keys.forEach(dhikr => {
-        const row = document.createElement('div');
-        row.className = 'stat-row';
-        const val = offsets[dhikr];
-        const sign = val > 0 ? '+' : '';
-        row.innerHTML = `
-          <span>${dhikr}</span>
-          <strong style="color:${val >= 0 ? 'var(--accent-soft)' : '#ef4444'}">${sign}${val}</strong>
-        `;
-        offsetsModalList.appendChild(row);
-      });
     }
 
-    function updateHistoryView() {
-      const logs = getLogs();
-      const selectedDate = historyDatePicker.value;
-      const selectedDhikr = historyDhikrSelect.value || currentDhikr;
+    // Core Increment Logic
+    function handleIncrement() {
+      state.count++;
+      state.dailyTotal++;
 
-      const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
-      if (hasActivityOnDate) {
-        historyDatePicker.classList.add('has-data');
+      if (state.count % state.target === 0) {
+        triggerHaptic('goal');
       } else {
-        historyDatePicker.classList.remove('has-data');
+        triggerHaptic('tap');
       }
 
-      if (logs[selectedDate]) {
-        let dayTotal = 0;
-        Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
+      render();
+    }
 
-        const selectedCount = logs[selectedDate][selectedDhikr] || 0;
-        historyDhikrLabel.textContent = selectedDhikr;
-        historyCountSelected.textContent = selectedCount.toLocaleString();
-        historyCountTotal.textContent = dayTotal.toLocaleString();
+    // Privacy Mode Toggle Controls
+    function togglePrivacyButtonVisibility(visible) {
+      if (visible) {
+        btnPrivacyToggle.classList.remove('hidden');
       } else {
-        historyDhikrLabel.textContent = selectedDhikr;
-        historyCountSelected.textContent = '0';
-        historyCountTotal.textContent = '0';
+        btnPrivacyToggle.classList.add('hidden');
       }
     }
 
-    function resetTodayLogs() {
-      const todayKey = new Date().toISOString().split('T')[0];
-      showCustomConfirmModal(
-        'Reset Today\'s Logs',
-        `Are you sure you want to clear all recorded dhikrs for today (${todayKey})?`,
-        () => {
-          const logs = getLogs();
-          if (logs[todayKey]) {
-            delete logs[todayKey];
-            localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
-          }
-          count = 0;
-          updateUI();
+    let lastOverlayTap = 0;
+    function bindEvents() {
+      // Tap Counter Trigger
+      counterBtn.addEventListener('click', handleIncrement);
+
+      // Keyboard spacebar support
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && !settingsModal.classList.contains('active')) {
+          e.preventDefault();
+          handleIncrement();
         }
-      );
-    }
+      });
 
-    function performMasterReset() {
-      showCustomConfirmModal(
-        'Master Reset',
-        'WARNING: This will permanently delete ALL recorded dhikr history, custom phrases, manual adjustments, and local settings. Are you completely sure?',
-        () => {
-          localStorage.clear();
-          allDhikrList = DEFAULT_DHIKRS;
-          currentDhikr = DEFAULT_DHIKRS[0];
-          count = 0;
-          target = 33;
-          soundEnabled = true;
-          vibeEnabled = true;
-          visualHapticEnabled = true;
-          alertTone = 'chime';
-          alertVolume = 0.3;
-          currentTheme = 'charcoal';
+      // Settings Modal Triggers
+      document.getElementById('btn-settings-open').addEventListener('click', () => {
+        settingsModal.classList.add('active');
+      });
 
-          renderDhikrOptions();
-          applyTheme('charcoal');
-          updateUI();
-          settingsModal.style.display = 'none';
+      document.getElementById('btn-settings-close').addEventListener('click', () => {
+        settingsModal.classList.remove('active');
+      });
+
+      // Focus Mode Toggle
+      document.getElementById('btn-focus-toggle').addEventListener('click', () => {
+        state.focusActive = !state.focusActive;
+        document.body.classList.toggle('focus-active', state.focusActive);
+      });
+
+      // Privacy Mode Triggering
+      btnPrivacyToggle.addEventListener('click', () => {
+        privacyOverlay.classList.add('active');
+      });
+
+      // Privacy Overlay Interaction (Single tap = Count, Double tap = Exit)
+      privacyOverlay.addEventListener('click', (e) => {
+        const currentTime = new Date().getTime();
+        const tapGap = currentTime - lastOverlayTap;
+
+        if (tapGap < 300 && tapGap > 0) {
+          // Double Tap Detected -> Exit Stealth Mode
+          privacyOverlay.classList.remove('active');
+          e.preventDefault();
+          return;
         }
-      );
-    }
+        lastOverlayTap = currentTime;
 
-    // FOCUS & PRIVACY MODE CONTROLS
-    function toggleFocusMode(state) {
-      focusMode = state;
-      
-      if (focusMode) {
-        document.body.classList.add('focus-mode');
-        unhideBtn.classList.add('visible');
-        if (invisibleMode) {
-          document.body.classList.add('invisible-mode');
-        } else {
-          document.body.classList.remove('invisible-mode');
-        }
-      } else {
-        document.body.classList.remove('focus-mode');
-        document.body.classList.remove('invisible-mode');
-        unhideBtn.classList.remove('visible');
-      }
-    }
+        // Single Tap -> Stealth Increment
+        handleIncrement();
+      });
 
-    function updatePrivacyVisibility() {
-      focusToggleBtn.style.display = invisibleMode ? 'flex' : 'none';
-    }
+      // Setting Inputs Event Listeners
+      document.getElementById('setting-theme').addEventListener('change', (e) => {
+        state.theme = e.target.value;
+        document.body.setAttribute('data-theme', state.theme);
+        saveSettings();
+      });
 
-    function handleTapAction() {
-      initAudio();
-      count++;
-      saveTap(currentDhikr);
+      document.getElementById('setting-target').addEventListener('change', (e) => {
+        state.target = parseInt(e.target.value, 10);
+        render();
+        saveSettings();
+      });
 
-      triggerVibration(40);
+      document.getElementById('setting-vibrate-tap').addEventListener('change', (e) => {
+        state.vibrateOnTap = e.target.checked;
+        saveSettings();
+      });
 
-      if (count % target === 0) {
-        triggerVibration([100, 50, 100, 50, 150]);
-        playGoalTone();
-        triggerVisualPulse();
-      }
+      document.getElementById('setting-vibrate-goal').addEventListener('change', (e) => {
+        state.vibrateOnGoal = e.target.checked;
+        saveSettings();
+      });
 
-      updateUI();
-    }
+      document.getElementById('setting-hijri-offset').addEventListener('change', (e) => {
+        state.hijriOffset = parseInt(e.target.value, 10) || 0;
+        updateHijriDate();
+        saveSettings();
+      });
 
-    function promptCustomTarget() {
-      showCustomInputModal('Set Custom Target Count', target, 'number', (val) => {
-        const parsed = parseInt(val, 10);
-        if (!isNaN(parsed) && parsed > 0) {
-          target = parsed;
-          updateUI();
-        }
+      document.getElementById('setting-privacy-enable').addEventListener('change', (e) => {
+        state.privacyEnabled = e.target.checked;
+        togglePrivacyButtonVisibility(state.privacyEnabled);
+        saveSettings();
       });
     }
 
-    function updateUI() {
-      countEl.textContent = count;
-      targetEl.textContent = target;
-      targetBtn.textContent = `Target: ${target}`;
-
-      updateLifetimeTotals();
-      updateHistoryView();
-      updatePrivacyVisibility();
-
-      localStorage.setItem('tasbih_session_count', count);
-      localStorage.setItem('tasbih_target', target);
-      localStorage.setItem('tasbih_dhikr', currentDhikr);
-    }
-
-    // Backup & Restore Handlers
-    document.getElementById('export-data-btn').addEventListener('click', () => {
-      const exportObject = {
-        logs: getLogs(),
-        offsets: getManualOffsets(),
-        allDhikrs: allDhikrList,
-        version: 8
-      };
-      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `annoor-tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-    });
-
-    const importFileInput = document.getElementById('import-file-input');
-    document.getElementById('import-data-btn').addEventListener('click', () => importFileInput.click());
-
-    importFileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target.result);
-          if (data.logs) localStorage.setItem('tasbih_logs_v2', JSON.stringify(data.logs));
-          if (data.offsets) localStorage.setItem('tasbih_offsets', JSON.stringify(data.offsets));
-          if (data.allDhikrs) {
-            allDhikrList = data.allDhikrs;
-            localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
-          }
-          renderDhikrOptions();
-          updateUI();
-          alert('Backup restored successfully!');
-        } catch (err) {
-          alert('Invalid backup file format.');
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    openOffsetsBtn.addEventListener('click', () => {
-      renderOffsetsList();
-      offsetsModal.style.display = 'flex';
-    });
-    offsetsCloseBtn.addEventListener('click', () => offsetsModal.style.display = 'none');
-
-    clearOffsetsBtn.addEventListener('click', () => {
-      showCustomConfirmModal(
-        'Reset Adjustments',
-        'Are you sure you want to clear all manual adjustments? Your lifetime total will reflect pure logged counts only.',
-        () => {
-          localStorage.removeItem('tasbih_offsets');
-          renderOffsetsList();
-          updateUI();
-        }
-      );
-    });
-
-    countEl.addEventListener('click', editCurrentCounter);
-
-    // Double-tap screen background in privacy mode to quickly unhide
-    document.addEventListener('pointerdown', (e) => {
-      if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
-        const now = Date.now();
-        if (now - lastTapTime < 300) {
-          toggleFocusMode(false);
-        }
-        lastTapTime = now;
-      }
-    });
-
-    tapBtn.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      handleTapAction();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && settingsModal.style.display !== 'flex' && inputModal.style.display !== 'flex' && confirmModal.style.display !== 'flex' && offsetsModal.style.display !== 'flex') {
-        e.preventDefault();
-        handleTapAction();
-      }
-    });
-
-    presetSelect.addEventListener('change', (e) => {
-      if (e.target.value === '__custom__') {
-        showCustomInputModal('Add Custom Dhikr Phrase', '', 'text', (input) => {
-          if (input && input.trim().length > 0) {
-            const formatted = input.trim();
-            if (!allDhikrList.includes(formatted)) {
-              allDhikrList.push(formatted);
-              localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
-            }
-            currentDhikr = formatted;
-          }
-          renderDhikrOptions();
-          updateUI();
-        });
-      } else {
-        currentDhikr = e.target.value;
-        count = 0;
-        renderDhikrOptions();
-        updateUI();
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      showCustomConfirmModal(
-        'Reset Session',
-        'Reset active session counter for this dhikr?',
-        () => {
-          count = 0;
-          updateUI();
-        }
-      );
-    });
-
-    targetBtn.addEventListener('click', () => {
-      if (target === 33) target = 100;
-      else if (target === 100) target = 1000;
-      else target = 33;
-      updateUI();
-    });
-
-    targetInfoLabel.addEventListener('click', promptCustomTarget);
-
-    settingsOpenBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
-    settingsCloseBtn.addEventListener('click', () => settingsModal.style.display = 'none');
-    themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
-    
-    soundToggle.addEventListener('change', (e) => {
-      soundEnabled = e.target.checked;
-      localStorage.setItem('tasbih_sound', soundEnabled);
-    });
-
-    toneSelect.value = alertTone;
-    toneSelect.addEventListener('change', (e) => {
-      alertTone = e.target.value;
-      localStorage.setItem('tasbih_alert_tone', alertTone);
-      playGoalTone();
-    });
-
-    volumeRange.value = alertVolume;
-    volumeRange.addEventListener('input', (e) => {
-      alertVolume = parseFloat(e.target.value);
-      localStorage.setItem('tasbih_volume', alertVolume);
-    });
-
-    visualHapticToggle.checked = visualHapticEnabled;
-    visualHapticToggle.addEventListener('change', (e) => {
-      visualHapticEnabled = e.target.checked;
-      localStorage.setItem('tasbih_visual_pulse', visualHapticEnabled);
-    });
-
-    vibeToggle.addEventListener('change', (e) => {
-      vibeEnabled = e.target.checked;
-      localStorage.setItem('tasbih_vibe', vibeEnabled);
-    });
-
-    invisibleToggleSetting.checked = invisibleMode;
-    invisibleToggleSetting.addEventListener('change', (e) => {
-      invisibleMode = e.target.checked;
-      localStorage.setItem('tasbih_invisible_mode', invisibleMode);
-      updatePrivacyVisibility();
-    });
-
-    focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
-    unhideBtn.addEventListener('click', () => toggleFocusMode(false));
-
-    resetTodayBtn.addEventListener('click', resetTodayLogs);
-    masterResetBtn.addEventListener('click', performMasterReset);
-
-    historyDatePicker.value = new Date().toISOString().split('T')[0];
-    historyDatePicker.addEventListener('change', updateHistoryView);
-    historyDhikrSelect.addEventListener('change', updateHistoryView);
-
-    soundToggle.checked = soundEnabled;
-    vibeToggle.checked = vibeEnabled;
-    renderDhikrOptions();
-    applyTheme(currentTheme);
-    renderDates();
-    updateUI();
+    // Run Application Initialization
+    document.addEventListener('DOMContentLoaded', initApp);
   </script>
 </body>
 </html>
