@@ -1,76 +1,45 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="charcoal">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
-  <title>An-Noor Tasbih</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Offline Tasbih</title>
   
-  <link rel="manifest" id="manifest-placeholder" />
-  <meta name="theme-color" content="#0a0a0a" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link id="manifest-placeholder" rel="manifest">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <style>
     :root {
-      --bg-primary: #0a0a0a;
-      --bg-card: #141414;
-      --bg-card-hover: #1f1f1f;
-      --text-main: #f5f5f7;
-      --text-muted: #8e8e93;
-      --accent: #d4af37;
-      --accent-soft: #f3e5ab;
-      --accent-glow: rgba(212, 175, 55, 0.25);
-      --border-color: #2c2c2e;
-      --radius: 18px;
-      --font-main: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --bg: #0a0a0a;
+      --card: #141414;
+      --border: #262626;
+      --accent: #737373;
+      --accent-soft: #d4d4d4;
+      --text: #f5f5f5;
+      --text-muted: #737373;
     }
 
-    [data-theme="emerald"] {
-      --bg-primary: #04130c;
-      --bg-card: #0a2318;
-      --bg-card-hover: #123425;
-      --text-main: #ecfdf5;
-      --text-muted: #6ee7b7;
-      --accent: #10b981;
-      --accent-soft: #a7f3d0;
-      --accent-glow: rgba(16, 185, 129, 0.25);
-      --border-color: #14532d;
+    [data-theme="amber"] {
+      --accent: #d97706;
+      --accent-soft: #fbbf24;
     }
 
-    [data-theme="midnight"] {
-      --bg-primary: #050b14;
-      --bg-card: #0e1726;
-      --bg-card-hover: #17253d;
-      --text-main: #f0f6fc;
-      --text-muted: #8b949e;
-      --accent: #38bdf8;
-      --accent-soft: #bae6fd;
-      --accent-glow: rgba(56, 189, 248, 0.25);
-      --border-color: #1e293b;
+    [data-theme="sage"] {
+      --accent: #059669;
+      --accent-soft: #34d399;
     }
 
-    [data-theme="rose"] {
-      --bg-primary: #14050b;
-      --bg-card: #240e17;
-      --bg-card-hover: #361724;
-      --text-main: #fff1f2;
-      --text-muted: #fda4af;
-      --accent: #fb7185;
-      --accent-soft: #fecdd3;
-      --accent-glow: rgba(251, 113, 133, 0.25);
-      --border-color: #4c0519;
+    [data-theme="navy"] {
+      --accent: #2563eb;
+      --accent-soft: #60a5fa;
     }
 
-    [data-theme="contrast"] {
-      --bg-primary: #000000;
-      --bg-card: #111111;
-      --bg-card-hover: #222222;
-      --text-main: #ffffff;
-      --text-muted: #aaaaaa;
-      --accent: #ffffff;
-      --accent-soft: #ffffff;
-      --accent-glow: rgba(255, 255, 255, 0.3);
-      --border-color: #444444;
+    [data-theme="charcoal"] {
+      --accent: #737373;
+      --accent-soft: #d4d4d4;
     }
 
     * {
@@ -79,647 +48,724 @@
       padding: 0;
       user-select: none;
       -webkit-user-select: none;
-      -webkit-tap-highlight-color: transparent;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     }
 
     body {
-      background-color: var(--bg-primary);
-      color: var(--text-main);
-      font-family: var(--font-main);
+      background-color: var(--bg);
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: space-between;
       padding: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease;
-      overflow-x: hidden;
+      touch-action: manipulation;
     }
 
-    .container {
+    header, main, section {
       width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 1.2rem;
-      padding-bottom: 2rem;
+      max-width: 440px;
     }
 
-    header {
+    .top-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.5rem 0;
+      margin-bottom: 0.5rem;
+      gap: 0.5rem;
     }
 
-    .brand-title {
-      font-size: 1.25rem;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-      color: var(--accent);
+    .brand-logo-card {
+      background: #000000;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-logo-card svg {
+      width: 28px;
+      height: 28px;
     }
 
     .icon-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 0.5rem 0.8rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text);
+      width: 44px;
+      height: 44px;
       border-radius: 12px;
-      cursor: pointer;
-      font-size: 0.9rem;
       display: flex;
       align-items: center;
-      gap: 0.4rem;
-      transition: background 0.2s ease, transform 0.1s ease;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 1.2rem;
+      flex-shrink: 0;
     }
 
-    .icon-btn:active {
-      transform: scale(0.96);
-      background: var(--bg-card-hover);
+    .icon-btn svg {
+      width: 20px;
+      height: 20px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
     }
 
-    .card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      padding: 1.2rem;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    }
-
-    .date-card {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
+    .full-date-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 0.6rem 0.8rem;
+      border: 1px solid var(--border);
       text-align: center;
-    }
-
-    .gregorian-date {
-      font-size: 1.1rem;
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .hijri-date {
-      font-size: 0.9rem;
-      color: var(--accent-soft);
-      font-weight: 500;
-    }
-
-    .dhikr-selector-card {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.15rem;
+      flex-grow: 1;
     }
 
-    .dhikr-selector-card label {
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+    .gregorian-text {
+      font-size: 0.8rem;
       color: var(--text-muted);
     }
 
-    select, input[type="date"], input[type="text"], input[type="number"] {
+    .hijri-text {
+      font-size: 0.95rem;
+      color: var(--accent-soft);
+      font-weight: 600;
+    }
+
+    select, input[type="date"], input[type="range"], input[type="text"], input[type="number"] {
       width: 100%;
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 0.75rem 1rem;
+      padding: 0.75rem;
       border-radius: 12px;
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
       font-size: 0.95rem;
       outline: none;
-      font-family: var(--font-main);
     }
 
-    select:focus, input:focus {
-      border-color: var(--accent);
+    select option {
+      background: #141414;
+      color: #f5f5f5;
     }
 
-    .counter-display-card {
+    input[type="date"].has-data {
+      border-color: var(--accent-soft);
+      background: rgba(255, 255, 255, 0.05);
+    }
+
+    main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      margin: 0.75rem 0;
+    }
+
+    .main-card {
+      background: var(--card);
+      border-radius: 28px;
+      padding: 1.75rem 1rem;
+      text-align: center;
+      border: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      padding: 2rem 1rem;
-      gap: 0.5rem;
-      position: relative;
+      width: 100%;
     }
 
-    .counter-value {
-      font-size: 4.5rem;
+    .counter-display {
+      font-size: 6.5rem;
       font-weight: 800;
-      color: var(--accent);
+      color: var(--accent-soft);
       line-height: 1;
+      margin: 0.25rem 0 0.5rem 0;
       font-variant-numeric: tabular-nums;
       cursor: pointer;
-      transition: transform 0.1s ease;
+      transition: opacity 0.15s ease;
     }
 
-    .counter-value:active {
-      transform: scale(0.95);
+    .counter-display:active {
+      opacity: 0.7;
     }
 
     .target-info {
-      font-size: 0.85rem;
       color: var(--text-muted);
+      font-size: 0.85rem;
       cursor: pointer;
+      text-decoration: underline dotted;
     }
 
-    .target-info span {
-      color: var(--text-main);
-      font-weight: 600;
-    }
-
-    .tap-area-btn {
+    .tap-area {
       width: 100%;
-      height: 180px;
-      background: radial-gradient(circle, var(--bg-card-hover) 0%, var(--bg-card) 100%);
-      border: 2px solid var(--accent);
-      border-radius: var(--radius);
-      color: var(--text-main);
-      font-size: 1.2rem;
-      font-weight: 600;
-      letter-spacing: 1px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 1.25rem 0;
+    }
+
+    .tap-btn {
+      width: 300px;
+      height: 300px;
+      max-width: 80vw;
+      max-height: 80vw;
+      border-radius: 50%;
+      border: 6px solid var(--accent-soft);
+      background: transparent;
+      color: var(--accent-soft);
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 3px;
       cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 0 15px var(--accent-glow);
-      transition: transform 0.05s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      touch-action: manipulation;
+      transition: transform 0.05s ease, border-width 0.05s ease, box-shadow 0.2s ease;
     }
 
-    .tap-area-btn:active {
-      transform: scale(0.98);
-      box-shadow: 0 0 25px var(--accent-glow);
-    }
-
-    .tap-area-btn.pulse {
-      animation: visualPulse 0.3s ease-out;
+    .tap-btn:active {
+      transform: scale(0.96);
+      border-width: 8px;
+      background: rgba(255, 255, 255, 0.03);
     }
 
     @keyframes visualPulse {
-      0% { border-color: var(--accent); box-shadow: 0 0 35px var(--accent); }
-      50% { border-color: #ffffff; box-shadow: 0 0 50px #ffffff; }
-      100% { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+      0% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
+      50% { transform: scale(1.08); box-shadow: 0 0 35px var(--accent-soft); }
+      100% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
     }
 
-    .controls-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.8rem;
+    .tap-btn.pulse {
+      animation: visualPulse 0.4s ease-out;
+    }
+
+    .desktop-hint {
+      display: none;
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+
+    @media (min-width: 768px) {
+      .desktop-hint {
+        display: block;
+      }
+    }
+
+    .controls {
+      display: flex;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .control-btn {
+      flex: 1;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+
+    .control-btn:active {
+      background: var(--border);
+    }
+
+    .stats-card {
+      background: var(--card);
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      border: 1px solid var(--border);
+      margin-top: 1rem;
+    }
+
+    .stats-title {
+      font-size: 0.95rem;
+      font-weight: 600;
+      margin-bottom: 0.6rem;
+      color: var(--accent-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
     .stat-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 0.6rem 0;
-      border-bottom: 1px solid var(--border-color);
-      font-size: 0.9rem;
+      padding: 0.45rem 0;
+      font-size: 0.85rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--text-muted);
+    }
+
+    .stat-row strong {
+      color: var(--text);
     }
 
     .stat-row:last-child {
       border-bottom: none;
     }
 
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.85);
-      backdrop-filter: blur(5px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 1000;
-      padding: 1rem;
+    .edit-icon-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-left: 0.4rem;
     }
 
-    .modal {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius);
-      width: 100%;
-      max-width: 420px;
-      max-height: 85vh;
-      overflow-y: auto;
+    .edit-icon-btn:hover {
+      color: var(--accent-soft);
+    }
+
+    .unhide-pill {
+      opacity: 0;
+      pointer-events: none;
+      position: fixed;
+      top: 1.25rem;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--card);
+      border: 1px solid var(--accent-soft);
+      color: var(--accent-soft);
+      padding: 0.6rem 1.25rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      z-index: 50;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.7);
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .unhide-pill svg {
+      width: 16px;
+      height: 16px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+    }
+
+    .unhide-pill.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.85);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem;
+      z-index: 100;
+    }
+
+    .modal-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
       padding: 1.5rem;
+      width: 100%;
+      max-width: 380px;
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
+      gap: 1rem;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-
-    .modal-title {
       font-size: 1.1rem;
-      font-weight: 700;
-      color: var(--accent);
+      font-weight: 600;
     }
 
-    .close-btn {
-      background: none;
+    .modal-actions {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: flex-end;
+      margin-top: 0.5rem;
+    }
+
+    .btn-primary {
+      background: var(--accent-soft);
+      color: #000;
       border: none;
-      color: var(--text-muted);
-      font-size: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 600;
       cursor: pointer;
     }
 
-    .setting-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
+    .btn-danger {
+      background: #ef4444;
+      color: #ffffff;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
     }
 
-    .setting-group label {
-      font-size: 0.8rem;
+    .btn-secondary {
+      background: transparent;
       color: var(--text-muted);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      border: 1px solid var(--border);
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      cursor: pointer;
     }
 
-    .switch-label {
+    .setting-item {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.95rem;
-      cursor: pointer;
+      font-size: 0.9rem;
+      gap: 0.5rem;
     }
 
-    .switch-label input[type="checkbox"] {
-      width: 20px;
+    .toggle-switch {
+      position: relative;
+      width: 48px;
+      height: 26px;
+      flex-shrink: 0;
+    }
+
+    .toggle-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--border);
+      transition: .2s;
+      border-radius: 26px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
       height: 20px;
-      accent-color: var(--accent);
+      width: 20px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      transition: .2s;
+      border-radius: 50%;
     }
 
-    .danger-btn {
-      background: rgba(239, 68, 68, 0.15);
-      border: 1px solid #ef4444;
-      color: #ef4444;
-      padding: 0.75rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      font-weight: 600;
-      transition: background 0.2s;
+    input:checked + .slider {
+      background-color: var(--accent);
     }
 
-    .danger-btn:active {
-      background: rgba(239, 68, 68, 0.3);
+    input:checked + .slider:before {
+      transform: translateX(22px);
     }
 
-    .secondary-btn {
-      background: var(--bg-primary);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 0.75rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      cursor: pointer;
-      font-weight: 600;
-    }
-
-    /* Privacy/Focus Mode Overlay Settings */
-    body.focus-mode header,
-    body.focus-mode .date-card,
-    body.focus-mode .dhikr-selector-card,
-    body.focus-mode .counter-display-card,
-    body.focus-mode .controls-grid,
-    body.focus-mode .history-section,
-    body.focus-mode .lifetime-section {
-      display: none !important;
-    }
-
-    body.focus-mode .container {
-      height: 100vh;
-      justify-content: center;
-      padding-bottom: 0;
-    }
-
-    body.focus-mode .tap-area-btn {
-      height: 70vh;
-      font-size: 1.5rem;
-    }
-
-    body.invisible-mode .tap-area-btn {
-      opacity: 0.03;
-      border-color: transparent;
-      box-shadow: none;
-    }
-
-    .unhide-btn {
-      display: none;
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      z-index: 500;
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      color: var(--text-main);
-      padding: 0.5rem 1rem;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      opacity: 0.6;
-    }
-
-    .unhide-btn.visible {
-      display: block;
-    }
-
-    .edit-icon-btn, .delete-btn {
-      background: none;
+    .delete-btn {
+      background: transparent;
       border: none;
-      color: var(--text-muted);
+      color: #ef4444;
       cursor: pointer;
-      font-size: 0.9rem;
+      font-size: 1rem;
       padding: 0.2rem 0.4rem;
     }
 
-    .edit-icon-btn:hover, .delete-btn:hover {
-      color: var(--accent);
+    body.focus-mode header,
+    body.focus-mode section,
+    body.focus-mode .controls,
+    body.focus-mode .target-info,
+    body.focus-mode #preset-select {
+      display: none !important;
     }
 
-    .permission-banner {
-      background: var(--bg-card);
-      border: 1px solid var(--accent);
-      border-radius: var(--radius);
-      padding: 1rem;
-      display: none;
-      flex-direction: column;
-      gap: 0.6rem;
-      text-align: center;
-    }
-
-    .permission-banner button {
-      background: var(--accent);
-      color: #000;
+    body.focus-mode .main-card {
       border: none;
-      padding: 0.6rem;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-
-    input[type="date"].has-data {
-      border-color: var(--accent);
+      background: transparent;
     }
   </style>
 </head>
 <body>
 
-  <button class="unhide-btn" id="unhide-btn">👁️ Exit Focus Mode</button>
+  <button class="unhide-pill" id="unhide-btn">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+    Exit Focus Mode
+  </button>
 
-  <div class="container">
-    <header>
-      <div class="brand-title">
-        <svg width="24" height="24" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <path d="M330 110 R15" fill="var(--accent)"/>
-          <circle cx="330" cy="110" r="14" fill="var(--accent)"/>
-          <circle cx="370" cy="140" r="14" fill="var(--accent)"/>
-          <circle cx="395" cy="180" r="14" fill="var(--accent)"/>
-          <circle cx="405" cy="225" r="14" fill="var(--accent)"/>
-          <circle cx="395" cy="270" r="14" fill="var(--accent)"/>
-          <circle cx="370" cy="310" r="14" fill="var(--accent)"/>
-          <circle cx="330" cy="340" r="14" fill="var(--accent)"/>
-          <circle cx="280" cy="355" r="14" fill="var(--accent)"/>
-          <circle cx="230" cy="345" r="14" fill="var(--accent)"/>
-          <circle cx="190" cy="315" r="14" fill="var(--accent)"/>
-          <circle cx="165" cy="270" r="14" fill="var(--accent)"/>
-          <circle cx="160" cy="225" r="18" fill="var(--accent)"/>
-          <circle cx="175" cy="180" r="14" fill="var(--accent)"/>
-          <circle cx="205" cy="140" r="14" fill="var(--accent)"/>
-          <circle cx="245" cy="115" r="14" fill="var(--accent)"/>
-          <circle cx="288" cy="105" r="14" fill="var(--accent)"/>
-          <path d="M 148 238 L 120 265" stroke="var(--accent)" stroke-width="4.5" stroke-linecap="round"/>
-          <path d="M 120 265 Q 110 270 102 282 L 115 295 Q 125 285 130 275 Z" fill="var(--accent)"/>
-          <g stroke="var(--accent)" stroke-width="3" stroke-linecap="round">
-            <line x1="105" y1="290" x2="65" y2="340"/>
-            <line x1="110" y1="293" x2="78" y2="348"/>
-            <line x1="115" y1="295" x2="92" y2="352"/>
-            <line x1="120" y1="293" x2="108" y2="348"/>
-            <line x1="124" y1="288" x2="120" y2="340"/>
+  <header>
+    <div class="top-bar">
+      <div class="brand-logo-card" title="Offline Tasbih">
+        <svg viewBox="0 0 512 512">
+          <g fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2">
+            <circle cx="256" cy="140" r="18"/>
+            <circle cx="310" cy="155" r="18"/>
+            <circle cx="355" cy="190" r="18"/>
+            <circle cx="380" cy="240" r="18"/>
+            <circle cx="380" cy="295" r="18"/>
+            <circle cx="355" cy="345" r="18"/>
+            <circle cx="310" cy="380" r="18"/>
+            <circle cx="256" cy="395" r="18"/>
+            <circle cx="202" cy="380" r="18"/>
+            <circle cx="157" cy="345" r="18"/>
+            <circle cx="132" cy="295" r="18"/>
+            <circle cx="132" cy="240" r="18"/>
+            <circle cx="157" cy="190" r="18"/>
+            <circle cx="202" cy="155" r="18"/>
           </g>
+          <path d="M 256 122 L 256 70" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
+          <circle cx="256" cy="65" r="10" fill="#FFFFFF"/>
         </svg>
-        <span>An-Noor Tasbih</span>
       </div>
-      <button class="icon-btn" id="settings-open-btn">⚙️ Settings</button>
-    </header>
 
-    <div class="permission-banner" id="permission-banner">
-      <div style="font-size: 0.9rem; font-weight: 600;">Enable Haptic Vibration</div>
-      <div style="font-size: 0.8rem; color: var(--text-muted);">Tap below to grant haptic tactile feedback permissions.</div>
-      <button id="enable-haptics-btn">Enable Haptics</button>
-    </div>
-
-    <div class="card date-card">
-      <div class="gregorian-date" id="gregorian-date">Loading date...</div>
-      <div class="hijri-date" id="hijri-date">Calculating Hijri...</div>
-    </div>
-
-    <div class="card dhikr-selector-card">
-      <label for="preset-select">Active Dhikr Phrase</label>
-      <select id="preset-select"></select>
-    </div>
-
-    <div class="card counter-display-card">
-      <div class="counter-value" id="count">0</div>
-      <div class="target-info" id="target-info-label">Target: <span id="target-count">33</span> (Tap number to edit)</div>
-    </div>
-
-    <button class="tap-area-btn" id="tap-btn">TAP TO COUNT</button>
-
-    <div class="controls-grid">
-      <button class="icon-btn" id="reset-btn" style="justify-content: center; padding: 0.8rem;">🔄 Reset Session</button>
-      <button class="icon-btn" id="target-btn" style="justify-content: center; padding: 0.8rem;">🎯 Target: 33</button>
-    </div>
-
-    <div class="card history-section">
-      <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
-        <span>Daily History Logs</span>
-        <button class="danger-btn" id="reset-today-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Reset Today</button>
+      <div class="full-date-card">
+        <div class="gregorian-text" id="gregorian-date">Loading date...</div>
+        <div class="hijri-text" id="hijri-date">Loading Hijri...</div>
       </div>
-      <div style="display: flex; flex-direction: column; gap: 0.8rem;">
-        <div>
-          <label style="font-size:0.75rem; color:var(--text-muted);">SELECT DATE</label>
-          <input type="date" id="history-date-picker" />
-        </div>
-        <div>
-          <label style="font-size:0.75rem; color:var(--text-muted);">FILTER BY DHIKR</label>
-          <select id="history-dhikr-select"></select>
-        </div>
-        <div style="background: var(--bg-primary); padding: 0.8rem; border-radius: 12px; display: flex; flex-direction: column; gap: 0.4rem;">
-          <div class="stat-row" style="padding: 0; border: none;">
-            <span style="color: var(--text-muted);" id="history-dhikr-label">Selected Dhikr Count:</span>
-            <strong id="history-count-selected">0</strong>
-          </div>
-          <div class="stat-row" style="padding: 0; border: none;">
-            <span style="color: var(--text-muted);">Total All Dhikrs On Date:</span>
-            <strong id="history-count-total">0</strong>
-          </div>
-        </div>
+
+      <button class="icon-btn" id="focus-toggle-btn" title="Focus Mode">
+        <svg viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="3" />
+          <line x1="12" y1="1" x2="12" y2="4" />
+          <line x1="12" y1="20" x2="12" y2="23" />
+          <line x1="1" y1="12" x2="4" y2="12" />
+          <line x1="20" y1="12" x2="23" y2="12" />
+        </svg>
+      </button>
+
+      <button class="icon-btn" id="settings-open-btn" title="Settings">⚙️</button>
+    </div>
+
+    <select id="preset-select"></select>
+  </header>
+
+  <main>
+    <div class="main-card">
+      <div class="target-info" id="target-info-label" title="Click to set custom target">Target: <span id="target-count">33</span> ✏️</div>
+      <div class="counter-display" id="count" title="Tap to set count directly">0</div>
+      
+      <div class="tap-area">
+        <button class="tap-btn" id="tap-btn">TAP</button>
+      </div>
+      <div class="desktop-hint">Press [Spacebar] or click screen to count</div>
+
+      <div class="controls">
+        <button class="control-btn" id="reset-btn">Reset Session</button>
+        <button class="control-btn" id="target-btn">Target: 33</button>
       </div>
     </div>
+  </main>
 
-    <div class="card lifetime-section">
-      <div style="font-size: 0.9rem; font-weight: 700; color: var(--accent); margin-bottom: 0.8rem; display: flex; justify-content: space-between; align-items: center;">
-        <span>Lifetime Counts</span>
-        <button class="icon-btn" id="open-offsets-btn" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">Adjustments</button>
-      </div>
-      <div id="lifetime-list"></div>
-      <div class="stat-row" style="margin-top: 0.5rem; font-weight: 700;">
-        <span>All-Time Grand Total</span>
-        <strong id="history-all-time-total" style="color: var(--accent);">0</strong>
-      </div>
+  <section class="stats-card">
+    <div class="stats-title">
+      <span>Total Cumulative Dhikr</span>
+      <button class="btn-secondary" id="open-offsets-btn" style="font-size:0.75rem; padding:0.25rem 0.6rem;">Adjustments Log</button>
     </div>
-  </div>
+    <div id="lifetime-list"></div>
+  </section>
+
+  <section class="stats-card">
+    <div class="stats-title">Look Back at History</div>
+    
+    <div class="stat-row" style="background: rgba(255,255,255,0.03); padding: 0.75rem; border-radius: 12px; margin-bottom: 0.75rem;">
+      <span style="font-weight: 600;">All-Time Cumulative Dhikr:</span>
+      <strong id="history-all-time-total" style="font-size: 1.1rem; color: var(--accent-soft);">0</strong>
+    </div>
+
+    <div style="margin-bottom: 0.75rem;">
+      <label for="history-date-picker" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Choose a date...</label>
+      <input type="date" id="history-date-picker">
+    </div>
+
+    <div style="margin-bottom: 0.75rem;">
+      <label for="history-dhikr-select" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">Select Dhikr to View:</label>
+      <select id="history-dhikr-select"></select>
+    </div>
+
+    <div class="stat-row">
+      <span>Selected Dhikr (<span id="history-dhikr-label">Dhikr</span>):</span>
+      <strong id="history-count-selected">0</strong>
+    </div>
+    <div class="stat-row">
+      <span>All Dhikr Total on this Date:</span>
+      <strong id="history-count-total">0</strong>
+    </div>
+
+    <button class="btn-danger" id="reset-today-btn" style="width:100%; margin-top:0.75rem; font-size:0.8rem; padding:0.5rem;">Reset Today's Logged Data</button>
+  </section>
 
   <div class="modal-overlay" id="settings-modal">
-    <div class="modal">
+    <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title">Settings & Customization</div>
-        <button class="close-btn" id="settings-close-btn">&times;</button>
+        <span>Settings</span>
+        <button class="icon-btn" id="settings-close-btn" style="border:none; background:transparent;">✕</button>
       </div>
 
-      <div class="setting-group">
-        <label>Color Theme</label>
-        <select id="theme-select">
-          <option value="charcoal">Charcoal Gold (Default)</option>
-          <option value="emerald">Islamic Emerald</option>
-          <option value="midnight">Midnight Blue</option>
-          <option value="rose">Rose Velvet</option>
-          <option value="contrast">High Contrast Monochrome</option>
+      <div class="setting-item">
+        <span>Accent Theme</span>
+        <select id="theme-select" style="width: auto; padding: 0.4rem;">
+          <option value="charcoal">OLED Charcoal (Default)</option>
+          <option value="amber">Amber Warmth</option>
+          <option value="sage">Sage Calm</option>
+          <option value="navy">Midnight Navy</option>
         </select>
       </div>
 
-      <div class="setting-group">
-        <label class="switch-label">
-          <span>Target Alert Sound</span>
-          <input type="checkbox" id="sound-toggle" checked />
+      <div class="setting-item">
+        <span>Target Sound Alert</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="sound-toggle" checked>
+          <span class="slider"></span>
         </label>
       </div>
 
-      <div class="setting-group">
-        <label>Alert Tone</label>
-        <select id="tone-select">
-          <option value="chime">Soft Chime</option>
-          <option value="bell">Resonant Bell</option>
-          <option value="pulse">Digital Pulse</option>
+      <div class="setting-item">
+        <span>Alert Tone</span>
+        <select id="tone-select" style="width: auto; padding: 0.4rem;">
+          <option value="chime">Chime</option>
+          <option value="bell">Soft Bell</option>
+          <option value="pulse">Soft Pulse</option>
         </select>
       </div>
 
-      <div class="setting-group">
-        <label>Alert Volume</label>
-        <input type="range" id="volume-range" min="0.05" max="1" step="0.05" value="0.3" />
+      <div class="setting-item">
+        <span>Volume</span>
+        <input type="range" id="volume-range" min="0" max="1" step="0.1" value="0.3" style="width: 100px;">
       </div>
 
-      <div class="setting-group">
-        <label class="switch-label">
-          <span>Target Visual Flash</span>
-          <input type="checkbox" id="visual-haptic-toggle" checked />
+      <div class="setting-item">
+        <span>Visual Ring Pulse Alert</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="visual-haptic-toggle" checked>
+          <span class="slider"></span>
         </label>
       </div>
 
-      <div class="setting-group">
-        <label class="switch-label">
-          <span>Haptic Vibration</span>
-          <input type="checkbox" id="vibe-toggle" checked />
+      <div class="setting-item">
+        <span>Target Vibration</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="vibe-toggle" checked>
+          <span class="slider"></span>
         </label>
       </div>
 
-      <div class="setting-group">
-        <label class="switch-label">
-          <span>Focus Mode (Full Screen Button)</span>
-          <input type="checkbox" id="focus-toggle-setting" />
+      <div class="setting-item">
+        <span>Focus Mode (Hide UI)</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="focus-toggle-setting">
+          <span class="slider"></span>
         </label>
       </div>
 
-      <div class="setting-group">
-        <label class="switch-label">
-          <span>Invisible Button in Focus Mode</span>
-          <input type="checkbox" id="invisible-toggle-setting" />
-        </label>
-      </div>
-
-      <button class="secondary-btn" id="focus-toggle-btn">Enter Full-Screen Focus Mode</button>
-
-      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;" class="setting-group">
-        <label>Manage Dhikr List</label>
-        <div id="custom-dhikr-manager-list" style="display:flex; flex-direction:column; gap:0.4rem;"></div>
-      </div>
-
-      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
-        <label>Data Backup & Restore</label>
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-          <button class="secondary-btn" id="export-data-btn">Export Data</button>
-          <button class="secondary-btn" id="import-data-btn">Restore Data</button>
-          <input type="file" id="import-file-input" accept=".json" style="display: none;" />
+      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Data Backup & Restore</div>
+        <div style="display:flex; gap:0.5rem;">
+          <button class="btn-secondary" id="export-data-btn" style="flex:1; font-size:0.8rem;">Export Backup</button>
+          <button class="btn-secondary" id="import-data-btn" style="flex:1; font-size:0.8rem;">Import Backup</button>
         </div>
+        <input type="file" id="import-file-input" accept=".json" style="display:none;">
       </div>
 
-      <div style="border-top: 1px solid var(--border-color); padding-top: 1rem;">
-        <button class="danger-btn" id="master-reset-btn" style="width: 100%;">Master Reset All Data</button>
+      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Manage All Dhikrs</div>
+        <div id="custom-dhikr-manager-list"></div>
+      </div>
+
+      <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
+        <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: #ef4444;">Master Reset</div>
+        <button class="btn-danger" id="master-reset-btn" style="width:100%; font-size:0.8rem;">Clear All Lifetime Data & Settings</button>
       </div>
     </div>
   </div>
 
   <div class="modal-overlay" id="offsets-modal">
-    <div class="modal">
+    <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title">Manual Count Adjustments</div>
-        <button class="close-btn" id="offsets-close-btn">&times;</button>
+        <span>Manual Adjustments Log</span>
+        <button class="icon-btn" id="offsets-close-btn" style="border:none; background:transparent;">✕</button>
       </div>
-      <div style="font-size: 0.85rem; color: var(--text-muted);">These adjustments are added to your logged totals to calculate your lifetime count.</div>
+      <div style="font-size: 0.8rem; color: var(--text-muted);">
+        Below are manual count adjustments applied to balance cumulative totals:
+      </div>
       <div id="offsets-modal-list"></div>
-      <button class="secondary-btn" id="clear-offsets-btn" style="margin-top: 0.5rem;">Clear Manual Adjustments</button>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="clear-offsets-btn" style="color: #ef4444; border-color: #ef4444;">Reset Adjustments</button>
+      </div>
     </div>
   </div>
 
   <div class="modal-overlay" id="input-modal">
-    <div class="modal">
+    <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title" id="input-modal-title">Input Value</div>
-        <button class="close-btn" id="input-modal-close">&times;</button>
+        <span id="input-modal-title">Enter Value</span>
+        <button class="icon-btn" id="input-modal-close" style="border:none; background:transparent;">✕</button>
       </div>
-      <input type="text" id="input-modal-field" />
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-        <button class="secondary-btn" id="input-modal-cancel">Cancel</button>
-        <button class="secondary-btn" id="input-modal-submit" style="background: var(--accent); color: #000; border: none; font-weight: 700;">Save</button>
+      <div id="input-modal-body">
+        <input type="text" id="input-modal-field" autocomplete="off">
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="input-modal-cancel">Cancel</button>
+        <button class="btn-primary" id="input-modal-submit">Save</button>
       </div>
     </div>
   </div>
 
   <div class="modal-overlay" id="confirm-modal">
-    <div class="modal">
+    <div class="modal-card">
       <div class="modal-header">
-        <div class="modal-title" id="confirm-modal-title">Confirm Action</div>
-        <button class="close-btn" id="confirm-modal-close">&times;</button>
+        <span id="confirm-modal-title">Confirm Action</span>
+        <button class="icon-btn" id="confirm-modal-close" style="border:none; background:transparent;">✕</button>
       </div>
-      <div id="confirm-modal-message" style="font-size: 0.9rem; color: var(--text-main);">Are you sure?</div>
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem;">
-        <button class="secondary-btn" id="confirm-modal-cancel">Cancel</button>
-        <button class="danger-btn" id="confirm-modal-submit">Confirm</button>
+      <div id="confirm-modal-message" style="font-size: 0.9rem; color: var(--text-muted);">
+        Are you sure?
+      </div>
+      <div class="modal-actions">
+        <button class="btn-secondary" id="confirm-modal-cancel">Cancel</button>
+        <button class="btn-danger" id="confirm-modal-submit">Confirm</button>
       </div>
     </div>
   </div>
 
   <script>
+    // --- 1. Service Worker & PWA Manifest Auto-Installer ---
     (function registerDynamicPWA() {
       const manifestData = {
-        name: "An-Noor Tasbih",
-        short_name: "An-Noor",
+        name: "Offline Tasbih",
+        short_name: "Tasbih",
         start_url: "./",
         display: "standalone",
         background_color: "#0a0a0a",
         theme_color: "#0a0a0a",
         icons: [{
-          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='330' cy='110' r='15'/><circle cx='370' cy='140' r='15'/><circle cx='395' cy='180' r='15'/><circle cx='405' cy='225' r='15'/><circle cx='395' cy='270' r='15'/><circle cx='370' cy='310' r='15'/><circle cx='330' cy='340' r='15'/><circle cx='280' cy='355' r='15'/><circle cx='230' cy='345' r='15'/><circle cx='190' cy='315' r='15'/><circle cx='165' cy='270' r='15'/><circle cx='160' cy='225' r='20'/><circle cx='175' cy='180' r='15'/><circle cx='205' cy='140' r='15'/><circle cx='245' cy='115' r='15'/><circle cx='288' cy='105' r='15'/></g><path d='M 148 238 L 120 265' stroke='%23FFFFFF' stroke-width='4.5' stroke-linecap='round'/><path d='M 120 265 Q 110 270 102 282 L 115 295 Q 125 285 130 275 Z' fill='%23FFFFFF'/><g stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round'><line x1='105' y1='290' x2='65' y2='340'/><line x1='110' y1='293' x2='78' y2='348'/><line x1='115' y1='295' x2='92' y2='352'/><line x1='120' y1='293' x2='108' y2='348'/><line x1='124' y1='288' x2='120' y2='340'/></g></svg>",
+          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='256' cy='140' r='18'/><circle cx='310' cy='155' r='18'/><circle cx='355' cy='190' r='18'/><circle cx='380' cy='240' r='18'/><circle cx='380' cy='295' r='18'/><circle cx='355' cy='345' r='18'/><circle cx='310' cy='380' r='18'/><circle cx='256' cy='395' r='18'/><circle cx='202' cy='380' r='18'/><circle cx='157' cy='345' r='18'/><circle cx='132' cy='295' r='18'/><circle cx='132' cy='240' r='18'/><circle cx='157' cy='190' r='18'/><circle cx='202' cy='155' r='18'/></g></svg>",
           sizes: "192x192 512x512",
           type: "image/svg+xml"
         }]
@@ -730,7 +776,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'annoor-tasbih-v7';
+          const CACHE_NAME = 'tasbih-v4';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -746,6 +792,7 @@
       }
     })();
 
+    // --- 2. Core App State & Logic ---
     const HIJRI_MONTHS = [
       "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
       "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
@@ -774,8 +821,7 @@
     let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
     let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
     let focusMode = false;
-    let invisibleMode = localStorage.getItem('tasbih_invisible_mode') === 'true';
-    let lastTapTime = 0;
+    let unhideTimeout = null;
 
     function setCleanURL(dhikrName) {
       if (window.history && window.history.replaceState) {
@@ -813,20 +859,18 @@
     const vibeToggle = document.getElementById('vibe-toggle');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
-    const invisibleToggleSetting = document.getElementById('invisible-toggle-setting');
     const unhideBtn = document.getElementById('unhide-btn');
     const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
     const masterResetBtn = document.getElementById('master-reset-btn');
 
-    const permissionBanner = document.getElementById('permission-banner');
-    const enableHapticsBtn = document.getElementById('enable-haptics-btn');
-
+    // Adjustments Log Modal
     const offsetsModal = document.getElementById('offsets-modal');
     const openOffsetsBtn = document.getElementById('open-offsets-btn');
     const offsetsCloseBtn = document.getElementById('offsets-close-btn');
     const offsetsModalList = document.getElementById('offsets-modal-list');
     const clearOffsetsBtn = document.getElementById('clear-offsets-btn');
 
+    // Dynamic Input & Confirm Modals
     const inputModal = document.getElementById('input-modal');
     const inputModalTitle = document.getElementById('input-modal-title');
     const inputModalField = document.getElementById('input-modal-field');
@@ -1003,64 +1047,14 @@
 
     function triggerVibration(pattern) {
       if (vibeEnabled && 'vibrate' in navigator) {
-        try { 
-          navigator.vibrate(pattern); 
-        } catch (e) {}
+        try { navigator.vibrate(pattern); } catch (e) {}
       }
     }
-
-    function isMobileDevice() {
-      return ('ontouchstart' in window || navigator.maxTouchPoints > 0);
-    }
-
-    function checkPermissionsBanner() {
-      if (isMobileDevice() && !localStorage.getItem('tasbih_permissions_acknowledged')) {
-        permissionBanner.style.display = 'flex';
-      }
-    }
-
-    enableHapticsBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      initAudio();
-      triggerVibration([60, 40, 60]);
-      localStorage.setItem('tasbih_permissions_acknowledged', 'true');
-      permissionBanner.style.display = 'none';
-    });
 
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       themeSelect.value = theme;
       localStorage.setItem('tasbih_theme', theme);
-    }
-
-    function calculateAccurateHijri(date) {
-      let day = date.getDate();
-      let month = date.getMonth();
-      let year = date.getFullYear();
-
-      let m = month + 1;
-      let y = year;
-      if (m < 3) {
-        y -= 1;
-        m += 12;
-      }
-
-      let a = Math.floor(y / 100);
-      let b = 2 - a + Math.floor(a / 4);
-
-      let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524;
-
-      let l = jd - 1948440 + 10632;
-      let n = Math.floor((l - 1) / 10631);
-      l = l - 10631 * n + 354;
-      let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
-      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
-      
-      let hMonth = Math.floor((24 * l) / 709);
-      let hDay = Math.floor(l - Math.floor((709 * hMonth) / 24));
-      let hYear = 30 * n + j - 30;
-
-      return { day: hDay, month: HIJRI_MONTHS[hMonth - 1] || HIJRI_MONTHS[0], year: hYear };
     }
 
     function renderDates() {
@@ -1069,8 +1063,19 @@
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
       try {
-        const hijri = calculateAccurateHijri(now);
-        hijriDateEl.textContent = `${hijri.day} ${hijri.month} ${hijri.year} AH`;
+        const parts = new Intl.DateTimeFormat('en-u-ca-islamic-num', {
+          day: 'numeric', month: 'numeric', year: 'numeric'
+        }).formatToParts(now);
+
+        let day = '', monthIdx = 0, year = '';
+        parts.forEach(p => {
+          if (p.type === 'day') day = p.value;
+          if (p.type === 'month') monthIdx = parseInt(p.value, 10) - 1;
+          if (p.type === 'year') year = p.value;
+        });
+
+        const monthName = HIJRI_MONTHS[monthIdx] || "Hijri";
+        hijriDateEl.textContent = `${day} ${monthName} ${year} AH`;
       } catch (e) {
         hijriDateEl.textContent = now.toLocaleDateString();
       }
@@ -1192,6 +1197,7 @@
       const selectedDate = historyDatePicker.value;
       const selectedDhikr = historyDhikrSelect.value || currentDhikr;
 
+      // Visual Highlight indicator if selected date has recorded activity
       const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
       if (hasActivityOnDate) {
         historyDatePicker.classList.add('has-data');
@@ -1259,20 +1265,21 @@
     function toggleFocusMode(state) {
       focusMode = state;
       focusToggleSetting.checked = focusMode;
-      
       if (focusMode) {
         document.body.classList.add('focus-mode');
-        unhideBtn.classList.add('visible');
-        if (invisibleMode) {
-          document.body.classList.add('invisible-mode');
-        } else {
-          document.body.classList.remove('invisible-mode');
-        }
       } else {
         document.body.classList.remove('focus-mode');
-        document.body.classList.remove('invisible-mode');
         unhideBtn.classList.remove('visible');
       }
+    }
+
+    function revealUnhideButton() {
+      if (!focusMode) return;
+      unhideBtn.classList.add('visible');
+      clearTimeout(unhideTimeout);
+      unhideTimeout = setTimeout(() => {
+        unhideBtn.classList.remove('visible');
+      }, 3000);
     }
 
     function handleTapAction() {
@@ -1314,17 +1321,18 @@
       localStorage.setItem('tasbih_dhikr', currentDhikr);
     }
 
+    // --- Data Export & Import ---
     document.getElementById('export-data-btn').addEventListener('click', () => {
       const exportObject = {
         logs: getLogs(),
         offsets: getManualOffsets(),
         allDhikrs: allDhikrList,
-        version: 7
+        version: 4
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = `annoor-tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
+      a.download = `tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
       a.click();
     });
 
@@ -1355,6 +1363,7 @@
       reader.readAsText(file);
     });
 
+    // --- Adjustments Log Modal Controls ---
     openOffsetsBtn.addEventListener('click', () => {
       renderOffsetsList();
       offsetsModal.style.display = 'flex';
@@ -1373,15 +1382,12 @@
       );
     });
 
+    // --- Main Event Listeners ---
     countEl.addEventListener('click', editCurrentCounter);
 
     document.addEventListener('pointerdown', (e) => {
       if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
-        const now = Date.now();
-        if (now - lastTapTime < 300) {
-          toggleFocusMode(false);
-        }
-        lastTapTime = now;
+        revealUnhideButton();
       }
     });
 
@@ -1473,13 +1479,6 @@
       localStorage.setItem('tasbih_vibe', vibeEnabled);
     });
 
-    invisibleToggleSetting.checked = invisibleMode;
-    invisibleToggleSetting.addEventListener('change', (e) => {
-      invisibleMode = e.target.checked;
-      localStorage.setItem('tasbih_invisible_mode', invisibleMode);
-      if (focusMode) toggleFocusMode(true);
-    });
-
     focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
     unhideBtn.addEventListener('click', () => toggleFocusMode(false));
     focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
@@ -1493,7 +1492,6 @@
 
     soundToggle.checked = soundEnabled;
     vibeToggle.checked = vibeEnabled;
-    checkPermissionsBanner();
     renderDhikrOptions();
     applyTheme(currentTheme);
     renderDates();
