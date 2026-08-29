@@ -89,8 +89,8 @@
     }
 
     .brand-logo-card svg {
-      width: 28px;
-      height: 28px;
+      width: 32px;
+      height: 32px;
     }
 
     .icon-btn {
@@ -233,7 +233,8 @@
       align-items: center;
       justify-content: center;
       touch-action: manipulation;
-      transition: transform 0.05s ease, border-width 0.05s ease, box-shadow 0.2s ease;
+      transition: transform 0.05s ease, border-width 0.05s ease;
+      will-change: transform;
     }
 
     .tap-btn:active {
@@ -242,10 +243,11 @@
       background: rgba(255, 255, 255, 0.03);
     }
 
+    /* FIX 3: Clean rounded pulse without square shadow clipping */
     @keyframes visualPulse {
-      0% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
-      50% { transform: scale(1.08); box-shadow: 0 0 35px var(--accent-soft); }
-      100% { transform: scale(1); box-shadow: 0 0 0px var(--accent-soft); }
+      0% { transform: scale(1); border-color: var(--accent-soft); }
+      50% { transform: scale(1.06); border-color: #ffffff; background: rgba(255, 255, 255, 0.1); }
+      100% { transform: scale(1); border-color: var(--accent-soft); }
     }
 
     .tap-btn.pulse {
@@ -511,37 +513,120 @@
       border: none;
       background: transparent;
     }
+
+    /* FIX 5: Invisible Privacy Screen Lock Mode */
+    body.invisible-mode {
+      background-color: #000000 !important;
+    }
+
+    body.invisible-mode header,
+    body.invisible-mode section,
+    body.invisible-mode .controls,
+    body.invisible-mode .target-info,
+    body.invisible-mode #preset-select,
+    body.invisible-mode .desktop-hint {
+      display: none !important;
+    }
+
+    body.invisible-mode .main-card {
+      background: transparent;
+      border: none;
+      padding: 0;
+      height: 100vh;
+      justify-content: center;
+    }
+
+    body.invisible-mode .counter-display {
+      opacity: 0.05;
+      font-size: 4rem;
+    }
+
+    body.invisible-mode .tap-area {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw; height: 100vh;
+      margin: 0; z-index: 10;
+    }
+
+    body.invisible-mode .tap-btn {
+      width: 100vw; height: 100vh;
+      max-width: 100vw; max-height: 100vh;
+      border-radius: 0; border: none;
+      background: transparent; color: transparent;
+    }
+
+    /* Permissions Prompt Banner */
+    .permission-banner {
+      position: fixed;
+      bottom: 1rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 2rem);
+      max-width: 420px;
+      background: var(--card);
+      border: 1px solid var(--accent-soft);
+      border-radius: 16px;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 200;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.8);
+      font-size: 0.85rem;
+      gap: 0.75rem;
+    }
   </style>
 </head>
 <body>
 
   <button class="unhide-pill" id="unhide-btn">
     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-    Exit Focus Mode
+    Exit Focus / Invisible Mode
   </button>
+
+  <!-- FIX 4: Permission Prompt Banner for Vibration & Web Audio unlock -->
+  <div class="permission-banner" id="permission-banner" style="display:none;">
+    <div>
+      <strong style="color:var(--accent-soft); display:block; margin-bottom:0.1rem;">Enable Haptics & Audio</strong>
+      Tap enable to allow full sound and vibration feedback on this device.
+    </div>
+    <button class="btn-primary" id="enable-haptics-btn" style="white-space:nowrap; padding:0.5rem 0.8rem; font-size:0.8rem;">Enable</button>
+  </div>
 
   <header>
     <div class="top-bar">
+      <!-- FIX 1: Logo with pure white beads and a hanging tassel -->
       <div class="brand-logo-card" title="Offline Tasbih">
         <svg viewBox="0 0 512 512">
-          <g fill="#FFFFFF" stroke="#CCCCCC" stroke-width="2">
-            <circle cx="256" cy="140" r="18"/>
-            <circle cx="310" cy="155" r="18"/>
-            <circle cx="355" cy="190" r="18"/>
-            <circle cx="380" cy="240" r="18"/>
-            <circle cx="380" cy="295" r="18"/>
-            <circle cx="355" cy="345" r="18"/>
-            <circle cx="310" cy="380" r="18"/>
-            <circle cx="256" cy="395" r="18"/>
-            <circle cx="202" cy="380" r="18"/>
-            <circle cx="157" cy="345" r="18"/>
-            <circle cx="132" cy="295" r="18"/>
-            <circle cx="132" cy="240" r="18"/>
-            <circle cx="157" cy="190" r="18"/>
-            <circle cx="202" cy="155" r="18"/>
+          <g fill="#FFFFFF" stroke="#000000" stroke-width="1.5">
+            <circle cx="256" cy="130" r="18"/>
+            <circle cx="310" cy="145" r="18"/>
+            <circle cx="355" cy="180" r="18"/>
+            <circle cx="380" cy="230" r="18"/>
+            <circle cx="380" cy="285" r="18"/>
+            <circle cx="355" cy="335" r="18"/>
+            <circle cx="310" cy="370" r="18"/>
+            <circle cx="256" cy="385" r="22"/> <!-- Main Join Bead -->
+            <circle cx="202" cy="370" r="18"/>
+            <circle cx="157" cy="335" r="18"/>
+            <circle cx="132" cy="285" r="18"/>
+            <circle cx="132" cy="230" r="18"/>
+            <circle cx="157" cy="180" r="18"/>
+            <circle cx="202" cy="145" r="18"/>
           </g>
-          <path d="M 256 122 L 256 70" stroke="#FFFFFF" stroke-width="6" stroke-linecap="round"/>
-          <circle cx="256" cy="65" r="10" fill="#FFFFFF"/>
+
+          <!-- Tassel Top Connector -->
+          <path d="M 256 407 L 256 430" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+          <!-- Tassel Head Cap -->
+          <path d="M 246 430 Q 256 422 266 430 L 268 442 Q 256 446 244 442 Z" fill="#FFFFFF"/>
+          <!-- Tassel Fringes/Threads -->
+          <g stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round">
+            <line x1="248" y1="442" x2="242" y2="480" />
+            <line x1="252" y1="443" x2="249" y2="484" />
+            <line x1="256" y1="444" x2="256" y2="486" />
+            <line x1="260" y1="443" x2="263" y2="484" />
+            <line x1="264" y1="442" x2="270" y2="480" />
+          </g>
         </svg>
       </div>
 
@@ -685,6 +770,15 @@
         </label>
       </div>
 
+      <!-- FIX 5: Invisible Privacy Lock Screen Switch -->
+      <div class="setting-item">
+        <span>Invisible Privacy Mode</span>
+        <label class="toggle-switch">
+          <input type="checkbox" id="invisible-toggle-setting">
+          <span class="slider"></span>
+        </label>
+      </div>
+
       <div style="border-top: 1px solid var(--border); padding-top: 0.75rem; margin-top: 0.5rem;">
         <div style="font-size: 0.9rem; font-weight:600; margin-bottom: 0.5rem; color: var(--accent-soft);">Data Backup & Restore</div>
         <div style="display:flex; gap:0.5rem;">
@@ -755,7 +849,7 @@
   </div>
 
   <script>
-    // --- 1. Service Worker & PWA Manifest Auto-Installer ---
+    // --- Service Worker & PWA Manifest Auto-Installer ---
     (function registerDynamicPWA() {
       const manifestData = {
         name: "Offline Tasbih",
@@ -776,7 +870,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'tasbih-v4';
+          const CACHE_NAME = 'tasbih-v5';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -792,7 +886,7 @@
       }
     })();
 
-    // --- 2. Core App State & Logic ---
+    // --- Core App State & Logic ---
     const HIJRI_MONTHS = [
       "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
       "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
@@ -821,7 +915,10 @@
     let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
     let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
     let focusMode = false;
+    let invisibleMode = localStorage.getItem('tasbih_invisible_mode') === 'true';
     let unhideTimeout = null;
+    let lastTapTime = 0;
+    let tapCountForUnlock = 0;
 
     function setCleanURL(dhikrName) {
       if (window.history && window.history.replaceState) {
@@ -859,9 +956,13 @@
     const vibeToggle = document.getElementById('vibe-toggle');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
+    const invisibleToggleSetting = document.getElementById('invisible-toggle-setting');
     const unhideBtn = document.getElementById('unhide-btn');
     const customDhikrManagerList = document.getElementById('custom-dhikr-manager-list');
     const masterResetBtn = document.getElementById('master-reset-btn');
+
+    const permissionBanner = document.getElementById('permission-banner');
+    const enableHapticsBtn = document.getElementById('enable-haptics-btn');
 
     // Adjustments Log Modal
     const offsetsModal = document.getElementById('offsets-modal');
@@ -1045,16 +1146,85 @@
       tapBtn.classList.add('pulse');
     }
 
+    // FIX 4: Robust Vibration Handler with explicit gesture permission initialisation
     function triggerVibration(pattern) {
       if (vibeEnabled && 'vibrate' in navigator) {
-        try { navigator.vibrate(pattern); } catch (e) {}
+        try { 
+          navigator.vibrate(pattern); 
+        } catch (e) {}
       }
     }
+
+    function checkPermissionsBanner() {
+      if ('vibrate' in navigator || window.AudioContext) {
+        if (!localStorage.getItem('tasbih_permissions_acknowledged')) {
+          permissionBanner.style.display = 'flex';
+        }
+      }
+    }
+
+    enableHapticsBtn.addEventListener('click', () => {
+      initAudio();
+      triggerVibration([50, 50, 50]);
+      localStorage.setItem('tasbih_permissions_acknowledged', 'true');
+      permissionBanner.style.display = 'none';
+    });
 
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       themeSelect.value = theme;
       localStorage.setItem('tasbih_theme', theme);
+    }
+
+    // FIX 2: Astronomical Tabular Hijri Date Calculation Algorithm (Kuwaiti / Umm al-Qura approximation)
+    function calculateAccurateHijri(date) {
+      let day = date.getDate();
+      let month = date.getMonth();
+      let year = date.getFullYear();
+
+      let m = month + 1;
+      let y = year;
+      if (m < 3) {
+        y -= 1;
+        m += 12;
+      }
+
+      let a = Math.floor(y / 100);
+      let b = 2 - a + Math.floor(a / 4);
+      if (y < 1583) b = 0;
+      if (y === 1582) {
+        if (m > 10) b = -10;
+        if (m === 10) {
+          b = 0;
+          if (day > 4) b = -10;
+        }
+      }
+
+      let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
+
+      let b2 = 0;
+      if (jd > 2299160) {
+        a = Math.floor((jd - 1867216.25) / 36524.25);
+        b2 = 1 + a - Math.floor(a / 4);
+      }
+      let bb = jd + b2 + 1524;
+      let cc = Math.floor((bb - 122.1) / 365.25);
+      let dd = Math.floor(365.25 * cc);
+      let ee = Math.floor((bb - dd) / 30.6001);
+
+      let dayNo = bb - dd - Math.floor(30.6001 * ee);
+
+      let l = jd - 1948440 + 10632;
+      let n = Math.floor((l - 1) / 10631);
+      l = l - 10631 * n + 354;
+      let j = (Math.floor((10985 - l) / 5316)) * (Math.floor((50 * l) / 17719)) + (Math.floor(l / 5670)) * (Math.floor((43 * l) / 15238));
+      l = l - (Math.floor((30 - j) / 15)) * (Math.floor((17719 * j) / 50)) - (Math.floor(j / 16)) * (Math.floor((15238 * j) / 43)) + 29;
+      
+      let hMonth = Math.floor((24 * l) / 709);
+      let hDay = Math.floor(l - Math.floor((709 * hMonth) / 24));
+      let hYear = 30 * n + j - 30;
+
+      return { day: hDay, month: HIJRI_MONTHS[hMonth - 1] || HIJRI_MONTHS[0], year: hYear };
     }
 
     function renderDates() {
@@ -1063,19 +1233,8 @@
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
       try {
-        const parts = new Intl.DateTimeFormat('en-u-ca-islamic-num', {
-          day: 'numeric', month: 'numeric', year: 'numeric'
-        }).formatToParts(now);
-
-        let day = '', monthIdx = 0, year = '';
-        parts.forEach(p => {
-          if (p.type === 'day') day = p.value;
-          if (p.type === 'month') monthIdx = parseInt(p.value, 10) - 1;
-          if (p.type === 'year') year = p.value;
-        });
-
-        const monthName = HIJRI_MONTHS[monthIdx] || "Hijri";
-        hijriDateEl.textContent = `${day} ${monthName} ${year} AH`;
+        const hijri = calculateAccurateHijri(now);
+        hijriDateEl.textContent = `${hijri.day} ${hijri.month} ${hijri.year} AH`;
       } catch (e) {
         hijriDateEl.textContent = now.toLocaleDateString();
       }
@@ -1197,7 +1356,6 @@
       const selectedDate = historyDatePicker.value;
       const selectedDhikr = historyDhikrSelect.value || currentDhikr;
 
-      // Visual Highlight indicator if selected date has recorded activity
       const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
       if (hasActivityOnDate) {
         historyDatePicker.classList.add('has-data');
@@ -1262,13 +1420,19 @@
       );
     }
 
+    // FIX 5: Focus & Invisible Privacy Mode Toggle
     function toggleFocusMode(state) {
       focusMode = state;
       focusToggleSetting.checked = focusMode;
+      
       if (focusMode) {
         document.body.classList.add('focus-mode');
+        if (invisibleMode) {
+          document.body.classList.add('invisible-mode');
+        }
       } else {
         document.body.classList.remove('focus-mode');
+        document.body.classList.remove('invisible-mode');
         unhideBtn.classList.remove('visible');
       }
     }
@@ -1280,6 +1444,24 @@
       unhideTimeout = setTimeout(() => {
         unhideBtn.classList.remove('visible');
       }, 3000);
+    }
+
+    // Detect Triple-Tap for Privacy Unlock in Invisible Mode
+    function checkInvisibleUnlockTap() {
+      const now = Date.now();
+      if (now - lastTapTime < 400) {
+        tapCountForUnlock++;
+      } else {
+        tapCountForUnlock = 1;
+      }
+      lastTapTime = now;
+
+      if (tapCountForUnlock >= 3) {
+        toggleFocusMode(false);
+        tapCountForUnlock = 0;
+      } else {
+        revealUnhideButton();
+      }
     }
 
     function handleTapAction() {
@@ -1327,7 +1509,7 @@
         logs: getLogs(),
         offsets: getManualOffsets(),
         allDhikrs: allDhikrList,
-        version: 4
+        version: 5
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -1387,7 +1569,11 @@
 
     document.addEventListener('pointerdown', (e) => {
       if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
-        revealUnhideButton();
+        if (invisibleMode) {
+          checkInvisibleUnlockTap();
+        } else {
+          revealUnhideButton();
+        }
       }
     });
 
@@ -1479,6 +1665,12 @@
       localStorage.setItem('tasbih_vibe', vibeEnabled);
     });
 
+    invisibleToggleSetting.checked = invisibleMode;
+    invisibleToggleSetting.addEventListener('change', (e) => {
+      invisibleMode = e.target.checked;
+      localStorage.setItem('tasbih_invisible_mode', invisibleMode);
+    });
+
     focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
     unhideBtn.addEventListener('click', () => toggleFocusMode(false));
     focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
@@ -1492,6 +1684,7 @@
 
     soundToggle.checked = soundEnabled;
     vibeToggle.checked = vibeEnabled;
+    checkPermissionsBanner();
     renderDhikrOptions();
     applyTheme(currentTheme);
     renderDates();
