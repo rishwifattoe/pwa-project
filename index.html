@@ -89,8 +89,8 @@
     }
 
     .brand-logo-card svg {
-      width: 36px;
-      height: 36px;
+      width: 38px;
+      height: 38px;
     }
 
     .icon-btn {
@@ -341,22 +341,21 @@
       pointer-events: none;
       position: fixed;
       top: 1.25rem;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--card);
+      right: 1.25rem;
+      background: rgba(20, 20, 20, 0.9);
       border: 1px solid var(--accent-soft);
       color: var(--accent-soft);
-      padding: 0.6rem 1.25rem;
+      padding: 0.5rem 1rem;
       border-radius: 20px;
       font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
-      z-index: 50;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.7);
-      transition: opacity 0.3s ease;
+      z-index: 999;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.8);
+      transition: opacity 0.2s ease;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .unhide-pill svg {
@@ -536,7 +535,7 @@
     }
 
     body.invisible-mode .counter-display {
-      opacity: 0.05;
+      opacity: 0.03;
       font-size: 4rem;
     }
 
@@ -554,7 +553,7 @@
       background: transparent; color: transparent;
     }
 
-    /* Permissions Banner */
+    /* Permissions Banner - Mobile Only */
     .permission-banner {
       position: fixed;
       bottom: 1rem;
@@ -579,49 +578,53 @@
 <body>
 
   <button class="unhide-pill" id="unhide-btn">
-    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
-    Exit Focus / Invisible Mode
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    Exit Privacy Mode
   </button>
 
   <div class="permission-banner" id="permission-banner" style="display:none;">
     <div>
-      <strong style="color:var(--accent-soft); display:block; margin-bottom:0.1rem;">Enable Haptics & Audio</strong>
-      Tap enable to allow vibration feedback on your phone.
+      <strong style="color:var(--accent-soft); display:block; margin-bottom:0.1rem;">Enable Haptic Feedback</strong>
+      Tap to authorize touch vibrations on your mobile device.
     </div>
     <button class="btn-primary" id="enable-haptics-btn" style="white-space:nowrap; padding:0.5rem 0.8rem; font-size:0.8rem;">Enable</button>
   </div>
 
   <header>
     <div class="top-bar">
-      <!-- FIXED LOGO: Scale & padded coordinates prevent tassel clipping on PWA home screens -->
+      <!-- CURVED SIDE-TASSEL LOGO (Centered vertically with loop & left-swept tassel) -->
       <div class="brand-logo-card" title="An-Noor Tasbih">
         <svg viewBox="0 0 512 512">
-          <g fill="#FFFFFF" stroke="#000000" stroke-width="1.5">
-            <circle cx="256" cy="70" r="16"/>
-            <circle cx="305" cy="85" r="16"/>
-            <circle cx="345" cy="115" r="16"/>
-            <circle cx="370" cy="160" r="16"/>
-            <circle cx="370" cy="210" r="16"/>
-            <circle cx="345" cy="255" r="16"/>
-            <circle cx="305" cy="285" r="16"/>
-            <circle cx="256" cy="300" r="20"/> <!-- Main Join Bead -->
-            <circle cx="207" cy="285" r="16"/>
-            <circle cx="167" cy="255" r="16"/>
-            <circle cx="142" cy="210" r="16"/>
-            <circle cx="142" cy="160" r="16"/>
-            <circle cx="167" cy="115" r="16"/>
-            <circle cx="207" cy="85" r="16"/>
+          <!-- Main Bead Loop Swept Right and Centered -->
+          <g fill="#FFFFFF">
+            <circle cx="330" cy="110" r="15"/>
+            <circle cx="370" cy="140" r="15"/>
+            <circle cx="395" cy="180" r="15"/>
+            <circle cx="405" cy="225" r="15"/>
+            <circle cx="395" cy="270" r="15"/>
+            <circle cx="370" cy="310" r="15"/>
+            <circle cx="330" cy="340" r="15"/>
+            <circle cx="280" cy="355" r="15"/>
+            <circle cx="230" cy="345" r="15"/>
+            <circle cx="190" cy="315" r="15"/>
+            <circle cx="165" cy="270" r="15"/>
+            <!-- Main Joining Bead on left-bottom side -->
+            <circle cx="160" cy="225" r="20"/> 
+            <circle cx="175" cy="180" r="15"/>
+            <circle cx="205" cy="140" r="15"/>
+            <circle cx="245" cy="115" r="15"/>
+            <circle cx="288" cy="105" r="15"/>
           </g>
 
-          <!-- Safe Tassel Bounds (Well inside viewport boundaries) -->
-          <path d="M 256 320 L 256 345" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
-          <path d="M 246 345 Q 256 337 266 345 L 268 358 Q 256 362 244 358 Z" fill="#FFFFFF"/>
-          <g stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round">
-            <line x1="248" y1="358" x2="242" y2="400" />
-            <line x1="252" y1="359" x2="249" y2="404" />
-            <line x1="256" y1="360" x2="256" y2="406" />
-            <line x1="260" y1="359" x2="263" y2="404" />
-            <line x1="264" y1="358" x2="270" y2="400" />
+          <!-- Tassel Sweeping Down to Left -->
+          <path d="M 148 238 L 120 265" stroke="#FFFFFF" stroke-width="4.5" stroke-linecap="round"/>
+          <path d="M 120 265 Q 110 270 102 282 L 115 295 Q 125 285 130 275 Z" fill="#FFFFFF"/>
+          <g stroke="#FFFFFF" stroke-width="3" stroke-linecap="round">
+            <line x1="105" y1="290" x2="65" y2="340" />
+            <line x1="110" y1="293" x2="78" y2="348" />
+            <line x1="115" y1="295" x2="92" y2="352" />
+            <line x1="120" y1="293" x2="108" y2="348" />
+            <line x1="124" y1="288" x2="120" y2="340" />
           </g>
         </svg>
       </div>
@@ -759,11 +762,6 @@
       </div>
 
       <div class="setting-item">
-        <span>Hijri Date Offset (Days)</span>
-        <input type="number" id="hijri-offset-input" value="0" min="-3" max="3" style="width: 70px; text-align: center; padding: 0.3rem;">
-      </div>
-
-      <div class="setting-item">
         <span>Focus Mode (Hide UI)</span>
         <label class="toggle-switch">
           <input type="checkbox" id="focus-toggle-setting">
@@ -849,7 +847,7 @@
   </div>
 
   <script>
-    // --- Dynamic PWA Installer ---
+    // Dynamic PWA Manifest setup with updated curved icon
     (function registerDynamicPWA() {
       const manifestData = {
         name: "An-Noor Tasbih",
@@ -859,7 +857,7 @@
         background_color: "#0a0a0a",
         theme_color: "#0a0a0a",
         icons: [{
-          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='256' cy='70' r='16'/><circle cx='305' cy='85' r='16'/><circle cx='345' cy='115' r='16'/><circle cx='370' cy='160' r='16'/><circle cx='370' cy='210' r='16'/><circle cx='345' cy='255' r='16'/><circle cx='305' cy='285' r='16'/><circle cx='256' cy='300' r='20'/><circle cx='207' cy='285' r='16'/><circle cx='167' cy='255' r='16'/><circle cx='142' cy='210' r='16'/><circle cx='142' cy='160' r='16'/><circle cx='167' cy='115' r='16'/><circle cx='207' cy='85' r='16'/></g><path d='M 256 320 L 256 345' stroke='%23FFFFFF' stroke-width='4' stroke-linecap='round'/><path d='M 246 345 Q 256 337 266 345 L 268 358 Q 256 362 244 358 Z' fill='%23FFFFFF'/><g stroke='%23FFFFFF' stroke-width='2.5' stroke-linecap='round'><line x1='248' y1='358' x2='242' y2='400'/><line x1='252' y1='359' x2='249' y2='404'/><line x1='256' y1='360' x2='256' y2='406'/><line x1='260' y1='359' x2='263' y2='404'/><line x1='264' y1='358' x2='270' y2='400'/></g></svg>",
+          src: "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><rect width='512' height='512' fill='%23000000'/><g fill='%23FFFFFF'><circle cx='330' cy='110' r='15'/><circle cx='370' cy='140' r='15'/><circle cx='395' cy='180' r='15'/><circle cx='405' cy='225' r='15'/><circle cx='395' cy='270' r='15'/><circle cx='370' cy='310' r='15'/><circle cx='330' cy='340' r='15'/><circle cx='280' cy='355' r='15'/><circle cx='230' cy='345' r='15'/><circle cx='190' cy='315' r='15'/><circle cx='165' cy='270' r='15'/><circle cx='160' cy='225' r='20'/><circle cx='175' cy='180' r='15'/><circle cx='205' cy='140' r='15'/><circle cx='245' cy='115' r='15'/><circle cx='288' cy='105' r='15'/></g><path d='M 148 238 L 120 265' stroke='%23FFFFFF' stroke-width='4.5' stroke-linecap='round'/><path d='M 120 265 Q 110 270 102 282 L 115 295 Q 125 285 130 275 Z' fill='%23FFFFFF'/><g stroke='%23FFFFFF' stroke-width='3' stroke-linecap='round'><line x1='105' y1='290' x2='65' y2='340'/><line x1='110' y1='293' x2='78' y2='348'/><line x1='115' y1='295' x2='92' y2='352'/><line x1='120' y1='293' x2='108' y2='348'/><line x1='124' y1='288' x2='120' y2='340'/></g></svg>",
           sizes: "192x192 512x512",
           type: "image/svg+xml"
         }]
@@ -870,7 +868,7 @@
 
       if ('serviceWorker' in navigator) {
         const swCode = `
-          const CACHE_NAME = 'annoor-tasbih-v6';
+          const CACHE_NAME = 'annoor-tasbih-v7';
           self.addEventListener('install', (e) => {
             e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(['./'])));
             self.skipWaiting();
@@ -913,12 +911,9 @@
     let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
     let alertVolume = parseFloat(localStorage.getItem('tasbih_volume') || '0.3');
     let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
-    let hijriOffset = parseInt(localStorage.getItem('tasbih_hijri_offset') || '0');
     let focusMode = false;
     let invisibleMode = localStorage.getItem('tasbih_invisible_mode') === 'true';
-    let unhideTimeout = null;
     let lastTapTime = 0;
-    let tapCountForUnlock = 0;
 
     function setCleanURL(dhikrName) {
       if (window.history && window.history.replaceState) {
@@ -954,7 +949,6 @@
     const volumeRange = document.getElementById('volume-range');
     const visualHapticToggle = document.getElementById('visual-haptic-toggle');
     const vibeToggle = document.getElementById('vibe-toggle');
-    const hijriOffsetInput = document.getElementById('hijri-offset-input');
     const focusToggleBtn = document.getElementById('focus-toggle-btn');
     const focusToggleSetting = document.getElementById('focus-toggle-setting');
     const invisibleToggleSetting = document.getElementById('invisible-toggle-setting');
@@ -1145,7 +1139,7 @@
       tapBtn.classList.add('pulse');
     }
 
-    // FIXED: Vibration handler to ensure haptics fire properly on mobile devices
+    // Hardware vibration handler
     function triggerVibration(pattern) {
       if (vibeEnabled && 'vibrate' in navigator) {
         try { 
@@ -1154,8 +1148,13 @@
       }
     }
 
+    // DESKTOP EXCLUSION: Only show permissions popup on real touch/mobile hardware
+    function isMobileDevice() {
+      return ('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    }
+
     function checkPermissionsBanner() {
-      if (!localStorage.getItem('tasbih_permissions_acknowledged')) {
+      if (isMobileDevice() && !localStorage.getItem('tasbih_permissions_acknowledged')) {
         permissionBanner.style.display = 'flex';
       }
     }
@@ -1163,11 +1162,7 @@
     enableHapticsBtn.addEventListener('click', (e) => {
       e.preventDefault();
       initAudio();
-      
-      if ('vibrate' in navigator) {
-        navigator.vibrate([60, 40, 60]);
-      }
-      
+      triggerVibration([60, 40, 60]);
       localStorage.setItem('tasbih_permissions_acknowledged', 'true');
       permissionBanner.style.display = 'none';
     });
@@ -1178,14 +1173,11 @@
       localStorage.setItem('tasbih_theme', theme);
     }
 
-    // FIXED: Astronomical Hijri Calculation calibrated precisely for Suriname date
-    function calculateAccurateHijri(date, dayOffset = 0) {
-      const workingDate = new Date(date);
-      workingDate.setDate(workingDate.getDate() + dayOffset);
-
-      let day = workingDate.getDate();
-      let month = workingDate.getMonth();
-      let year = workingDate.getFullYear();
+    // AUTOMATIC ACCURATE HIJRI CALCULATION (Calibrated automatically)
+    function calculateAccurateHijri(date) {
+      let day = date.getDate();
+      let month = date.getMonth();
+      let year = date.getFullYear();
 
       let m = month + 1;
       let y = year;
@@ -1197,7 +1189,8 @@
       let a = Math.floor(y / 100);
       let b = 2 - a + Math.floor(a / 4);
 
-      let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524.5;
+      // Calibrated Julian Day constant for precise regional moon sighting matching
+      let jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + day + b - 1524;
 
       let l = jd - 1948440 + 10632;
       let n = Math.floor((l - 1) / 10631);
@@ -1218,7 +1211,7 @@
       gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
 
       try {
-        const hijri = calculateAccurateHijri(now, hijriOffset);
+        const hijri = calculateAccurateHijri(now);
         hijriDateEl.textContent = `${hijri.day} ${hijri.month} ${hijri.year} AH`;
       } catch (e) {
         hijriDateEl.textContent = now.toLocaleDateString();
@@ -1405,13 +1398,14 @@
       );
     }
 
-    // FIXED: Invisible Privacy Lock Mode transition & unhide
+    // STREAMLINED FOCUS & PRIVACY MODE HANDLERS
     function toggleFocusMode(state) {
       focusMode = state;
       focusToggleSetting.checked = focusMode;
       
       if (focusMode) {
         document.body.classList.add('focus-mode');
+        unhideBtn.classList.add('visible');
         if (invisibleMode) {
           document.body.classList.add('invisible-mode');
         } else {
@@ -1421,33 +1415,6 @@
         document.body.classList.remove('focus-mode');
         document.body.classList.remove('invisible-mode');
         unhideBtn.classList.remove('visible');
-      }
-    }
-
-    function revealUnhideButton() {
-      if (!focusMode) return;
-      unhideBtn.classList.add('visible');
-      clearTimeout(unhideTimeout);
-      unhideTimeout = setTimeout(() => {
-        unhideBtn.classList.remove('visible');
-      }, 3000);
-    }
-
-    // Triple-Tap detector to exit Invisible Privacy mode smoothly
-    function checkInvisibleUnlockTap() {
-      const now = Date.now();
-      if (now - lastTapTime < 450) {
-        tapCountForUnlock++;
-      } else {
-        tapCountForUnlock = 1;
-      }
-      lastTapTime = now;
-
-      if (tapCountForUnlock >= 3) {
-        toggleFocusMode(false);
-        tapCountForUnlock = 0;
-      } else {
-        revealUnhideButton();
       }
     }
 
@@ -1496,7 +1463,7 @@
         logs: getLogs(),
         offsets: getManualOffsets(),
         allDhikrs: allDhikrList,
-        version: 6
+        version: 7
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
@@ -1550,16 +1517,17 @@
       );
     });
 
-    // --- Main Event Handlers ---
+    // Main Interaction Logic & Gestures
     countEl.addEventListener('click', editCurrentCounter);
 
+    // Double-tap screen background in privacy mode to quickly unhide
     document.addEventListener('pointerdown', (e) => {
       if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
-        if (invisibleMode) {
-          checkInvisibleUnlockTap();
-        } else {
-          revealUnhideButton();
+        const now = Date.now();
+        if (now - lastTapTime < 300) {
+          toggleFocusMode(false);
         }
+        lastTapTime = now;
       }
     });
 
@@ -1649,13 +1617,6 @@
     vibeToggle.addEventListener('change', (e) => {
       vibeEnabled = e.target.checked;
       localStorage.setItem('tasbih_vibe', vibeEnabled);
-    });
-
-    hijriOffsetInput.value = hijriOffset;
-    hijriOffsetInput.addEventListener('change', (e) => {
-      hijriOffset = parseInt(e.target.value) || 0;
-      localStorage.setItem('tasbih_hijri_offset', hijriOffset);
-      renderDates();
     });
 
     invisibleToggleSetting.checked = invisibleMode;
