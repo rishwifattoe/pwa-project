@@ -20,11 +20,72 @@
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            50: 'var(--color-theme-50)',
+                            100: 'var(--color-theme-100)',
+                            200: 'var(--color-theme-200)',
+                            300: 'var(--color-theme-300)',
+                            400: 'var(--color-theme-400)',
+                            500: 'var(--color-theme-500)',
+                            600: 'var(--color-theme-600)',
+                            700: 'var(--color-theme-700)',
+                            800: 'var(--color-theme-800)',
+                            900: 'var(--color-theme-900)',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* CSS Variables for Dynamic Color Themes */
+        :root[data-theme="indigo"] {
+            --color-theme-50: #eep2ff; --color-theme-100: #e0e7ff; --color-theme-200: #c7d2fe;
+            --color-theme-300: #a5b4fc; --color-theme-400: #818cf8; --color-theme-500: #6366f1;
+            --color-theme-600: #4f46e5; --color-theme-700: #4338ca; --color-theme-800: #3730a3;
+            --color-theme-900: #312e81;
+        }
+        :root[data-theme="emerald"] {
+            --color-theme-50: #ecfdf5; --color-theme-100: #d1fae5; --color-theme-200: #a7f3d0;
+            --color-theme-300: #6ee7b7; --color-theme-400: #34d399; --color-theme-500: #10b981;
+            --color-theme-600: #059669; --color-theme-700: #047857; --color-theme-800: #065f46;
+            --color-theme-900: #064e3b;
+        }
+        :root[data-theme="sunset"] {
+            --color-theme-50: #fff7ed; --color-theme-100: #ffedd5; --color-theme-200: #fed7aa;
+            --color-theme-300: #fdba74; --color-theme-400: #fb923c; --color-theme-500: #f97316;
+            --color-theme-600: #ea580c; --color-theme-700: #c2410c; --color-theme-800: #9a3412;
+            --color-theme-900: #7c2d12;
+        }
+        :root[data-theme="crimson"] {
+            --color-theme-50: #fff1f2; --color-theme-100: #ffe4e6; --color-theme-200: #fecdd3;
+            --color-theme-300: #fda4af; --color-theme-400: #fb7185; --color-theme-500: #f43f5e;
+            --color-theme-600: #e11d48; --color-theme-700: #be123c; --color-theme-800: #9f1239;
+            --color-theme-900: #881337;
+        }
+        :root[data-theme="royal"] {
+            --color-theme-50: #faf5ff; --color-theme-100: #f3e8ff; --color-theme-200: #e9d5ff;
+            --color-theme-300: #d8b4fe; --color-theme-400: #c084fc; --color-theme-500: #a855f7;
+            --color-theme-600: #9333ea; --color-theme-700: #7e22ce; --color-theme-800: #6b21a8;
+            --color-theme-900: #581c87;
+        }
+        :root[data-theme="dark"] {
+            --color-theme-50: #f8fafc; --color-theme-100: #f1f5f9; --color-theme-200: #e2e8f0;
+            --color-theme-300: #cbd5e1; --color-theme-400: #94a3b8; --color-theme-500: #64748b;
+            --color-theme-600: #475569; --color-theme-700: #334155; --color-theme-800: #1e293b;
+            --color-theme-900: #0f172a;
+        }
+
         /* Disable touch callouts, blue highlight, and text selection globally */
         * {
             -webkit-tap-highlight-color: transparent !important;
@@ -35,7 +96,7 @@
         /* Pulse Animation for Ring */
         @keyframes ringPulse {
             0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8)); }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px var(--color-theme-500)); }
             100% { transform: scale(1); opacity: 0.8; }
         }
 
@@ -51,14 +112,14 @@
             background: rgba(0, 0, 0, 0.05);
         }
         ::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.3);
+            background: var(--color-theme-400);
             border-radius: 3px;
         }
         .dark ::-webkit-scrollbar-track {
             background: rgba(255, 255, 255, 0.05);
         }
         .dark ::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.5);
+            background: var(--color-theme-600);
         }
     </style>
 </head>
@@ -67,13 +128,10 @@
     <!-- App Header -->
     <header class="w-full max-w-md mx-auto p-4 flex justify-between items-center z-10">
         <div class="flex items-center gap-2">
-            <!-- Updated Logo SVG: Tassel placed underneath the beads -->
-            <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <!-- Bead Ring -->
+            <!-- Logo SVG: Tassel placed underneath the beads -->
+            <svg class="w-8 h-8 text-theme-600 dark:text-theme-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="9" r="6" stroke-dasharray="2 2" />
-                <!-- Main Hanging Bead -->
                 <circle cx="12" cy="15" r="1.5" fill="currentColor" />
-                <!-- Tassel Hanging Underneath -->
                 <path d="M12 16.5 V21" />
                 <path d="M10 21 L14 21" />
                 <path d="M10.5 19.5 L13.5 19.5" />
@@ -97,7 +155,7 @@
         <div class="w-full flex justify-between items-center bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mt-2">
             <div class="flex flex-col">
                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Target</span>
-                <span id="display-target" class="text-lg font-bold text-indigo-600 dark:text-indigo-400">33</span>
+                <span id="display-target" class="text-lg font-bold text-theme-600 dark:text-theme-400 transition-colors">33</span>
             </div>
             <div class="flex flex-col items-center">
                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Laps</span>
@@ -117,7 +175,7 @@
                     <!-- Track Circle -->
                     <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="8" fill="transparent"></circle>
                     <!-- Progress Circle -->
-                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-indigo-600 dark:text-indigo-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
+                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-theme-600 dark:text-theme-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
                 </svg>
 
                 <!-- Interactive Main Tap Button -->
@@ -136,7 +194,7 @@
             </button>
 
             <button id="btn-sound" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
-                <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 mb-1"></i>
+                <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5 text-theme-600 dark:text-theme-400 mb-1 transition-colors"></i>
                 <span id="label-sound" class="text-xs font-medium text-slate-500 dark:text-slate-400">Sound</span>
             </button>
 
@@ -147,16 +205,14 @@
         </div>
     </main>
 
-    <!-- PRIVACY MODE OVERLAY (Full Screen Cover) -->
+    <!-- PRIVACY MODE OVERLAY (Full Pitch-Black Cover with Auto-Disappearing Exit Button) -->
     <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6">
-        <!-- Exit Privacy Mode Header Button -->
         <div class="flex justify-end w-full">
-            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700 px-4 py-2 rounded-full text-sm font-medium transition">
+            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full text-sm font-medium transition-opacity duration-500 opacity-100">
                 <i data-lucide="eye-off" class="w-4 h-4"></i>
                 <span>Exit Privacy Mode</span>
             </button>
         </div>
-        <!-- Invisible Tap Zone Covering Entire Screen -->
         <div id="privacy-tap-area" class="flex-1 w-full h-full cursor-pointer"></div>
     </div>
 
@@ -165,7 +221,7 @@
         <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-6">
                 <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="settings" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    <i data-lucide="settings" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
                     Settings
                 </h2>
                 <button id="close-settings" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -174,16 +230,41 @@
             </div>
 
             <div class="space-y-6">
+                <!-- Color Themes Palette -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Color Theme</label>
+                    <div class="grid grid-cols-3 gap-2" id="theme-selector">
+                        <button data-theme-id="indigo" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-indigo-50 border-indigo-200 text-indigo-700">
+                            <span class="w-4 h-4 rounded-full bg-indigo-600"></span> Indigo
+                        </button>
+                        <button data-theme-id="emerald" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-emerald-50 border-emerald-200 text-emerald-700">
+                            <span class="w-4 h-4 rounded-full bg-emerald-600"></span> Emerald
+                        </button>
+                        <button data-theme-id="sunset" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-orange-50 border-orange-200 text-orange-700">
+                            <span class="w-4 h-4 rounded-full bg-orange-600"></span> Sunset
+                        </button>
+                        <button data-theme-id="crimson" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-rose-50 border-rose-200 text-rose-700">
+                            <span class="w-4 h-4 rounded-full bg-rose-600"></span> Crimson
+                        </button>
+                        <button data-theme-id="royal" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-purple-50 border-purple-200 text-purple-700">
+                            <span class="w-4 h-4 rounded-full bg-purple-600"></span> Royal
+                        </button>
+                        <button data-theme-id="dark" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-slate-100 border-slate-300 text-slate-800">
+                            <span class="w-4 h-4 rounded-full bg-slate-800"></span> Dark
+                        </button>
+                    </div>
+                </div>
+
                 <!-- Target Setting -->
                 <div>
                     <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Target Count</label>
                     <div class="grid grid-cols-4 gap-2 mb-2">
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="33">33</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="99">99</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="100">100</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="1000">1000</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="33">33</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="99">99</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="100">100</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="1000">1000</button>
                     </div>
-                    <input type="number" id="input-target" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Custom Target">
+                    <input type="number" id="input-target" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none transition" placeholder="Custom Target">
                 </div>
 
                 <!-- Toggles -->
@@ -196,7 +277,7 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-vibrate" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
                         </label>
                     </div>
 
@@ -208,24 +289,24 @@
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-pulse" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
                         </label>
                     </div>
 
-                    <!-- Dark Mode -->
+                    <!-- Dark Mode Toggle -->
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-medium text-sm">Dark Mode</div>
-                            <div class="text-xs text-slate-400">Toggle dark/light theme</div>
+                            <div class="text-xs text-slate-400">Toggle dark interface style</div>
                         </div>
                         <label class="relative inline-flex items-center cursor-pointer">
                             <input type="checkbox" id="toggle-theme" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
                         </label>
                     </div>
                 </div>
 
-                <!-- PRIVACY MODE TOGGLE -->
+                <!-- PRIVACY MODE BUTTON -->
                 <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
                     <button id="btn-activate-privacy" class="w-full py-3 bg-slate-900 dark:bg-slate-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-600 transition">
                         <i data-lucide="eye-off" class="w-5 h-5"></i>
@@ -236,12 +317,12 @@
         </div>
     </div>
 
-    <!-- DHIKR PRESETS MODAL -->
+    <!-- DHIKR PRESETS & MANAGEMENT MODAL -->
     <div id="modal-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    <i data-lucide="book-open" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
                     Select Dhikr
                 </h2>
                 <button id="close-dhikr" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -250,17 +331,49 @@
             </div>
             
             <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="dhikr-list">
-                <!-- Preset Items Injected by JS -->
+                <!-- Injected dynamically -->
+            </div>
+
+            <!-- Add Custom Dhikr Trigger -->
+            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
+                <button id="btn-open-add-dhikr" class="w-full py-2.5 bg-theme-50 dark:bg-theme-900/30 text-theme-600 dark:text-theme-400 rounded-xl text-sm font-semibold hover:bg-theme-100 dark:hover:bg-theme-900/50 transition flex items-center justify-center gap-2">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Add Custom Dhikr
+                </button>
             </div>
         </div>
     </div>
 
-    <!-- HISTORY MODAL -->
+    <!-- ADD CUSTOM DHIKR MODAL -->
+    <div id="modal-add-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-4">Add Custom Dhikr</h3>
+            <div class="space-y-3">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Title / Name</label>
+                    <input type="text" id="add-dhikr-name" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none" placeholder="e.g. Astaghfirullah">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Arabic Text (Optional)</label>
+                    <input type="text" id="add-dhikr-arabic" dir="rtl" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none font-serif" placeholder="أَسْتَغْفِرُ ٱللَّٰهَ">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Translation (Optional)</label>
+                    <input type="text" id="add-dhikr-trans" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none" placeholder="I seek forgiveness from Allah">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button id="btn-save-dhikr" class="flex-1 py-2 bg-theme-600 text-white rounded-xl font-semibold hover:bg-theme-700 transition">Save</button>
+                    <button id="btn-cancel-dhikr" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL (Pure Automated Logging - Manual Add Removed) -->
     <div id="modal-history" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="history" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    <i data-lucide="history" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
                     Dhikr History
                 </h2>
                 <button id="close-history" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
@@ -272,34 +385,10 @@
                 <!-- History logs loaded by JS -->
             </div>
 
-            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex gap-2">
-                <button id="btn-manual-log" class="flex-1 py-2 px-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition flex items-center justify-center gap-1">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Add Entry
+            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+                <button id="btn-clear-history" class="w-full py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/40 transition">
+                    Clear History
                 </button>
-                <button id="btn-clear-history" class="py-2 px-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/40 transition">
-                    Clear
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MANUAL ENTRY MODAL -->
-    <div id="modal-manual-log" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
-            <h3 class="text-lg font-bold mb-4">Log Manual Dhikr</h3>
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Dhikr Name</label>
-                    <input type="text" id="manual-name" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value="Custom Dhikr">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Count</label>
-                    <input type="number" id="manual-count" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="33">
-                </div>
-                <div class="flex gap-2 pt-2">
-                    <button id="btn-save-manual" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition">Save</button>
-                    <button id="btn-cancel-manual" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Cancel</button>
-                </div>
             </div>
         </div>
     </div>
@@ -333,7 +422,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'tasbih-v2';
+                    const CACHE_NAME = 'tasbih-v3';
                     const ASSETS = ['./'];
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
@@ -348,26 +437,22 @@
         }
 
         // Preset Dhikr Data
-        const DHIKR_PRESETS = [
-            { name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah" },
-            { name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah" },
-            { name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest" },
-            { name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah" },
-            { name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah" },
-            { name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah" },
-            { name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah" },
-            { name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad" }
+        const DEFAULT_DHIKRS = [
+            { id: '1', name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah", isDefault: true },
+            { id: '2', name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah", isDefault: true },
+            { id: '3', name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest", isDefault: true },
+            { id: '4', name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah", isDefault: true },
+            { id: '5', name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah", isDefault: true },
+            { id: '6', name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah", isDefault: true },
+            { id: '7', name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah", isDefault: true },
+            { id: '8', name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad", isDefault: true }
         ];
 
-        // Web Audio API Synthesizer (Zero External Dependencies)
+        // Web Audio API Synthesizer
         class AudioFeedback {
-            constructor() {
-                this.ctx = null;
-            }
+            constructor() { this.ctx = null; }
             init() {
-                if (!this.ctx) {
-                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-                }
+                if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
             }
             playClick() {
                 this.init();
@@ -410,13 +495,17 @@
             target: 33,
             laps: 0,
             total: 0,
-            dhikr: DHIKR_PRESETS[0],
+            dhikrs: JSON.parse(localStorage.getItem('tasbih_dhikrs') || JSON.stringify(DEFAULT_DHIKRS)),
+            dhikr: null,
             soundEnabled: true,
             vibrateEnabled: false,
             pulseEnabled: true,
             darkMode: false,
+            theme: 'indigo',
             history: JSON.parse(localStorage.getItem('tasbih_history') || '[]')
         };
+
+        state.dhikr = state.dhikrs[0];
 
         const audio = new AudioFeedback();
 
@@ -445,7 +534,6 @@
         const closeDhikr = document.getElementById('close-dhikr');
         const modalHistory = document.getElementById('modal-history');
         const closeHistory = document.getElementById('close-history');
-        const modalManualLog = document.getElementById('modal-manual-log');
 
         const privacyOverlay = document.getElementById('privacy-overlay');
         const btnActivatePrivacy = document.getElementById('btn-activate-privacy');
@@ -457,12 +545,38 @@
         const togglePulse = document.getElementById('toggle-pulse');
         const toggleTheme = document.getElementById('toggle-theme');
 
+        // Privacy Mode Auto-Hide Controls
+        let privacyTimer = null;
+
+        function showPrivacyExitButton() {
+            btnExitPrivacy.classList.remove('opacity-0', 'pointer-events-none');
+            btnExitPrivacy.classList.add('opacity-100');
+            clearTimeout(privacyTimer);
+            privacyTimer = setTimeout(() => {
+                btnExitPrivacy.classList.remove('opacity-100');
+                btnExitPrivacy.classList.add('opacity-0', 'pointer-events-none');
+            }, 3000);
+        }
+
         // Initialize App
         function init() {
             lucide.createIcons();
             loadSettings();
             renderDhikrList();
             updateUI();
+        }
+
+        function applyTheme(themeId) {
+            state.theme = themeId;
+            document.documentElement.setAttribute('data-theme', themeId);
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                if (btn.getAttribute('data-theme-id') === themeId) {
+                    btn.classList.add('ring-2', 'ring-slate-900', 'dark:ring-white');
+                } else {
+                    btn.classList.remove('ring-2', 'ring-slate-900', 'dark:ring-white');
+                }
+            });
+            saveSettings();
         }
 
         function loadSettings() {
@@ -474,12 +588,14 @@
                 state.vibrateEnabled = parsed.vibrateEnabled ?? false;
                 state.pulseEnabled = parsed.pulseEnabled ?? true;
                 state.darkMode = parsed.darkMode ?? false;
+                state.theme = parsed.theme || 'indigo';
             }
             if (state.darkMode || window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
                 toggleTheme.checked = true;
                 state.darkMode = true;
             }
+            applyTheme(state.theme);
             toggleVibrate.checked = state.vibrateEnabled;
             togglePulse.checked = state.pulseEnabled;
             inputTarget.value = state.target;
@@ -492,7 +608,8 @@
                 soundEnabled: state.soundEnabled,
                 vibrateEnabled: state.vibrateEnabled,
                 pulseEnabled: state.pulseEnabled,
-                darkMode: state.darkMode
+                darkMode: state.darkMode,
+                theme: state.theme
             }));
         }
 
@@ -503,13 +620,11 @@
             elDisplayTotal.textContent = state.total;
             elDhikrLabel.textContent = state.dhikr.name;
 
-            // Progress Ring Calculation (276.46 circumference)
             const circumference = 2 * Math.PI * 44;
             const progress = Math.min(state.count / state.target, 1);
             const offset = circumference - (progress * circumference);
             elProgressBar.style.strokeDashoffset = offset;
 
-            // Visual Ring Pulse Check
             if (state.count >= state.target && state.pulseEnabled) {
                 elCounterRingContainer.classList.add('pulse-active');
             } else {
@@ -549,13 +664,14 @@
         // Tap Handlers
         btnCount.addEventListener('click', () => {
             if (state.count >= state.target) {
-                state.count = 0; // Auto reset loop on next tap after reaching goal
+                state.count = 0;
             }
             increment();
         });
 
-        // Privacy Mode Taps
+        // Privacy Mode Taps & Auto-Hide Behavior
         privacyTapArea.addEventListener('click', () => {
+            showPrivacyExitButton();
             if (state.count >= state.target) state.count = 0;
             increment();
         });
@@ -564,10 +680,12 @@
             modalSettings.classList.add('hidden');
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
+            showPrivacyExitButton();
         });
 
         btnExitPrivacy.addEventListener('click', (e) => {
             e.stopPropagation();
+            clearTimeout(privacyTimer);
             privacyOverlay.classList.add('hidden');
             privacyOverlay.classList.remove('flex');
         });
@@ -588,33 +706,86 @@
             saveSettings();
         });
 
-        // Dhikr List Management
+        // Custom Dhikr Add/Remove Functionality
         function renderDhikrList() {
             const container = document.getElementById('dhikr-list');
-            container.innerHTML = DHIKR_PRESETS.map((item, idx) => `
-                <button class="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex justify-between items-center group ${state.dhikr.name === item.name ? 'bg-indigo-50/70 dark:bg-indigo-900/40 border-indigo-300 dark:border-indigo-600' : ''}" data-idx="${idx}">
-                    <div>
+            container.innerHTML = state.dhikrs.map((item) => `
+                <div class="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-theme-50 dark:hover:bg-theme-900/30 transition flex justify-between items-center group ${state.dhikr.id === item.id ? 'bg-theme-50/70 dark:bg-theme-900/40 border-theme-300 dark:border-theme-600' : ''}">
+                    <button class="flex-1 text-left select-dhikr-btn" data-id="${item.id}">
                         <div class="font-bold text-slate-800 dark:text-slate-100">${item.name}</div>
-                        <div class="text-xs text-slate-400">${item.translation}</div>
+                        <div class="text-xs text-slate-400">${item.translation || ''}</div>
+                    </button>
+                    <div class="flex items-center gap-3">
+                        <div class="font-serif text-lg text-theme-600 dark:text-theme-400">${item.arabic || ''}</div>
+                        ${!item.isDefault ? `
+                            <button class="delete-dhikr-btn p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition" data-id="${item.id}">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        ` : ''}
                     </div>
-                    <div class="text-right">
-                        <div class="font-serif text-lg text-indigo-600 dark:text-indigo-400">${item.arabic}</div>
-                    </div>
-                </button>
+                </div>
             `).join('');
 
-            container.querySelectorAll('button').forEach(btn => {
+            lucide.createIcons();
+
+            container.querySelectorAll('.select-dhikr-btn').forEach(btn => {
                 btn.addEventListener('click', () => {
-                    const idx = btn.getAttribute('data-idx');
-                    state.dhikr = DHIKR_PRESETS[idx];
+                    const id = btn.getAttribute('data-id');
+                    state.dhikr = state.dhikrs.find(d => d.id === id);
                     state.count = 0;
                     updateUI();
                     modalDhikr.classList.add('hidden');
                 });
             });
+
+            container.querySelectorAll('.delete-dhikr-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    state.dhikrs = state.dhikrs.filter(d => d.id !== id);
+                    if (state.dhikr.id === id) state.dhikr = state.dhikrs[0];
+                    localStorage.setItem('tasbih_dhikrs', JSON.stringify(state.dhikrs));
+                    renderDhikrList();
+                    updateUI();
+                });
+            });
         }
 
-        // History System
+        // Add Dhikr Modal Triggers
+        const modalAddDhikr = document.getElementById('modal-add-dhikr');
+        document.getElementById('btn-open-add-dhikr').addEventListener('click', () => {
+            modalAddDhikr.classList.remove('hidden');
+        });
+        document.getElementById('btn-cancel-dhikr').addEventListener('click', () => {
+            modalAddDhikr.classList.add('hidden');
+        });
+        document.getElementById('btn-save-dhikr').addEventListener('click', () => {
+            const name = document.getElementById('add-dhikr-name').value.trim();
+            const arabic = document.getElementById('add-dhikr-arabic').value.trim();
+            const translation = document.getElementById('add-dhikr-trans').value.trim();
+
+            if (name) {
+                const newDhikr = {
+                    id: Date.now().toString(),
+                    name: name,
+                    arabic: arabic,
+                    translation: translation,
+                    isDefault: false
+                };
+                state.dhikrs.push(newDhikr);
+                state.dhikr = newDhikr;
+                state.count = 0;
+                localStorage.setItem('tasbih_dhikrs', JSON.stringify(state.dhikrs));
+                renderDhikrList();
+                updateUI();
+                modalAddDhikr.classList.add('hidden');
+                document.getElementById('add-dhikr-name').value = '';
+                document.getElementById('add-dhikr-arabic').value = '';
+                document.getElementById('add-dhikr-trans').value = '';
+            }
+        });
+
+        // Automated History System
         function logHistory(name, count) {
             if (count <= 0) return;
             const entry = {
@@ -631,7 +802,7 @@
         function renderHistory() {
             const container = document.getElementById('history-container');
             if (state.history.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No history entries logged yet.</div>`;
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No completed dhikr logs yet.</div>`;
                 return;
             }
             container.innerHTML = state.history.map(item => `
@@ -640,7 +811,7 @@
                         <div class="font-semibold text-sm text-slate-800 dark:text-slate-200">${item.name}</div>
                         <div class="text-xs text-slate-400">${item.date} • ${item.timestamp}</div>
                     </div>
-                    <div class="font-bold text-indigo-600 dark:text-indigo-400 text-lg">
+                    <div class="font-bold text-theme-600 dark:text-theme-400 text-lg transition-colors">
                         +${item.count}
                     </div>
                 </div>
@@ -667,6 +838,14 @@
             state.history = [];
             localStorage.removeItem('tasbih_history');
             renderHistory();
+        });
+
+        // Theme Palette Listener
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const themeId = btn.getAttribute('data-theme-id');
+                applyTheme(themeId);
+            });
         });
 
         // Settings Inputs
@@ -708,24 +887,6 @@
                 document.documentElement.classList.remove('dark');
             }
             saveSettings();
-        });
-
-        // Manual History Entry Modal Setup
-        const btnManualLog = document.getElementById('btn-manual-log');
-        const btnSaveManual = document.getElementById('btn-save-manual');
-        const btnCancelManual = document.getElementById('btn-cancel-manual');
-
-        btnManualLog.addEventListener('click', () => modalManualLog.classList.remove('hidden'));
-        btnCancelManual.addEventListener('click', () => modalManualLog.classList.add('hidden'));
-        btnSaveManual.addEventListener('click', () => {
-            const name = document.getElementById('manual-name').value || 'Custom Dhikr';
-            const count = parseInt(document.getElementById('manual-count').value) || 0;
-            if (count > 0) {
-                logHistory(name, count);
-                renderHistory();
-                modalManualLog.classList.add('hidden');
-                document.getElementById('manual-count').value = '';
-            }
         });
 
         // Startup Call
