@@ -157,7 +157,19 @@
         }
     </script>
     <style>
-    
+
+        #privacy-overlay {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    height: 100dvh !important; /* Dynamic viewport height covers dynamic URL bars */
+    background-color: #000000 !important;
+}
+            
         :root[data-theme="charcoal"] {
             --color-50: #f8fafc; --color-100: #f1f5f9; --color-300: #cbd5e1;
             --color-400: #94a3b8; --color-500: #64748b; --color-600: #475569;
@@ -646,11 +658,35 @@
             }
         });
 
-        btnActivatePrivacy.addEventListener('click', () => {
-            modalSettings.classList.add('hidden');
-            privacyOverlay.classList.remove('hidden');
-            privacyOverlay.classList.add('flex');
-        });
+        // --- Function to update Android/iOS Status Bar color dynamically ---
+function setSystemThemeColor(color) {
+    let themeMeta = document.querySelector('meta[name="theme-color"]');
+    if (!themeMeta) {
+        themeMeta = document.createElement('meta');
+        themeMeta.name = 'theme-color';
+        document.head.appendChild(themeMeta);
+    }
+    themeMeta.setAttribute('content', color);
+}
+
+// --- Activate Privacy Mode ---
+btnActivatePrivacy.addEventListener('click', () => {
+    modalSettings.classList.add('hidden');
+    privacyOverlay.classList.remove('hidden');
+    privacyOverlay.classList.add('flex');
+    
+    // Force the native OS status bar / notch to go pitch black
+    setSystemThemeColor('#000000');
+});
+
+// --- Exit Privacy Mode (Attach this to your double-tap or exit handler) ---
+function exitPrivacyMode() {
+    privacyOverlay.classList.add('hidden');
+    privacyOverlay.classList.remove('flex');
+    
+    // Restore original app theme color for status bar
+    setSystemThemeColor('#1e293b');
+}
 
         btnReset.addEventListener('click', () => {
             if (state.count > 0 && state.count < state.target) {
