@@ -13,16 +13,15 @@
     <meta name="apple-mobile-web-app-title" content="Tasbih">
     
     <!-- Dynamic PWA Manifest & App Icons -->
-<script>
+    <script>
     (function() {
-        // --- Shared Drawing Logic for Tasbih Graphic ---
+        // Shared Drawing Logic for Tasbih Graphic
         function drawTasbihGraphic(ctx) {
             const centerX = 256;
             const centerY = 210;
             const radius = 125;
             const beadCount = 11;
 
-            // White Beads Loop
             for (let i = 0; i < beadCount; i++) {
                 const angle = (i * 2 * Math.PI) / beadCount - Math.PI / 2;
                 const x = centerX + radius * Math.cos(angle);
@@ -35,18 +34,15 @@
                 ctx.fill();
             }
 
-            // Tassel Assembly at Bottom Bead
             ctx.shadowBlur = 0;
             const joinX = centerX;
             const joinY = centerY + radius;
 
-            // Connector Ring/Bead
             ctx.beginPath();
             ctx.arc(joinX, joinY + 12, 10, 0, 2 * Math.PI);
             ctx.fillStyle = '#cbd5e1';
             ctx.fill();
 
-            // Tassel Cord
             ctx.beginPath();
             ctx.moveTo(joinX, joinY + 22);
             ctx.lineTo(joinX, joinY + 55);
@@ -54,13 +50,11 @@
             ctx.lineWidth = 5;
             ctx.stroke();
 
-            // Tassel Crown / Cap
             ctx.beginPath();
             ctx.arc(joinX, joinY + 60, 14, 0, Math.PI, true);
             ctx.fillStyle = '#94a3b8';
             ctx.fill();
 
-            // Tassel Fringe Threads
             const fringeStartY = joinY + 60;
             const fringeEndY = joinY + 130;
             const spread = 28;
@@ -74,61 +68,45 @@
                 ctx.stroke();
             }
 
-            // Tassel Wrap Accent Ring
             ctx.beginPath();
             ctx.rect(joinX - 10, fringeStartY + 4, 20, 6);
             ctx.fillStyle = '#64748b';
             ctx.fill();
         }
 
-        // --- 1. Generate Full-Bleed Solid Charcoal Icon (For Splash Screen & Favicon) ---
-        const canvasAny = document.createElement('canvas');
-        canvasAny.width = 512;
-        canvasAny.height = 512;
-        const ctxAny = canvasAny.getContext('2d');
-        
-        // Solid fill matching background_color prevents Chrome from auto-generating a border box
-        ctxAny.fillStyle = '#1e293b';
-        ctxAny.fillRect(0, 0, 512, 512);
+        // --- Generate Clean Icon without Square Outlines ---
+        const canvas = document.createElement('canvas');
+        canvas.width = 512;
+        canvas.height = 512;
+        const ctx = canvas.getContext('2d');
 
-        ctxAny.save();
-        ctxAny.translate(256, 256);
-        ctxAny.scale(0.85, 0.85);
-        ctxAny.translate(-256, -230);
-        drawTasbihGraphic(ctxAny);
-        ctxAny.restore();
-        const iconAnyUrl = canvasAny.toDataURL('image/png');
+        // Draw background matching theme color seamlessly
+        ctx.fillStyle = '#1e293b';
+        ctx.fillRect(0, 0, 512, 512);
 
-        // --- 2. Generate Maskable Icon (For Launcher) ---
-        const canvasMask = document.createElement('canvas');
-        canvasMask.width = 512;
-        canvasMask.height = 512;
-        const ctxMask = canvasMask.getContext('2d');
-        
-        ctxMask.fillStyle = '#1e293b';
-        ctxMask.fillRect(0, 0, 512, 512);
+        // Draw Tasbih graphic
+        ctx.save();
+        ctx.translate(256, 256);
+        ctx.scale(0.8, 0.8);
+        ctx.translate(-256, -230);
+        drawTasbihGraphic(ctx);
+        ctx.restore();
 
-        ctxMask.save();
-        ctxMask.translate(256, 256);
-        ctxMask.scale(0.72, 0.72);
-        ctxMask.translate(-256, -230);
-        drawTasbihGraphic(ctxMask);
-        ctxMask.restore();
-        const iconMaskUrl = canvasMask.toDataURL('image/png');
+        const iconUrl = canvas.toDataURL('image/png');
 
-        // Set Favicon & Apple Touch Icon
+        // Set Apple Touch Icon & Favicon
         const appleIcon = document.createElement('link');
         appleIcon.rel = 'apple-touch-icon';
-        appleIcon.href = iconMaskUrl;
+        appleIcon.href = iconUrl;
         document.head.appendChild(appleIcon);
 
         const favicon = document.createElement('link');
         favicon.rel = 'icon';
         favicon.type = 'image/png';
-        favicon.href = iconAnyUrl;
+        favicon.href = iconUrl;
         document.head.appendChild(favicon);
 
-        // --- 3. Web Manifest ---
+        // --- PWA Web Manifest without "maskable" declaration ---
         const manifest = {
             name: "Digital Tasbih Counter",
             short_name: "Tasbih",
@@ -138,22 +116,10 @@
             theme_color: "#1e293b",
             icons: [
                 {
-                    src: iconAnyUrl,
-                    sizes: "192x192",
-                    type: "image/png",
-                    purpose: "any"
-                },
-                {
-                    src: iconAnyUrl,
+                    src: iconUrl,
                     sizes: "512x512",
                     type: "image/png",
                     purpose: "any"
-                },
-                {
-                    src: iconMaskUrl,
-                    sizes: "512x512",
-                    type: "image/png",
-                    purpose: "maskable"
                 }
             ]
         };
@@ -164,7 +130,8 @@
         manifestLink.href = URL.createObjectURL(manifestBlob);
         document.head.appendChild(manifestLink);
     })();
-</script>
+    </script>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -190,16 +157,7 @@
         }
     </script>
     <style>
-        /* Remove default element focus borders and canvas/img borders */
-*:focus, *:focus-visible {
-    outline: none !important;
-}
-
-canvas, img, svg {
-    border: none !important;
-    outline: none !important;
-    box-shadow: none !important;
-}
+    
         :root[data-theme="charcoal"] {
             --color-50: #f8fafc; --color-100: #f1f5f9; --color-300: #cbd5e1;
             --color-400: #94a3b8; --color-500: #64748b; --color-600: #475569;
