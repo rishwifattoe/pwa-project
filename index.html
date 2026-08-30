@@ -121,8 +121,7 @@
         favicon.type = 'image/png';
         favicon.href = iconAnyUrl;
         document.head.appendChild(favicon);
-
-        // --- 3. Web Manifest with Separated Icons ---
+// --- 3. Web Manifest with Explicit Sizes ---
         const manifest = {
             name: "Digital Tasbih Counter",
             short_name: "Tasbih",
@@ -131,6 +130,12 @@
             background_color: "#1e293b",
             theme_color: "#1e293b",
             icons: [
+                {
+                    src: iconAnyUrl,
+                    sizes: "192x192",
+                    type: "image/png",
+                    purpose: "any"
+                },
                 {
                     src: iconAnyUrl,
                     sizes: "512x512",
