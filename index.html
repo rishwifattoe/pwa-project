@@ -49,6 +49,16 @@
             --color-400: #fb7185; --color-500: #f43f5e; --color-600: #e11d48;
             --color-700: #be123c; --color-800: #9f1239; --color-900: #881337;
         }
+        :root[data-theme="violet"] {
+            --color-50: #f5f3ff; --color-100: #ede9fe; --color-300: #c4b5fd;
+            --color-400: #a78bfa; --color-500: #8b5cf6; --color-600: #7c3aed;
+            --color-700: #6d28d9; --color-800: #5b21b6; --color-900: #4c1d95;
+        }
+        :root[data-theme="cyan"] {
+            --color-50: #ecfeff; --color-100: #cffafe; --color-300: #67e8f9;
+            --color-400: #22d3ee; --color-500: #06b6d4; --color-600: #0891b2;
+            --color-700: #0e7490; --color-800: #155e75; --color-900: #164e63;
+        }
 
         @keyframes pulse-ring {
             0% { transform: scale(1); opacity: 0.8; }
@@ -62,7 +72,7 @@
 </head>
 <body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-theme-500 selection:text-white">
 
-    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 transition-colors flex flex-col min-h-[640px]">
+    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 transition-colors flex flex-col min-h-[580px]">
         
         <!-- Header -->
         <header class="p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50">
@@ -84,34 +94,34 @@
             </div>
         </header>
 
-        <!-- Main Display Area -->
-        <main class="flex-1 p-6 flex flex-col items-center justify-between text-center gap-4">
+        <!-- Main Counter Area (Original Design & Alignment) -->
+        <main class="flex-1 p-6 flex flex-col items-center justify-between text-center gap-6">
             
-            <!-- Bigger Counter Ring -->
-            <div class="relative flex items-center justify-center my-2">
-                <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full flex items-center justify-center transition-all">
-                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
-                        <circle cx="80" cy="80" r="72" stroke="currentColor" stroke-width="8" class="text-slate-100 dark:text-slate-700/60" fill="transparent" />
-                        <circle id="progress-bar" cx="80" cy="80" r="72" stroke="currentColor" stroke-width="8" class="text-theme-500 transition-all duration-300" stroke-dasharray="452.39" stroke-dashoffset="452.39" stroke-linecap="round" fill="transparent" />
+            <!-- Target & Dhikr Info -->
+            <div class="space-y-1">
+                <div id="dhikr-arabic" class="text-3xl font-serif text-theme-600 dark:text-theme-400 mb-1">سُبْحَانَ ٱللَّهِ</div>
+                <div id="dhikr-title" class="font-bold text-slate-800 dark:text-slate-100">SubhanAllah</div>
+                <div id="dhikr-translation" class="text-xs text-slate-400">Glory be to Allah</div>
+            </div>
+
+            <!-- Main Counter Ring -->
+            <div class="relative flex items-center justify-center my-auto">
+                <div id="counter-ring-container" class="relative w-56 h-56 rounded-full flex items-center justify-center transition-all">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
+                        <circle cx="60" cy="60" r="52" stroke="currentColor" stroke-width="6" class="text-slate-100 dark:text-slate-700/60" fill="transparent" />
+                        <circle id="progress-bar" cx="60" cy="60" r="52" stroke="currentColor" stroke-width="6" class="text-theme-500 transition-all duration-300" stroke-dasharray="326.72" stroke-dashoffset="326.72" stroke-linecap="round" fill="transparent" />
                     </svg>
 
-                    <!-- Large Count Display Inside Circle -->
-                    <button id="btn-count" class="absolute inset-4 rounded-full flex flex-col items-center justify-center focus:outline-none select-none hover:bg-theme-50/20 dark:hover:bg-theme-900/10 active:scale-95 transition">
-                        <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-800 dark:text-white">0</span>
+                    <!-- Clickable Area Inside Ring -->
+                    <button id="btn-count" class="absolute inset-3 rounded-full flex flex-col items-center justify-center focus:outline-none select-none hover:bg-theme-50/20 dark:hover:bg-theme-900/10 active:scale-95 transition">
+                        <span id="display-count" class="text-6xl font-extrabold tracking-tight text-slate-800 dark:text-white">0</span>
                         <span class="text-xs uppercase tracking-widest font-semibold text-slate-400 mt-1">Target: <span id="display-target">33</span></span>
                     </button>
                 </div>
             </div>
 
-            <!-- Neatly Aligned Dhikr Info Box Below Circle -->
-            <div class="w-full max-w-sm px-4 py-3 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center justify-center text-center">
-                <div id="dhikr-arabic" class="text-2xl font-serif text-theme-600 dark:text-theme-400 mb-1">SubhanAllah</div>
-                <div id="dhikr-title" class="font-bold text-slate-800 dark:text-slate-200 text-sm">Glory be to Allah</div>
-                <div id="dhikr-translation" class="text-xs text-slate-400 mt-0.5 min-h-[1rem]">Allah is free from all imperfections</div>
-            </div>
-
             <!-- Global Stats Bar -->
-            <div class="w-full grid grid-cols-2 gap-3 pt-2">
+            <div class="w-full grid grid-cols-2 gap-3">
                 <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center">
                     <span class="text-xs text-slate-400 font-medium">Laps</span>
                     <span id="display-laps" class="text-xl font-bold text-slate-700 dark:text-slate-200">0</span>
@@ -129,20 +139,13 @@
         </main>
     </div>
 
-    <!-- Privacy Mode Overlay -->
-    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between items-center p-6 text-white select-none">
+    <!-- Privacy Mode Overlay (Exit Button Removed) -->
+    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-center items-center p-6 text-white select-none">
         <div id="privacy-tap-area" class="absolute inset-0 z-10"></div>
-        
-        <div class="relative z-20 pointer-events-none text-center mt-12 opacity-30">
-            <i data-lucide="eye-off" class="w-8 h-8 mx-auto mb-2"></i>
+        <div class="relative z-20 pointer-events-none text-center opacity-20">
+            <i data-lucide="eye-off" class="w-10 h-10 mx-auto mb-2"></i>
             <p class="text-xs">Privacy Mode Active</p>
-        </div>
-
-        <!-- Custom Worker Banner at Bottom -->
-        <div id="privacy-instruction-banner" class="relative z-20 transition-opacity duration-300 opacity-0 mb-4 px-4 py-2.5 bg-slate-800/90 border border-slate-700/80 rounded-xl text-slate-300 text-xs font-mono flex items-center gap-3 shadow-2xl backdrop-blur-md">
-            <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span>pwa-project.app.workers.dev</span>
-            <button id="btn-exit-privacy" class="ml-2 px-2.5 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs font-sans transition opacity-0 pointer-events-none">Exit</button>
+            <p class="text-[10px] mt-1 text-slate-500">Double-tap screen to exit</p>
         </div>
     </div>
 
@@ -221,13 +224,16 @@
                 </div>
             </div>
 
+            <!-- Expanded Theme Options -->
             <div>
                 <label class="text-xs font-medium text-slate-400 mb-2 block">Accent Color</label>
-                <div class="flex gap-3">
-                    <button class="theme-btn w-8 h-8 rounded-full bg-indigo-600" data-theme-id="indigo"></button>
-                    <button class="theme-btn w-8 h-8 rounded-full bg-emerald-600" data-theme-id="emerald"></button>
-                    <button class="theme-btn w-8 h-8 rounded-full bg-amber-600" data-theme-id="amber"></button>
-                    <button class="theme-btn w-8 h-8 rounded-full bg-rose-600" data-theme-id="rose"></button>
+                <div class="grid grid-cols-6 gap-2">
+                    <button class="theme-btn w-8 h-8 rounded-full bg-indigo-600 mx-auto" data-theme-id="indigo" title="Indigo"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-emerald-600 mx-auto" data-theme-id="emerald" title="Emerald"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-amber-600 mx-auto" data-theme-id="amber" title="Amber"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-rose-600 mx-auto" data-theme-id="rose" title="Rose"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-violet-600 mx-auto" data-theme-id="violet" title="Violet"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-cyan-600 mx-auto" data-theme-id="cyan" title="Cyan"></button>
                 </div>
             </div>
 
@@ -238,7 +244,7 @@
         </div>
     </div>
 
-    <!-- Modal: History -->
+    <!-- Modal: History (Pure Automated Logging) -->
     <div id="modal-history" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[85vh] flex flex-col">
             <div class="flex items-center justify-between mb-4">
@@ -345,32 +351,14 @@
 
         const privacyOverlay = document.getElementById('privacy-overlay');
         const btnActivatePrivacy = document.getElementById('btn-activate-privacy');
-        const btnExitPrivacy = document.getElementById('btn-exit-privacy');
         const privacyTapArea = document.getElementById('privacy-tap-area');
-        const privacyInstructionBanner = document.getElementById('privacy-instruction-banner');
 
         const inputTarget = document.getElementById('input-target');
         const toggleVibrate = document.getElementById('toggle-vibrate');
         const togglePulse = document.getElementById('toggle-pulse');
         const toggleTheme = document.getElementById('toggle-theme');
 
-        let privacyExitTimer = null;
         let lastTapTime = 0;
-
-        function showPrivacyExitButton() {
-            btnExitPrivacy.classList.remove('opacity-0', 'pointer-events-none');
-            btnExitPrivacy.classList.add('opacity-100');
-            privacyInstructionBanner.classList.remove('opacity-0');
-            privacyInstructionBanner.classList.add('opacity-100');
-
-            clearTimeout(privacyExitTimer);
-            privacyExitTimer = setTimeout(() => {
-                btnExitPrivacy.classList.remove('opacity-100');
-                btnExitPrivacy.classList.add('opacity-0', 'pointer-events-none');
-                privacyInstructionBanner.classList.remove('opacity-100');
-                privacyInstructionBanner.classList.add('opacity-0');
-            }, 3000);
-        }
 
         function init() {
             lucide.createIcons();
@@ -442,7 +430,7 @@
                 elDhikrTranslation.textContent = '';
             }
 
-            const circumference = 2 * Math.PI * 72;
+            const circumference = 2 * Math.PI * 52;
             const progress = Math.min(state.count / state.target, 1);
             const offset = circumference - (progress * circumference);
             elProgressBar.style.strokeDasharray = circumference;
@@ -488,12 +476,20 @@
             increment();
         });
 
+        // Double Tap Screen to exit Privacy Mode
         privacyTapArea.addEventListener('click', (e) => {
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTapTime;
             
             if (tapLength < 300 && tapLength > 0) {
-                showPrivacyExitButton();
+                privacyOverlay.classList.add('hidden');
+                privacyOverlay.classList.remove('flex');
+
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
             } else {
                 if (state.count >= state.target) state.count = 0;
                 increment();
@@ -505,26 +501,11 @@
             modalSettings.classList.add('hidden');
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
-            
-            showPrivacyExitButton();
 
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(() => {});
             } else if (document.documentElement.webkitRequestFullscreen) {
                 document.documentElement.webkitRequestFullscreen();
-            }
-        });
-
-        btnExitPrivacy.addEventListener('click', (e) => {
-            e.stopPropagation();
-            clearTimeout(privacyExitTimer);
-            privacyOverlay.classList.add('hidden');
-            privacyOverlay.classList.remove('flex');
-
-            if (document.exitFullscreen) {
-                document.exitFullscreen().catch(() => {});
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
             }
         });
 
