@@ -12,7 +12,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Tasbih">
     
-   <!-- Dynamic PWA Manifest & App Icons -->
+    <!-- Dynamic PWA Manifest & App Icons -->
 <script>
     (function() {
         // --- Shared Drawing Logic for Tasbih Graphic ---
@@ -81,30 +81,36 @@
             ctx.fill();
         }
 
-        // --- 1. Generate Transparent Icon (for Splash Screen & Favicon) ---
+        // --- 1. Generate Full-Bleed Solid Charcoal Icon (For Splash Screen & Favicon) ---
         const canvasAny = document.createElement('canvas');
         canvasAny.width = 512;
         canvasAny.height = 512;
         const ctxAny = canvasAny.getContext('2d');
+        
+        // Solid fill matching background_color prevents Chrome from auto-generating a border box
+        ctxAny.fillStyle = '#1e293b';
+        ctxAny.fillRect(0, 0, 512, 512);
+
+        ctxAny.save();
         ctxAny.translate(256, 256);
         ctxAny.scale(0.85, 0.85);
         ctxAny.translate(-256, -230);
         drawTasbihGraphic(ctxAny);
+        ctxAny.restore();
         const iconAnyUrl = canvasAny.toDataURL('image/png');
 
-        // --- 2. Generate Full-Bleed Solid Charcoal Icon (for Home Screen Launcher) ---
+        // --- 2. Generate Maskable Icon (For Launcher) ---
         const canvasMask = document.createElement('canvas');
         canvasMask.width = 512;
         canvasMask.height = 512;
         const ctxMask = canvasMask.getContext('2d');
         
-        // Full-bleed fill prevents launcher container box outline
         ctxMask.fillStyle = '#1e293b';
         ctxMask.fillRect(0, 0, 512, 512);
 
         ctxMask.save();
         ctxMask.translate(256, 256);
-        ctxMask.scale(0.72, 0.72); // Scaled within safe zone
+        ctxMask.scale(0.72, 0.72);
         ctxMask.translate(-256, -230);
         drawTasbihGraphic(ctxMask);
         ctxMask.restore();
@@ -121,7 +127,8 @@
         favicon.type = 'image/png';
         favicon.href = iconAnyUrl;
         document.head.appendChild(favicon);
-// --- 3. Web Manifest with Explicit Sizes ---
+
+        // --- 3. Web Manifest ---
         const manifest = {
             name: "Digital Tasbih Counter",
             short_name: "Tasbih",
@@ -158,7 +165,6 @@
         document.head.appendChild(manifestLink);
     })();
 </script>
-
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
