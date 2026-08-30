@@ -4,6 +4,96 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Tasbih Counter</title>
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#000000">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tasbih">
+    
+    <!-- Dynamic PWA Manifest & App Icons -->
+    <script>
+        // Generate Black Icon with White Beads via Canvas
+        (function() {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d');
+
+            // Black Background
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath();
+            ctx.roundRect(0, 0, 512, 512, 112);
+            ctx.fill();
+
+            // White Beads Loop
+            const centerX = 256;
+            const centerY = 240;
+            const radius = 140;
+            const beadCount = 11;
+
+            for (let i = 0; i < beadCount; i++) {
+                const angle = (i * 2 * Math.PI) / beadCount - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+                ctx.beginPath();
+                ctx.arc(x, y, 18, 0, 2 * Math.PI);
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+                ctx.shadowBlur = 8;
+                ctx.fill();
+            }
+
+            // Tassel Details
+            ctx.shadowBlur = 0;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY + radius, 12, 0, 2 * Math.PI);
+            ctx.fillStyle = '#e2e8f0';
+            ctx.fill();
+
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY + radius + 12);
+            ctx.lineTo(centerX, centerY + radius + 60);
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 6;
+            ctx.stroke();
+
+            const iconUrl = canvas.toDataURL('image/png');
+
+            // Set Apple Touch Icon & Favicon
+            const appleIcon = document.createElement('link');
+            appleIcon.rel = 'apple-touch-icon';
+            appleIcon.href = iconUrl;
+            document.head.appendChild(appleIcon);
+
+            const favicon = document.createElement('link');
+            favicon.rel = 'icon';
+            favicon.type = 'image/png';
+            favicon.href = iconUrl;
+            document.head.appendChild(favicon);
+
+            // Embedded PWA Web Manifest
+            const manifest = {
+                name: "Digital Tasbih Counter",
+                short_name: "Tasbih",
+                start_url: "./",
+                display: "standalone",
+                background_color: "#0f172a",
+                theme_color: "#0f172a",
+                icons: [
+                    { src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
+                ]
+            };
+
+            const manifestBlob = new Blob([JSON.stringify(manifest)], { type: 'application/json' });
+            const manifestLink = document.createElement('link');
+            manifestLink.rel = 'manifest';
+            manifestLink.href = URL.createObjectURL(manifestBlob);
+            document.head.appendChild(manifestLink);
+        })();
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script>
@@ -80,10 +170,11 @@
                 <i data-lucide="book-open" class="w-4 h-4 text-theme-500"></i>
                 <span>Select Dhikr</span>
             </button>
-            <div class="flex items-center gap-1">
-                <button id="btn-sound" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="Toggle Sound">
+            <div class="flex items-center gap-1.5">
+                <!-- Improved Visual Sound Button -->
+                <button id="btn-sound" class="p-2.5 rounded-xl transition flex items-center gap-1.5 border" title="Toggle Sound">
                     <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5"></i>
-                    <span id="label-sound" class="sr-only">Sound On</span>
+                    <span id="label-sound" class="text-xs font-bold hidden sm:inline">ON</span>
                 </button>
                 <button id="btn-history" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="History">
                     <i data-lucide="history" class="w-5 h-5"></i>
@@ -257,6 +348,17 @@
     </div>
 
     <script>
+        // Register Service Worker dynamically for PWA installation support
+        if ('serviceWorker' in navigator) {
+            const swCode = `
+                self.addEventListener('install', (e) => self.skipWaiting());
+                self.addEventListener('activate', (e) => e.waitUntil(self.clients.claim()));
+                self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request).catch(() => caches.match(e.request))));
+            `;
+            const blob = new Blob([swCode], { type: 'text/javascript' });
+            navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+        }
+
         const DEFAULT_DHIKRS = [
             { id: '1', name: 'SubhanAllah', arabic: 'سُبْحَانَ ٱللَّهِ', translation: 'Glory be to Allah' },
             { id: '2', name: 'Alhamdulillah', arabic: 'ٱلْحَمْدُ لِلَّهِ', translation: 'Praise be to Allah' },
@@ -460,9 +562,16 @@
             updateUI();
         }
 
+        // Distinct Visual Styling for Sound Mute vs Active
         function updateSoundIcon() {
             iconSound.setAttribute('data-lucide', state.soundEnabled ? 'volume-2' : 'volume-x');
-            labelSound.textContent = state.soundEnabled ? 'Sound On' : 'Mute';
+            labelSound.textContent = state.soundEnabled ? 'ON' : 'MUTED';
+            
+            if (state.soundEnabled) {
+                btnSound.className = "p-2.5 rounded-xl transition flex items-center gap-1.5 border bg-theme-50 dark:bg-theme-900/40 text-theme-600 dark:text-theme-400 border-theme-200 dark:border-theme-800";
+            } else {
+                btnSound.className = "p-2.5 rounded-xl transition flex items-center gap-1.5 border bg-slate-100 dark:bg-slate-700/60 text-slate-400 dark:text-slate-500 border-slate-200 dark:border-slate-600";
+            }
             lucide.createIcons();
         }
 
@@ -471,7 +580,6 @@
             increment();
         });
 
-        // Double-Tap Logic in Privacy Mode without counting
         privacyTapArea.addEventListener('click', () => {
             privacyTapCount++;
             if (privacyTapCount === 1) {
@@ -506,7 +614,6 @@
             }
         });
 
-        // Reset Counter: Clears count, laps, and total count
         btnReset.addEventListener('click', () => {
             if (state.count > 0 && state.count < state.target) {
                 logHistory((state.dhikr ? state.dhikr.name : 'Dhikr') + " (Partial)", state.count);
