@@ -86,14 +86,12 @@
             --color-theme-900: #0f172a;
         }
 
-        /* Disable touch callouts, blue highlight, and text selection globally */
         * {
             -webkit-tap-highlight-color: transparent !important;
             -webkit-touch-callout: none;
             user-select: none;
         }
 
-        /* Pulse Animation for Ring */
         @keyframes ringPulse {
             0% { transform: scale(1); opacity: 0.8; }
             50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px var(--color-theme-500)); }
@@ -104,7 +102,6 @@
             animation: ringPulse 0.8s ease-in-out infinite;
         }
 
-        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
         }
@@ -128,7 +125,6 @@
     <!-- App Header -->
     <header class="w-full max-w-md mx-auto p-4 flex justify-between items-center z-10">
         <div class="flex items-center gap-2">
-            <!-- Logo SVG: Tassel placed underneath the beads -->
             <svg class="w-8 h-8 text-theme-600 dark:text-theme-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="9" r="6" stroke-dasharray="2 2" />
                 <circle cx="12" cy="15" r="1.5" fill="currentColor" />
@@ -170,15 +166,11 @@
         <!-- Counter Center Display & Clicker Zone -->
         <div class="my-auto py-8 flex flex-col items-center justify-center w-full">
             <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center rounded-full">
-                <!-- SVG Progress Ring -->
                 <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
-                    <!-- Track Circle -->
                     <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="8" fill="transparent"></circle>
-                    <!-- Progress Circle -->
                     <circle id="progress-bar" cx="50" cy="50" r="44" class="text-theme-600 dark:text-theme-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
                 </svg>
 
-                <!-- Interactive Main Tap Button -->
                 <button id="btn-count" class="absolute inset-4 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center active:scale-95 transition-transform duration-100 focus:outline-none cursor-pointer">
                     <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white">0</span>
                     <span id="dhikr-label" class="text-sm font-medium text-slate-400 mt-2 max-w-[140px] truncate text-center">SubhanAllah</span>
@@ -205,10 +197,10 @@
         </div>
     </main>
 
-    <!-- PRIVACY MODE OVERLAY (Full Pitch-Black Cover with Auto-Disappearing Exit Button) -->
-    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6">
+    <!-- PRIVACY MODE OVERLAY (Full Pitch-Black Cover with Double-Tap Reveal) -->
+    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6 touch-none">
         <div class="flex justify-end w-full">
-            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full text-sm font-medium transition-opacity duration-500 opacity-100">
+            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full text-sm font-medium transition-opacity duration-300 opacity-0 pointer-events-none">
                 <i data-lucide="eye-off" class="w-4 h-4"></i>
                 <span>Exit Privacy Mode</span>
             </button>
@@ -269,7 +261,6 @@
 
                 <!-- Toggles -->
                 <div class="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <!-- Haptic Feedback -->
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-medium text-sm">Haptic Feedback</div>
@@ -281,7 +272,6 @@
                         </label>
                     </div>
 
-                    <!-- Visual Ring Pulse Alert -->
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-medium text-sm">Visual Ring Pulse Alert</div>
@@ -293,7 +283,6 @@
                         </label>
                     </div>
 
-                    <!-- Dark Mode Toggle -->
                     <div class="flex justify-between items-center">
                         <div>
                             <div class="font-medium text-sm">Dark Mode</div>
@@ -306,7 +295,6 @@
                     </div>
                 </div>
 
-                <!-- PRIVACY MODE BUTTON -->
                 <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
                     <button id="btn-activate-privacy" class="w-full py-3 bg-slate-900 dark:bg-slate-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-600 transition">
                         <i data-lucide="eye-off" class="w-5 h-5"></i>
@@ -334,7 +322,6 @@
                 <!-- Injected dynamically -->
             </div>
 
-            <!-- Add Custom Dhikr Trigger -->
             <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
                 <button id="btn-open-add-dhikr" class="w-full py-2.5 bg-theme-50 dark:bg-theme-900/30 text-theme-600 dark:text-theme-400 rounded-xl text-sm font-semibold hover:bg-theme-100 dark:hover:bg-theme-900/50 transition flex items-center justify-center gap-2">
                     <i data-lucide="plus" class="w-4 h-4"></i> Add Custom Dhikr
@@ -343,10 +330,11 @@
         </div>
     </div>
 
-    <!-- ADD CUSTOM DHIKR MODAL -->
+    <!-- ADD / EDIT DHIKR MODAL -->
     <div id="modal-add-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
-            <h3 class="text-lg font-bold mb-4">Add Custom Dhikr</h3>
+            <h3 id="dhikr-modal-title" class="text-lg font-bold mb-4">Add Custom Dhikr</h3>
+            <input type="hidden" id="edit-dhikr-id" value="">
             <div class="space-y-3">
                 <div>
                     <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Title / Name</label>
@@ -368,7 +356,7 @@
         </div>
     </div>
 
-    <!-- HISTORY MODAL (Pure Automated Logging - Manual Add Removed) -->
+    <!-- HISTORY MODAL -->
     <div id="modal-history" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
         <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
             <div class="flex justify-between items-center mb-4">
@@ -395,7 +383,7 @@
 
     <!-- Application Script -->
     <script>
-        // Inline Manifest Generation for Offline PWA Support
+        // PWA Manifest with Icon Padding & Safe-Zone Scaling Fix
         const manifestData = {
             name: "Digital Tasbih & Dhikr Counter",
             short_name: "Tasbih",
@@ -406,7 +394,7 @@
             theme_color: "#4f46e5",
             icons: [
                 {
-                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><circle cx='50' cy='40' r='25' stroke='%23ffffff' stroke-width='6' fill='none' stroke-dasharray='8 8'/><circle cx='50' cy='65' r='6' fill='%23ffffff'/><path d='M50 71 L50 90 M42 90 L58 90 M44 84 L56 84' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/></svg>",
+                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f46e5'/><g transform='translate(15, 15) scale(0.7)'><circle cx='50' cy='40' r='24' stroke='%23ffffff' stroke-width='6' fill='none' stroke-dasharray='8 8'/><circle cx='50' cy='64' r='5' fill='%23ffffff'/><path d='M50 69 L50 88 M43 88 L57 88 M45 82 L55 82' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/></g></svg>",
                     sizes: "512x512",
                     type: "image/svg+xml",
                     purpose: "any maskable"
@@ -418,11 +406,10 @@
         document.getElementById('favicon').setAttribute('href', manifestData.icons[0].src);
         document.getElementById('apple-touch-icon').setAttribute('href', manifestData.icons[0].src);
 
-        // Service Worker Registration
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'tasbih-v3';
+                    const CACHE_NAME = 'tasbih-v4';
                     const ASSETS = ['./'];
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
@@ -436,19 +423,17 @@
             });
         }
 
-        // Preset Dhikr Data
         const DEFAULT_DHIKRS = [
-            { id: '1', name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah", isDefault: true },
-            { id: '2', name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah", isDefault: true },
-            { id: '3', name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest", isDefault: true },
-            { id: '4', name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah", isDefault: true },
-            { id: '5', name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah", isDefault: true },
-            { id: '6', name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah", isDefault: true },
-            { id: '7', name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah", isDefault: true },
-            { id: '8', name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad", isDefault: true }
+            { id: '1', name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah" },
+            { id: '2', name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah" },
+            { id: '3', name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest" },
+            { id: '4', name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah" },
+            { id: '5', name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah" },
+            { id: '6', name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah" },
+            { id: '7', name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah" },
+            { id: '8', name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad" }
         ];
 
-        // Web Audio API Synthesizer
         class AudioFeedback {
             constructor() { this.ctx = null; }
             init() {
@@ -489,7 +474,6 @@
             }
         }
 
-        // App State Manager
         const state = {
             count: 0,
             target: 33,
@@ -509,7 +493,6 @@
 
         const audio = new AudioFeedback();
 
-        // DOM Elements
         const elDisplayCount = document.getElementById('display-count');
         const elDisplayTarget = document.getElementById('display-target');
         const elDisplayLaps = document.getElementById('display-laps');
@@ -527,7 +510,6 @@
         const btnSettings = document.getElementById('btn-settings');
         const btnHistory = document.getElementById('btn-history');
 
-        // Modals & Overlays
         const modalSettings = document.getElementById('modal-settings');
         const closeSettings = document.getElementById('close-settings');
         const modalDhikr = document.getElementById('modal-dhikr');
@@ -545,20 +527,19 @@
         const togglePulse = document.getElementById('toggle-pulse');
         const toggleTheme = document.getElementById('toggle-theme');
 
-        // Privacy Mode Auto-Hide Controls
-        let privacyTimer = null;
+        let privacyExitTimer = null;
+        let lastTapTime = 0;
 
         function showPrivacyExitButton() {
             btnExitPrivacy.classList.remove('opacity-0', 'pointer-events-none');
             btnExitPrivacy.classList.add('opacity-100');
-            clearTimeout(privacyTimer);
-            privacyTimer = setTimeout(() => {
+            clearTimeout(privacyExitTimer);
+            privacyExitTimer = setTimeout(() => {
                 btnExitPrivacy.classList.remove('opacity-100');
                 btnExitPrivacy.classList.add('opacity-0', 'pointer-events-none');
             }, 3000);
         }
 
-        // Initialize App
         function init() {
             lucide.createIcons();
             loadSettings();
@@ -618,7 +599,7 @@
             elDisplayTarget.textContent = state.target;
             elDisplayLaps.textContent = state.laps;
             elDisplayTotal.textContent = state.total;
-            elDhikrLabel.textContent = state.dhikr.name;
+            elDhikrLabel.textContent = state.dhikr ? state.dhikr.name : 'Select Dhikr';
 
             const circumference = 2 * Math.PI * 44;
             const progress = Math.min(state.count / state.target, 1);
@@ -632,7 +613,6 @@
             }
         }
 
-        // Increment Action Core Logic
         function increment() {
             state.count++;
             state.total++;
@@ -644,7 +624,7 @@
                 state.laps++;
                 if (state.soundEnabled) audio.playCompletion();
                 if (state.vibrateEnabled && navigator.vibrate) navigator.vibrate([60, 100, 60]);
-                logHistory(state.dhikr.name, state.target);
+                logHistory(state.dhikr ? state.dhikr.name : 'Dhikr', state.target);
             }
 
             updateUI();
@@ -661,39 +641,55 @@
             lucide.createIcons();
         }
 
-        // Tap Handlers
         btnCount.addEventListener('click', () => {
-            if (state.count >= state.target) {
-                state.count = 0;
-            }
+            if (state.count >= state.target) state.count = 0;
             increment();
         });
 
-        // Privacy Mode Taps & Auto-Hide Behavior
-        privacyTapArea.addEventListener('click', () => {
-            showPrivacyExitButton();
-            if (state.count >= state.target) state.count = 0;
-            increment();
+        // Stealth Privacy Tapping & Fullscreen Setup
+        privacyTapArea.addEventListener('click', (e) => {
+            const currentTime = new Date().getTime();
+            const tapLength = currentTime - lastTapTime;
+            
+            // Double Tap or Top-Area Tap Reveals Exit Button
+            if ((tapLength < 300 && tapLength > 0) || e.clientY < 80) {
+                showPrivacyExitButton();
+            } else {
+                if (state.count >= state.target) state.count = 0;
+                increment();
+            }
+            lastTapTime = currentTime;
         });
 
         btnActivatePrivacy.addEventListener('click', () => {
             modalSettings.classList.add('hidden');
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
-            showPrivacyExitButton();
+            
+            // Request Native Fullscreen to hide device battery/time bar
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            }
         });
 
         btnExitPrivacy.addEventListener('click', (e) => {
             e.stopPropagation();
-            clearTimeout(privacyTimer);
+            clearTimeout(privacyExitTimer);
             privacyOverlay.classList.add('hidden');
             privacyOverlay.classList.remove('flex');
+
+            if (document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
         });
 
-        // Controls Handlers
         btnReset.addEventListener('click', () => {
             if (state.count > 0 && state.count < state.target) {
-                logHistory(state.dhikr.name + " (Partial)", state.count);
+                logHistory((state.dhikr ? state.dhikr.name : 'Dhikr') + " (Partial)", state.count);
             }
             state.count = 0;
             state.laps = 0;
@@ -706,19 +702,22 @@
             saveSettings();
         });
 
-        // Custom Dhikr Add/Remove Functionality
+        // Full Dhikr Management: Select, Add, Edit, and Delete Default/Custom Dhikrs
         function renderDhikrList() {
             const container = document.getElementById('dhikr-list');
             container.innerHTML = state.dhikrs.map((item) => `
-                <div class="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-theme-50 dark:hover:bg-theme-900/30 transition flex justify-between items-center group ${state.dhikr.id === item.id ? 'bg-theme-50/70 dark:bg-theme-900/40 border-theme-300 dark:border-theme-600' : ''}">
+                <div class="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-theme-50 dark:hover:bg-theme-900/30 transition flex justify-between items-center group ${state.dhikr && state.dhikr.id === item.id ? 'bg-theme-50/70 dark:bg-theme-900/40 border-theme-300 dark:border-theme-600' : ''}">
                     <button class="flex-1 text-left select-dhikr-btn" data-id="${item.id}">
                         <div class="font-bold text-slate-800 dark:text-slate-100">${item.name}</div>
                         <div class="text-xs text-slate-400">${item.translation || ''}</div>
                     </button>
-                    <div class="flex items-center gap-3">
-                        <div class="font-serif text-lg text-theme-600 dark:text-theme-400">${item.arabic || ''}</div>
-                        ${!item.isDefault ? `
-                            <button class="delete-dhikr-btn p-1.5 text-slate-300 hover:text-red-500 rounded-lg transition" data-id="${item.id}">
+                    <div class="flex items-center gap-2">
+                        <div class="font-serif text-base text-theme-600 dark:text-theme-400 mr-1">${item.arabic || ''}</div>
+                        <button class="edit-dhikr-btn p-1.5 text-slate-400 hover:text-theme-600 dark:hover:text-theme-400 rounded-lg transition" data-id="${item.id}">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        ${state.dhikrs.length > 1 ? `
+                            <button class="delete-dhikr-btn p-1.5 text-slate-400 hover:text-red-500 rounded-lg transition" data-id="${item.id}">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         ` : ''}
@@ -738,12 +737,28 @@
                 });
             });
 
+            container.querySelectorAll('.edit-dhikr-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const id = btn.getAttribute('data-id');
+                    const targetDhikr = state.dhikrs.find(d => d.id === id);
+                    if (targetDhikr) {
+                        document.getElementById('dhikr-modal-title').textContent = 'Edit Dhikr';
+                        document.getElementById('edit-dhikr-id').value = targetDhikr.id;
+                        document.getElementById('add-dhikr-name').value = targetDhikr.name;
+                        document.getElementById('add-dhikr-arabic').value = targetDhikr.arabic || '';
+                        document.getElementById('add-dhikr-trans').value = targetDhikr.translation || '';
+                        modalAddDhikr.classList.remove('hidden');
+                    }
+                });
+            });
+
             container.querySelectorAll('.delete-dhikr-btn').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
                     const id = btn.getAttribute('data-id');
                     state.dhikrs = state.dhikrs.filter(d => d.id !== id);
-                    if (state.dhikr.id === id) state.dhikr = state.dhikrs[0];
+                    if (state.dhikr && state.dhikr.id === id) state.dhikr = state.dhikrs[0];
                     localStorage.setItem('tasbih_dhikrs', JSON.stringify(state.dhikrs));
                     renderDhikrList();
                     updateUI();
@@ -751,41 +766,53 @@
             });
         }
 
-        // Add Dhikr Modal Triggers
         const modalAddDhikr = document.getElementById('modal-add-dhikr');
         document.getElementById('btn-open-add-dhikr').addEventListener('click', () => {
+            document.getElementById('dhikr-modal-title').textContent = 'Add Custom Dhikr';
+            document.getElementById('edit-dhikr-id').value = '';
+            document.getElementById('add-dhikr-name').value = '';
+            document.getElementById('add-dhikr-arabic').value = '';
+            document.getElementById('add-dhikr-trans').value = '';
             modalAddDhikr.classList.remove('hidden');
         });
+
         document.getElementById('btn-cancel-dhikr').addEventListener('click', () => {
             modalAddDhikr.classList.add('hidden');
         });
+
         document.getElementById('btn-save-dhikr').addEventListener('click', () => {
+            const editId = document.getElementById('edit-dhikr-id').value;
             const name = document.getElementById('add-dhikr-name').value.trim();
             const arabic = document.getElementById('add-dhikr-arabic').value.trim();
             const translation = document.getElementById('add-dhikr-trans').value.trim();
 
             if (name) {
-                const newDhikr = {
-                    id: Date.now().toString(),
-                    name: name,
-                    arabic: arabic,
-                    translation: translation,
-                    isDefault: false
-                };
-                state.dhikrs.push(newDhikr);
-                state.dhikr = newDhikr;
-                state.count = 0;
+                if (editId) {
+                    const idx = state.dhikrs.findIndex(d => d.id === editId);
+                    if (idx !== -1) {
+                        state.dhikrs[idx] = { ...state.dhikrs[idx], name, arabic, translation };
+                        if (state.dhikr && state.dhikr.id === editId) {
+                            state.dhikr = state.dhikrs[idx];
+                        }
+                    }
+                } else {
+                    const newDhikr = {
+                        id: Date.now().toString(),
+                        name: name,
+                        arabic: arabic,
+                        translation: translation
+                    };
+                    state.dhikrs.push(newDhikr);
+                    state.dhikr = newDhikr;
+                    state.count = 0;
+                }
                 localStorage.setItem('tasbih_dhikrs', JSON.stringify(state.dhikrs));
                 renderDhikrList();
                 updateUI();
                 modalAddDhikr.classList.add('hidden');
-                document.getElementById('add-dhikr-name').value = '';
-                document.getElementById('add-dhikr-arabic').value = '';
-                document.getElementById('add-dhikr-trans').value = '';
             }
         });
 
-        // Automated History System
         function logHistory(name, count) {
             if (count <= 0) return;
             const entry = {
@@ -818,7 +845,6 @@
             `).join('');
         }
 
-        // Modal Triggers
         btnSettings.addEventListener('click', () => modalSettings.classList.remove('hidden'));
         closeSettings.addEventListener('click', () => modalSettings.classList.add('hidden'));
 
@@ -840,7 +866,6 @@
             renderHistory();
         });
 
-        // Theme Palette Listener
         document.querySelectorAll('.theme-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const themeId = btn.getAttribute('data-theme-id');
@@ -848,7 +873,6 @@
             });
         });
 
-        // Settings Inputs
         document.querySelectorAll('.target-preset-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const target = parseInt(btn.getAttribute('data-target'));
@@ -889,7 +913,6 @@
             saveSettings();
         });
 
-        // Startup Call
         init();
     </script>
 </body>
