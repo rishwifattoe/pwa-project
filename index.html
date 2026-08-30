@@ -1,1189 +1,735 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="charcoal">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Digital Tasbih Counter</title>
-  <style>
-    /* --- CSS Reset & Variables --- */
-    :root {
-      --bg-color: #121212;
-      --card-bg: #1e1e1e;
-      --card-border: #2d2d2d;
-      --text-main: #f3f4f6;
-      --text-muted: #9ca3af;
-      --accent-soft: #10b981;
-      --accent-hover: #059669;
-      --btn-bg: #2a2a2a;
-      --btn-hover: #374151;
-      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
-      --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Digital Tasbih</title>
+    
+    <!-- PWA Primary Meta Tags -->
+    <meta name="title" content="Digital Tasbih">
+    <meta name="description" content="Offline Digital Tasbih and Dhikr Counter PWA">
+    <meta name="theme-color" content="#4f46e5">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Tasbih">
+    
+    <!-- Manifest & Icons -->
+    <link rel="manifest" id="manifest-placeholder">
+    <link rel="apple-touch-icon" id="apple-touch-icon">
+    <link rel="icon" type="image/svg+xml" id="favicon">
 
-    [data-theme="emerald"] {
-      --bg-color: #064e3b;
-      --card-bg: #047857;
-      --card-border: #059669;
-      --text-main: #ecfdf5;
-      --text-muted: #a7f3d0;
-      --accent-soft: #34d399;
-      --accent-hover: #10b981;
-      --btn-bg: #065f46;
-      --btn-hover: #047857;
-    }
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-    [data-theme="midnight"] {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --card-border: #334155;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --accent-soft: #38bdf8;
-      --accent-hover: #0284c7;
-      --btn-bg: #1e293b;
-      --btn-hover: #334155;
-    }
+    <style>
+        /* Disable touch callouts, blue highlight, and text selection globally */
+        * {
+            -webkit-tap-highlight-color: transparent !important;
+            -webkit-touch-callout: none;
+            user-select: none;
+        }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      user-select: none;
-      -webkit-user-select: none;
-    }
+        /* Pulse Animation for Ring */
+        @keyframes ringPulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px rgba(99, 102, 241, 0.8)); }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
 
-    body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: var(--font-family);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      padding: 1rem;
-      transition: background-color 0.3s ease, color 0.3s ease;
-    }
+        .pulse-active {
+            animation: ringPulse 0.8s ease-in-out infinite;
+        }
 
-    /* --- Container & Layout --- */
-    .app-container {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-
-    .header-card, .counter-card, .history-card, .stats-card {
-      background-color: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 1rem;
-      padding: 1.25rem;
-      box-shadow: var(--shadow);
-    }
-
-    /* --- Header --- */
-    .header-card {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .date-display {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .gregorian-date {
-      font-size: 0.9rem;
-      font-weight: 600;
-    }
-
-    .hijri-date {
-      font-size: 0.8rem;
-      color: var(--text-muted);
-    }
-
-    .header-actions {
-      display: flex;
-      gap: 0.5rem;
-    }
-
-    .icon-btn {
-      background: var(--btn-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      width: 2.25rem;
-      height: 2.25rem;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-      transition: background 0.2s;
-    }
-
-    .icon-btn:hover {
-      background: var(--btn-hover);
-    }
-
-    /* --- Controls & Selectors --- */
-    .controls-row {
-      display: flex;
-      gap: 0.5rem;
-      margin-bottom: 1rem;
-    }
-
-    select, input[type="date"], input[type="text"], input[type="number"] {
-      background: var(--btn-bg);
-      color: var(--text-main);
-      border: 1px solid var(--card-border);
-      border-radius: 0.5rem;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.9rem;
-      outline: none;
-      width: 100%;
-    }
-
-    select:focus, input:focus {
-      border-color: var(--accent-soft);
-    }
-
-    /* --- Main Counter Display --- */
-    .counter-card {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 2rem 1.25rem;
-    }
-
-    .count-display {
-      font-size: 4.5rem;
-      font-weight: 800;
-      line-height: 1;
-      margin: 1rem 0;
-      cursor: pointer;
-      color: var(--accent-soft);
-      transition: transform 0.1s ease;
-    }
-
-    .count-display:active {
-      transform: scale(0.95);
-    }
-
-    .target-info {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-      cursor: pointer;
-    }
-
-    .tap-area {
-      width: 100%;
-      height: 180px;
-      margin-top: 1.5rem;
-      background: var(--btn-bg);
-      border: 2px dashed var(--card-border);
-      border-radius: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      touch-action: manipulation;
-      transition: background 0.15s, border-color 0.15s;
-    }
-
-    .tap-area:active {
-      background: var(--btn-hover);
-      border-color: var(--accent-soft);
-    }
-
-    .tap-area.pulse {
-      animation: visualPulse 0.3s ease-out;
-    }
-
-    @keyframes visualPulse {
-      0% { transform: scale(1); border-color: var(--accent-soft); }
-      50% { transform: scale(0.98); background: var(--accent-hover); }
-      100% { transform: scale(1); }
-    }
-
-    .action-row {
-      display: flex;
-      width: 100%;
-      gap: 0.5rem;
-      margin-top: 1rem;
-    }
-
-    .btn {
-      flex: 1;
-      padding: 0.6rem 1rem;
-      background: var(--btn-bg);
-      border: 1px solid var(--card-border);
-      color: var(--text-main);
-      border-radius: 0.5rem;
-      font-weight: 600;
-      cursor: pointer;
-      text-align: center;
-    }
-
-    .btn:hover {
-      background: var(--btn-hover);
-    }
-
-    .btn-danger {
-      background: #7f1d1d;
-      border-color: #991b1b;
-      color: #fca5a5;
-    }
-
-    .btn-danger:hover {
-      background: #991b1b;
-    }
-
-    /* --- Stats & Lifetime List --- */
-    .stat-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0.5rem 0;
-      border-bottom: 1px solid var(--card-border);
-      font-size: 0.9rem;
-    }
-
-    .stat-row:last-child {
-      border-bottom: none;
-    }
-
-    .edit-icon-btn {
-      background: none;
-      border: none;
-      cursor: pointer;
-      font-size: 0.8rem;
-      margin-left: 0.3rem;
-      opacity: 0.7;
-    }
-
-    .edit-icon-btn:hover {
-      opacity: 1;
-    }
-
-    /* --- Focus Mode Styles --- */
-    body.focus-mode .header-card,
-    body.focus-mode .history-card,
-    body.focus-mode .stats-card,
-    body.focus-mode .controls-row,
-    body.focus-mode .action-row,
-    body.focus-mode .target-info {
-      display: none !important;
-    }
-
-    body.focus-mode .counter-card {
-      border: none;
-      background: transparent;
-      box-shadow: none;
-      height: 80vh;
-      justify-content: center;
-    }
-
-    body.focus-mode .tap-area {
-      height: 60vh;
-    }
-
-    .unhide-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s;
-      z-index: 1000;
-    }
-
-    .unhide-btn.visible {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* --- Modals --- */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.75);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 2000;
-      padding: 1rem;
-    }
-
-    .modal-content {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 1rem;
-      width: 100%;
-      max-width: 400px;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      box-shadow: var(--shadow);
-    }
-
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 700;
-      font-size: 1.1rem;
-    }
-
-    .setting-group {
-      display: flex;
-      flex-direction: column;
-      gap: 0.3rem;
-    }
-
-    .setting-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.9rem;
-    }
-
-    .setting-label {
-      font-size: 0.85rem;
-      color: var(--text-muted);
-    }
-
-    input[type="date"].has-data {
-      border-color: var(--accent-soft);
-    }
-  </style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.3);
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.5);
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 select-none overflow-x-hidden">
 
-  <button id="unhide-btn" class="btn unhide-btn">Exit Focus Mode</button>
+    <!-- App Header -->
+    <header class="w-full max-w-md mx-auto p-4 flex justify-between items-center z-10">
+        <div class="flex items-center gap-2">
+            <!-- Updated Logo SVG: Tassel placed underneath the beads -->
+            <svg class="w-8 h-8 text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <!-- Bead Ring -->
+                <circle cx="12" cy="9" r="6" stroke-dasharray="2 2" />
+                <!-- Main Hanging Bead -->
+                <circle cx="12" cy="15" r="1.5" fill="currentColor" />
+                <!-- Tassel Hanging Underneath -->
+                <path d="M12 16.5 V21" />
+                <path d="M10 21 L14 21" />
+                <path d="M10.5 19.5 L13.5 19.5" />
+            </svg>
+            <h1 class="text-xl font-bold tracking-wide">Tasbih</h1>
+        </div>
+        <div class="flex items-center gap-2">
+            <button id="btn-history" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition">
+                <i data-lucide="history" class="w-6 h-6"></i>
+            </button>
+            <button id="btn-settings" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition">
+                <i data-lucide="settings" class="w-6 h-6"></i>
+            </button>
+        </div>
+    </header>
 
-  <div class="app-container">
-    <!-- Header -->
-    <div class="header-card">
-      <div class="date-display">
-        <span id="gregorian-date" class="gregorian-date">Loading...</span>
-        <span id="hijri-date" class="hijri-date">Loading...</span>
-      </div>
-      <div class="header-actions">
-        <button id="focus-toggle-btn" class="icon-btn" title="Toggle Focus Mode">👁️</button>
-        <button id="settings-open-btn" class="icon-btn" title="Settings">⚙️</button>
-      </div>
-    </div>
-
-    <!-- Active Counter Section -->
-    <div class="counter-card">
-      <div class="controls-row" style="width: 100%;">
-        <select id="preset-select"></select>
-      </div>
-
-      <div id="count-el" class="count-display">0</div>
-      <div id="target-info-label" class="target-info">Target: <span id="target-el">33</span></div>
-
-      <div id="tap-btn" class="tap-area">Tap Anywhere to Count</div>
-
-      <div class="action-row">
-        <button id="target-btn" class="btn">Target: 33</button>
-        <button id="reset-btn" class="btn btn-danger">Reset</button>
-      </div>
-    </div>
-
-    <!-- Daily Log/History Filter -->
-    <div class="history-card">
-      <div style="font-weight:700; margin-bottom:0.75rem; font-size:1rem;">Daily History View</div>
-      <div class="controls-row">
-        <input type="date" id="history-date-picker">
-        <select id="history-dhikr-select"></select>
-      </div>
-      <div class="stat-row">
-        <span>Selected Phrase (<span id="history-dhikr-label"></span>):</span>
-        <strong id="history-count-selected">0</strong>
-      </div>
-      <div class="stat-row">
-        <span>All Phrases Combined (Day):</span>
-        <strong id="history-count-total">0</strong>
-      </div>
-    </div>
-
-    <!-- Lifetime Statistics Section -->
-    <div class="stats-card">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
-        <span style="font-weight:700; font-size:1rem;">Lifetime Totals</span>
-        <button id="open-offsets-btn" class="icon-btn" style="width:auto; padding:0 0.5rem; font-size:0.75rem;" title="View Adjustments Log">Log 📋</button>
-      </div>
-      <div id="lifetime-list-el"></div>
-      <div class="stat-row" style="margin-top:0.5rem; font-weight:700; border-top:1px solid var(--card-border); padding-top:0.5rem;">
-        <span>Grand Total:</span>
-        <strong id="history-all-time-total">0</strong>
-      </div>
-    </div>
-  </div>
-
-  <!-- Settings Modal -->
-  <div id="settings-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span>Settings</span>
-        <button id="settings-close-btn" class="icon-btn">✕</button>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Theme</label>
-        <select id="theme-select">
-          <option value="charcoal">Charcoal Dark</option>
-          <option value="emerald">Emerald Green</option>
-          <option value="midnight">Midnight Blue</option>
-        </select>
-      </div>
-
-      <div class="setting-row">
-        <span>Sound Feedback</span>
-        <input type="checkbox" id="sound-toggle">
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Alert Tone</label>
-        <select id="tone-select">
-          <option value="chime">Chime</option>
-          <option value="bell">Bell</option>
-          <option value="pulse">Pulse</option>
-        </select>
-      </div>
-
-      <div class="setting-group">
-        <label class="setting-label">Volume</label>
-        <input type="range" id="volume-range" min="0" max="1" step="0.1" value="0.3">
-      </div>
-
-      <div class="setting-row">
-        <span>Visual Pulse Effect</span>
-        <input type="checkbox" id="visual-haptic-toggle">
-      </div>
-
-      <div class="setting-row">
-        <span>Vibration Feedback</span>
-        <input type="checkbox" id="vibe-toggle">
-      </div>
-
-      <div class="setting-row">
-        <span>Focus Mode</span>
-        <input type="checkbox" id="focus-toggle-setting">
-      </div>
-
-      <hr style="border:none; border-top:1px solid var(--card-border);">
-
-      <div class="action-row">
-        <button id="export-data-btn" class="btn">Export JSON</button>
-        <button id="import-data-btn" class="btn">Import JSON</button>
-        <input type="file" id="import-file-input" accept=".json" style="display:none;">
-      </div>
-
-      <div class="action-row">
-        <button id="reset-today-btn" class="btn btn-danger">Reset Today's Logs</button>
-        <button id="master-reset-btn" class="btn btn-danger">Master Reset</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Adjustments Log Modal -->
-  <div id="offsets-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div class="modal-header">
-        <span>Manual Adjustments Log</span>
-        <button id="offsets-close-btn" class="icon-btn">✕</button>
-      </div>
-      <div id="offsets-modal-list"></div>
-      <button id="clear-offsets-btn" class="btn btn-danger" style="margin-top:0.5rem;">Reset Adjustments</button>
-    </div>
-  </div>
-
-  <!-- Generic Input Modal -->
-  <div id="input-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div id="input-modal-title" class="modal-header">Input</div>
-      <input type="text" id="input-modal-field">
-      <div class="action-row">
-        <button id="input-modal-cancel" class="btn">Cancel</button>
-        <button id="input-modal-confirm" class="btn" style="background:var(--accent-soft); color:#000;">Save</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Generic Confirm Modal -->
-  <div id="confirm-modal" class="modal-overlay">
-    <div class="modal-content">
-      <div id="confirm-modal-title" class="modal-header">Confirm</div>
-      <div id="confirm-modal-message" style="font-size:0.9rem; color:var(--text-muted);">Are you sure?</div>
-      <div class="action-row">
-        <button id="confirm-modal-cancel" class="btn">Cancel</button>
-        <button id="confirm-modal-ok" class="btn btn-danger">Confirm</button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    // --- Constants & Global Defaults ---
-    const DEFAULT_DHIKRS = ['SubhanAllah', 'Alhamdulillah', 'Allahu Akbar', 'Astaghfirullah', 'La ilaha illa Allah'];
-    const HIJRI_MONTHS = ['Muharram', 'Safar', 'Rabi al-Awwal', 'Rabi al-Thani', 'Jumada al-Awwal', 'Jumada al-Thani', 'Rajab', 'Sha\'ban', 'Ramadan', 'Shawwal', 'Dhu al-Qi\'dah', 'Dhu al-Hijjah'];
-
-    // --- Application State ---
-    let allDhikrList = JSON.parse(localStorage.getItem('tasbih_all_dhikrs')) || DEFAULT_DHIKRS;
-    let currentDhikr = localStorage.getItem('tasbih_dhikr') || allDhikrList[0];
-    let count = parseInt(localStorage.getItem('tasbih_session_count'), 10) || 0;
-    let target = parseInt(localStorage.getItem('tasbih_target'), 10) || 33;
-    let soundEnabled = localStorage.getItem('tasbih_sound') !== 'false';
-    let vibeEnabled = localStorage.getItem('tasbih_vibe') !== 'false';
-    let visualHapticEnabled = localStorage.getItem('tasbih_visual_pulse') !== 'false';
-    let alertTone = localStorage.getItem('tasbih_alert_tone') || 'chime';
-    let alertVolume = parseFloat(localStorage.getItem('tasbih_volume')) || 0.3;
-    let currentTheme = localStorage.getItem('tasbih_theme') || 'charcoal';
-    let focusMode = false;
-    let unhideTimeout = null;
-
-    // --- DOM Elements ---
-    const gregorianDateEl = document.getElementById('gregorian-date');
-    const hijriDateEl = document.getElementById('hijri-date');
-    const countEl = document.getElementById('count-el');
-    const targetEl = document.getElementById('target-el');
-    const targetInfoLabel = document.getElementById('target-info-label');
-    const tapBtn = document.getElementById('tap-btn');
-    const resetBtn = document.getElementById('reset-btn');
-    const targetBtn = document.getElementById('target-btn');
-    const presetSelect = document.getElementById('preset-select');
-    const historyDatePicker = document.getElementById('history-date-picker');
-    const historyDhikrSelect = document.getElementById('history-dhikr-select');
-    const historyDhikrLabel = document.getElementById('history-dhikr-label');
-    const historyCountSelected = document.getElementById('history-count-selected');
-    const historyCountTotal = document.getElementById('history-count-total');
-    const lifetimeListEl = document.getElementById('lifetime-list-el');
-    const historyAllTimeTotal = document.getElementById('history-all-time-total');
-    const focusToggleBtn = document.getElementById('focus-toggle-btn');
-    const unhideBtn = document.getElementById('unhide-btn');
-
-    // Settings Modal DOM
-    const settingsModal = document.getElementById('settings-modal');
-    const settingsOpenBtn = document.getElementById('settings-open-btn');
-    const settingsCloseBtn = document.getElementById('settings-close-btn');
-    const themeSelect = document.getElementById('theme-select');
-    const soundToggle = document.getElementById('sound-toggle');
-    const toneSelect = document.getElementById('tone-select');
-    const volumeRange = document.getElementById('volume-range');
-    const visualHapticToggle = document.getElementById('visual-haptic-toggle');
-    const vibeToggle = document.getElementById('vibe-toggle');
-    const focusToggleSetting = document.getElementById('focus-toggle-setting');
-    const resetTodayBtn = document.getElementById('reset-today-btn');
-    const masterResetBtn = document.getElementById('master-reset-btn');
-
-    // Offsets Modal DOM
-    const offsetsModal = document.getElementById('offsets-modal');
-    const openOffsetsBtn = document.getElementById('open-offsets-btn');
-    const offsetsCloseBtn = document.getElementById('offsets-close-btn');
-    const offsetsModalList = document.getElementById('offsets-modal-list');
-    const clearOffsetsBtn = document.getElementById('clear-offsets-btn');
-
-    // Custom Input/Confirm Modal DOM
-    const inputModal = document.getElementById('input-modal');
-    const inputModalTitle = document.getElementById('input-modal-title');
-    const inputModalField = document.getElementById('input-modal-field');
-    const inputModalCancel = document.getElementById('input-modal-cancel');
-    const inputModalConfirm = document.getElementById('input-modal-confirm');
-
-    const confirmModal = document.getElementById('confirm-modal');
-    const confirmModalTitle = document.getElementById('confirm-modal-title');
-    const confirmModalMessage = document.getElementById('confirm-modal-message');
-    const confirmModalCancel = document.getElementById('confirm-modal-cancel');
-    const confirmModalOk = document.getElementById('confirm-modal-ok');
-
-    // --- Modal Helper Functions ---
-    function showCustomInputModal(title, defaultValue, inputType, onConfirm) {
-      inputModalTitle.textContent = title;
-      inputModalField.type = inputType || 'text';
-      inputModalField.value = defaultValue;
-      inputModal.style.display = 'flex';
-      inputModalField.focus();
-
-      const handleConfirm = () => {
-        onConfirm(inputModalField.value);
-        closeInputModal();
-      };
-
-      const closeInputModal = () => {
-        inputModal.style.display = 'none';
-        inputModalConfirm.removeEventListener('click', handleConfirm);
-      };
-
-      inputModalCancel.onclick = closeInputModal;
-      inputModalConfirm.onclick = handleConfirm;
-    }
-
-    function showCustomConfirmModal(title, message, onConfirm) {
-      confirmModalTitle.textContent = title;
-      confirmModalMessage.textContent = message;
-      confirmModal.style.display = 'flex';
-
-      const handleConfirm = () => {
-        onConfirm();
-        closeConfirmModal();
-      };
-
-      const closeConfirmModal = () => {
-        confirmModal.style.display = 'none';
-        confirmModalOk.removeEventListener('click', handleConfirm);
-      };
-
-      confirmModalCancel.onclick = closeConfirmModal;
-      confirmModalOk.onclick = handleConfirm;
-    }
-
-    // --- Option Rendering Helper ---
-    function renderDhikrOptions() {
-      presetSelect.innerHTML = '';
-      historyDhikrSelect.innerHTML = '';
-
-      allDhikrList.forEach(dhikr => {
-        const opt1 = document.createElement('option');
-        opt1.value = dhikr;
-        opt1.textContent = dhikr;
-        if (dhikr === currentDhikr) opt1.selected = true;
-        presetSelect.appendChild(opt1);
-
-        const opt2 = document.createElement('option');
-        opt2.value = dhikr;
-        opt2.textContent = dhikr;
-        historyDhikrSelect.appendChild(opt2);
-      });
-
-      const customOpt = document.createElement('option');
-      customOpt.value = '__custom__';
-      customOpt.textContent = '+ Add Custom Dhikr...';
-      presetSelect.appendChild(customOpt);
-    }
-
-    // --- Exact Code from User Prompt ---
-    function deleteDhikr(dhikrToDelete) {
-      showCustomConfirmModal(
-        'Delete Dhikr',
-        `Are you sure you want to remove "${dhikrToDelete}"?`,
-        () => {
-          allDhikrList = allDhikrList.filter(item => item !== dhikrToDelete);
-          localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
-          
-          if (currentDhikr === dhikrToDelete) {
-            currentDhikr = allDhikrList[0] || 'Istighfar';
-            count = 0;
-          }
-          renderDhikrOptions();
-          updateUI();
-        }
-      );
-    }
-
-    let audioCtx = null;
-    function initAudio() {
-      if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
-    function playGoalTone() {
-      if (!soundEnabled) return;
-      initAudio();
-      try {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-md w-full mx-auto flex flex-col justify-between items-center px-4 pb-6">
         
-        if (alertTone === 'bell') {
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(440, audioCtx.currentTime);
-          osc.frequency.exponentialRampToValueAtTime(880, audioCtx.currentTime + 0.5);
-        } else if (alertTone === 'pulse') {
-          osc.type = 'square';
-          osc.frequency.setValueAtTime(329.63, audioCtx.currentTime);
-        } else {
-          osc.type = 'sine';
-          osc.frequency.setValueAtTime(587.33, audioCtx.currentTime);
+        <!-- Top Stats / Target Indicator -->
+        <div class="w-full flex justify-between items-center bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mt-2">
+            <div class="flex flex-col">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Target</span>
+                <span id="display-target" class="text-lg font-bold text-indigo-600 dark:text-indigo-400">33</span>
+            </div>
+            <div class="flex flex-col items-center">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Laps</span>
+                <span id="display-laps" class="text-lg font-bold">0</span>
+            </div>
+            <div class="flex flex-col items-end">
+                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</span>
+                <span id="display-total" class="text-lg font-bold text-slate-600 dark:text-slate-300">0</span>
+            </div>
+        </div>
+
+        <!-- Counter Center Display & Clicker Zone -->
+        <div class="my-auto py-8 flex flex-col items-center justify-center w-full">
+            <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center rounded-full">
+                <!-- SVG Progress Ring -->
+                <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
+                    <!-- Track Circle -->
+                    <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="8" fill="transparent"></circle>
+                    <!-- Progress Circle -->
+                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-indigo-600 dark:text-indigo-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
+                </svg>
+
+                <!-- Interactive Main Tap Button -->
+                <button id="btn-count" class="absolute inset-4 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center active:scale-95 transition-transform duration-100 focus:outline-none cursor-pointer">
+                    <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white">0</span>
+                    <span id="dhikr-label" class="text-sm font-medium text-slate-400 mt-2 max-w-[140px] truncate text-center">SubhanAllah</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Controls Bottom Bar -->
+        <div class="w-full grid grid-cols-3 gap-3">
+            <button id="btn-reset" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
+                <i data-lucide="rotate-ccw" class="w-5 h-5 text-slate-600 dark:text-slate-300 mb-1"></i>
+                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Reset</span>
+            </button>
+
+            <button id="btn-sound" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
+                <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5 text-indigo-600 dark:text-indigo-400 mb-1"></i>
+                <span id="label-sound" class="text-xs font-medium text-slate-500 dark:text-slate-400">Sound</span>
+            </button>
+
+            <button id="btn-dhikr-select" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
+                <i data-lucide="book-open" class="w-5 h-5 text-slate-600 dark:text-slate-300 mb-1"></i>
+                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Preset</span>
+            </button>
+        </div>
+    </main>
+
+    <!-- PRIVACY MODE OVERLAY (Full Screen Cover) -->
+    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6">
+        <!-- Exit Privacy Mode Header Button -->
+        <div class="flex justify-end w-full">
+            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/80 border border-slate-700 px-4 py-2 rounded-full text-sm font-medium transition">
+                <i data-lucide="eye-off" class="w-4 h-4"></i>
+                <span>Exit Privacy Mode</span>
+            </button>
+        </div>
+        <!-- Invisible Tap Zone Covering Entire Screen -->
+        <div id="privacy-tap-area" class="flex-1 w-full h-full cursor-pointer"></div>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="modal-settings" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="settings" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    Settings
+                </h2>
+                <button id="close-settings" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div class="space-y-6">
+                <!-- Target Setting -->
+                <div>
+                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Target Count</label>
+                    <div class="grid grid-cols-4 gap-2 mb-2">
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="33">33</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="99">99</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="100">100</button>
+                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-indigo-50 dark:hover:bg-indigo-900/40 border border-transparent hover:border-indigo-500 transition" data-target="1000">1000</button>
+                    </div>
+                    <input type="number" id="input-target" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Custom Target">
+                </div>
+
+                <!-- Toggles -->
+                <div class="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-700">
+                    <!-- Haptic Feedback -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-medium text-sm">Haptic Feedback</div>
+                            <div class="text-xs text-slate-400">Vibrate on each tap</div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-vibrate" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+
+                    <!-- Visual Ring Pulse Alert -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-medium text-sm">Visual Ring Pulse Alert</div>
+                            <div class="text-xs text-slate-400">Glow/Pulse ring when target reached</div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-pulse" class="sr-only peer" checked>
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+
+                    <!-- Dark Mode -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <div class="font-medium text-sm">Dark Mode</div>
+                            <div class="text-xs text-slate-400">Toggle dark/light theme</div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="toggle-theme" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-indigo-600"></div>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- PRIVACY MODE TOGGLE -->
+                <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
+                    <button id="btn-activate-privacy" class="w-full py-3 bg-slate-900 dark:bg-slate-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-600 transition">
+                        <i data-lucide="eye-off" class="w-5 h-5"></i>
+                        <span>Enter Privacy Mode</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DHIKR PRESETS MODAL -->
+    <div id="modal-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="book-open" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    Select Dhikr
+                </h2>
+                <button id="close-dhikr" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="dhikr-list">
+                <!-- Preset Items Injected by JS -->
+            </div>
+        </div>
+    </div>
+
+    <!-- HISTORY MODAL -->
+    <div id="modal-history" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="history" class="w-5 h-5 text-indigo-600 dark:text-indigo-400"></i>
+                    Dhikr History
+                </h2>
+                <button id="close-history" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+
+            <div id="history-container" class="space-y-3 overflow-y-auto flex-1 pr-1">
+                <!-- History logs loaded by JS -->
+            </div>
+
+            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                <button id="btn-manual-log" class="flex-1 py-2 px-4 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 rounded-xl text-sm font-semibold hover:bg-indigo-100 dark:hover:bg-indigo-900/50 transition flex items-center justify-center gap-1">
+                    <i data-lucide="plus" class="w-4 h-4"></i> Add Entry
+                </button>
+                <button id="btn-clear-history" class="py-2 px-4 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/40 transition">
+                    Clear
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MANUAL ENTRY MODAL -->
+    <div id="modal-manual-log" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
+            <h3 class="text-lg font-bold mb-4">Log Manual Dhikr</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Dhikr Name</label>
+                    <input type="text" id="manual-name" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" value="Custom Dhikr">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Count</label>
+                    <input type="number" id="manual-count" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="33">
+                </div>
+                <div class="flex gap-2 pt-2">
+                    <button id="btn-save-manual" class="flex-1 py-2 bg-indigo-600 text-white rounded-xl font-semibold hover:bg-indigo-700 transition">Save</button>
+                    <button id="btn-cancel-manual" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script>
+        // Inline Manifest Generation for Offline PWA Support
+        const manifestData = {
+            name: "Digital Tasbih & Dhikr Counter",
+            short_name: "Tasbih",
+            description: "Offline Digital Tasbih PWA App",
+            start_url: "./",
+            display: "standalone",
+            background_color: "#0f172a",
+            theme_color: "#4f46e5",
+            icons: [
+                {
+                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%234f46e5'/><circle cx='50' cy='40' r='25' stroke='%23ffffff' stroke-width='6' fill='none' stroke-dasharray='8 8'/><circle cx='50' cy='65' r='6' fill='%23ffffff'/><path d='M50 71 L50 90 M42 90 L58 90 M44 84 L56 84' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/></svg>",
+                    sizes: "512x512",
+                    type: "image/svg+xml",
+                    purpose: "any maskable"
+                }
+            ]
+        };
+        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
+        document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
+        document.getElementById('favicon').setAttribute('href', manifestData.icons[0].src);
+        document.getElementById('apple-touch-icon').setAttribute('href', manifestData.icons[0].src);
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                const swCode = `
+                    const CACHE_NAME = 'tasbih-v2';
+                    const ASSETS = ['./'];
+                    self.addEventListener('install', (e) => {
+                        e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
+                    });
+                    self.addEventListener('fetch', (e) => {
+                        e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
+                    });
+                `;
+                const blob = new Blob([swCode], { type: 'application/javascript' });
+                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
+            });
         }
 
-        gain.gain.setValueAtTime(alertVolume, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.8);
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 0.8);
-      } catch (e) {}
-    }
+        // Preset Dhikr Data
+        const DHIKR_PRESETS = [
+            { name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah" },
+            { name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah" },
+            { name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest" },
+            { name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah" },
+            { name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah" },
+            { name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah" },
+            { name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah" },
+            { name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad" }
+        ];
 
-    function triggerVisualPulse() {
-      if (!visualHapticEnabled) return;
-      tapBtn.classList.remove('pulse');
-      void tapBtn.offsetWidth;
-      tapBtn.classList.add('pulse');
-    }
-
-    function triggerVibration(pattern) {
-      if (vibeEnabled && 'vibrate' in navigator) {
-        try { navigator.vibrate(pattern); } catch (e) {}
-      }
-    }
-
-    function applyTheme(theme) {
-      document.documentElement.setAttribute('data-theme', theme);
-      themeSelect.value = theme;
-      localStorage.setItem('tasbih_theme', theme);
-    }
-
-    function renderDates() {
-      const now = new Date();
-      const gregOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
-      gregorianDateEl.textContent = now.toLocaleDateString('en-GB', gregOptions);
-
-      try {
-        const parts = new Intl.DateTimeFormat('en-u-ca-islamic-num', {
-          day: 'numeric', month: 'numeric', year: 'numeric'
-        }).formatToParts(now);
-
-        let day = '', monthIdx = 0, year = '';
-        parts.forEach(p => {
-          if (p.type === 'day') day = p.value;
-          if (p.type === 'month') monthIdx = parseInt(p.value, 10) - 1;
-          if (p.type === 'year') year = p.value;
-        });
-
-        const monthName = HIJRI_MONTHS[monthIdx] || "Hijri";
-        hijriDateEl.textContent = `${day} ${monthName} ${year} AH`;
-      } catch (e) {
-        hijriDateEl.textContent = now.toLocaleDateString();
-      }
-    }
-
-    function getLogs() {
-      return JSON.parse(localStorage.getItem('tasbih_logs_v2') || '{}');
-    }
-
-    function getManualOffsets() {
-      return JSON.parse(localStorage.getItem('tasbih_offsets') || '{}');
-    }
-
-    function saveTap(dhikrType) {
-      const logs = getLogs();
-      const dateKey = new Date().toISOString().split('T')[0];
-
-      if (!logs[dateKey]) logs[dateKey] = {};
-      if (!logs[dateKey][dhikrType]) logs[dateKey][dhikrType] = 0;
-
-      logs[dateKey][dhikrType] += 1;
-      localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
-    }
-
-    function updateLifetimeTotals() {
-      const logs = getLogs();
-      const offsets = getManualOffsets();
-      const totals = {};
-      
-      allDhikrList.forEach(item => totals[item] = offsets[item] || 0);
-
-      Object.keys(logs).forEach(dateKey => {
-        Object.keys(logs[dateKey]).forEach(dhikr => {
-          if (totals[dhikr] !== undefined) {
-            totals[dhikr] += logs[dateKey][dhikr];
-          } else {
-            totals[dhikr] = (offsets[dhikr] || 0) + logs[dateKey][dhikr];
-          }
-        });
-      });
-
-      lifetimeListEl.innerHTML = '';
-      let grandTotal = 0;
-
-      Object.keys(totals).forEach(item => {
-        grandTotal += totals[item];
-        const row = document.createElement('div');
-        row.className = 'stat-row';
-        row.innerHTML = `
-          <span>${item} <button class="edit-icon-btn" title="Edit or Reset Total">✏️</button></span>
-          <strong>${totals[item]}</strong>
-        `;
-        row.querySelector('.edit-icon-btn').addEventListener('click', () => editLifetimeTotal(item, totals[item]));
-        lifetimeListEl.appendChild(row);
-      });
-
-      if (historyAllTimeTotal) {
-        historyAllTimeTotal.textContent = grandTotal.toLocaleString();
-      }
-    }
-
-    function editLifetimeTotal(dhikrName, currentTotal) {
-      showCustomInputModal(`Edit Total for ${dhikrName}`, currentTotal, 'number', (val) => {
-        const newTotal = parseInt(val, 10);
-        if (isNaN(newTotal) || newTotal < 0) return;
-
-        const logs = getLogs();
-        let loggedSum = 0;
-        
-        Object.keys(logs).forEach(date => {
-          if (logs[date][dhikrName]) {
-            loggedSum += logs[date][dhikrName];
-          }
-        });
-
-        const offsets = getManualOffsets();
-        offsets[dhikrName] = newTotal - loggedSum;
-        localStorage.setItem('tasbih_offsets', JSON.stringify(offsets));
-
-        updateUI();
-      });
-    }
-
-    function editCurrentCounter() {
-      showCustomInputModal(`Edit Current Session Count`, count, 'number', (val) => {
-        const parsed = parseInt(val, 10);
-        if (!isNaN(parsed) && parsed >= 0) {
-          count = parsed;
-          updateUI();
-        }
-      });
-    }
-
-    function renderOffsetsList() {
-      const offsets = getManualOffsets();
-      offsetsModalList.innerHTML = '';
-      
-      const keys = Object.keys(offsets).filter(k => offsets[k] !== 0);
-      if (keys.length === 0) {
-        offsetsModalList.innerHTML = '<div style="font-size:0.85rem; color:var(--text-muted); padding:0.5rem 0;">No manual adjustments recorded.</div>';
-        return;
-      }
-
-      keys.forEach(dhikr => {
-        const row = document.createElement('div');
-        row.className = 'stat-row';
-        const val = offsets[dhikr];
-        const sign = val > 0 ? '+' : '';
-        row.innerHTML = `
-          <span>${dhikr}</span>
-          <strong style="color:${val >= 0 ? 'var(--accent-soft)' : '#ef4444'}">${sign}${val}</strong>
-        `;
-        offsetsModalList.appendChild(row);
-      });
-    }
-
-    function updateHistoryView() {
-      const logs = getLogs();
-      const selectedDate = historyDatePicker.value;
-      const selectedDhikr = historyDhikrSelect.value || currentDhikr;
-
-      // Visual Highlight indicator if selected date has recorded activity
-      const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
-      if (hasActivityOnDate) {
-        historyDatePicker.classList.add('has-data');
-      } else {
-        historyDatePicker.classList.remove('has-data');
-      }
-
-      if (logs[selectedDate]) {
-        let dayTotal = 0;
-        Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
-
-        const selectedCount = logs[selectedDate][selectedDhikr] || 0;
-        historyDhikrLabel.textContent = selectedDhikr;
-        historyCountSelected.textContent = selectedCount.toLocaleString();
-        historyCountTotal.textContent = dayTotal.toLocaleString();
-      } else {
-        historyDhikrLabel.textContent = selectedDhikr;
-        historyCountSelected.textContent = '0';
-        historyCountTotal.textContent = '0';
-      }
-    }
-
-    function resetTodayLogs() {
-      const todayKey = new Date().toISOString().split('T')[0];
-      showCustomConfirmModal(
-        'Reset Today\'s Logs',
-        `Are you sure you want to clear all recorded dhikrs for today (${todayKey})?`,
-        () => {
-          const logs = getLogs();
-          if (logs[todayKey]) {
-            delete logs[todayKey];
-            localStorage.setItem('tasbih_logs_v2', JSON.stringify(logs));
-          }
-          count = 0;
-          updateUI();
-        }
-      );
-    }
-
-    function performMasterReset() {
-      showCustomConfirmModal(
-        'Master Reset',
-        'WARNING: This will permanently delete ALL recorded dhikr history, custom phrases, manual adjustments, and local settings. Are you completely sure?',
-        () => {
-          localStorage.clear();
-          allDhikrList = DEFAULT_DHIKRS;
-          currentDhikr = DEFAULT_DHIKRS[0];
-          count = 0;
-          target = 33;
-          soundEnabled = true;
-          vibeEnabled = true;
-          visualHapticEnabled = true;
-          alertTone = 'chime';
-          alertVolume = 0.3;
-          currentTheme = 'charcoal';
-
-          renderDhikrOptions();
-          applyTheme('charcoal');
-          updateUI();
-          settingsModal.style.display = 'none';
-        }
-      );
-    }
-
-    function toggleFocusMode(state) {
-      focusMode = state;
-      focusToggleSetting.checked = focusMode;
-      if (focusMode) {
-        document.body.classList.add('focus-mode');
-      } else {
-        document.body.classList.remove('focus-mode');
-        unhideBtn.classList.remove('visible');
-      }
-    }
-
-    function revealUnhideButton() {
-      if (!focusMode) return;
-      unhideBtn.classList.add('visible');
-      clearTimeout(unhideTimeout);
-      unhideTimeout = setTimeout(() => {
-        unhideBtn.classList.remove('visible');
-      }, 3000);
-    }
-
-    function handleTapAction() {
-      initAudio();
-      count++;
-      saveTap(currentDhikr);
-
-      triggerVibration(30);
-
-      if (count % target === 0) {
-        triggerVibration([100, 50, 100, 50, 150]);
-        playGoalTone();
-        triggerVisualPulse();
-      }
-
-      updateUI();
-    }
-
-    function promptCustomTarget() {
-      showCustomInputModal('Set Custom Target Count', target, 'number', (val) => {
-        const parsed = parseInt(val, 10);
-        if (!isNaN(parsed) && parsed > 0) {
-          target = parsed;
-          updateUI();
-        }
-      });
-    }
-
-    function updateUI() {
-      countEl.textContent = count;
-      targetEl.textContent = target;
-      targetBtn.textContent = `Target: ${target}`;
-
-      updateLifetimeTotals();
-      updateHistoryView();
-
-      localStorage.setItem('tasbih_session_count', count);
-      localStorage.setItem('tasbih_target', target);
-      localStorage.setItem('tasbih_dhikr', currentDhikr);
-    }
-
-    // --- Data Export & Import ---
-    document.getElementById('export-data-btn').addEventListener('click', () => {
-      const exportObject = {
-        logs: getLogs(),
-        offsets: getManualOffsets(),
-        allDhikrs: allDhikrList,
-        version: 4
-      };
-      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = `tasbih-backup-${new Date().toISOString().split('T')[0]}.json`;
-      a.click();
-    });
-
-    const importFileInput = document.getElementById('import-file-input');
-    document.getElementById('import-data-btn').addEventListener('click', () => importFileInput.click());
-
-    importFileInput.addEventListener('change', (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        try {
-          const data = JSON.parse(event.target.result);
-          if (data.logs) localStorage.setItem('tasbih_logs_v2', JSON.stringify(data.logs));
-          if (data.offsets) localStorage.setItem('tasbih_offsets', JSON.stringify(data.offsets));
-          if (data.allDhikrs) {
-            allDhikrList = data.allDhikrs;
-            localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
-          }
-          renderDhikrOptions();
-          updateUI();
-          alert('Backup restored successfully!');
-        } catch (err) {
-          alert('Invalid backup file format.');
-        }
-      };
-      reader.readAsText(file);
-    });
-
-    // --- Adjustments Log Modal Controls ---
-    openOffsetsBtn.addEventListener('click', () => {
-      renderOffsetsList();
-      offsetsModal.style.display = 'flex';
-    });
-    offsetsCloseBtn.addEventListener('click', () => offsetsModal.style.display = 'none');
-
-    clearOffsetsBtn.addEventListener('click', () => {
-      showCustomConfirmModal(
-        'Reset Adjustments',
-        'Are you sure you want to clear all manual adjustments? Your lifetime total will reflect pure logged counts only.',
-        () => {
-          localStorage.removeItem('tasbih_offsets');
-          renderOffsetsList();
-          updateUI();
-        }
-      );
-    });
-
-    // --- Main Event Listeners ---
-    countEl.addEventListener('click', editCurrentCounter);
-
-    document.addEventListener('pointerdown', (e) => {
-      if (focusMode && !tapBtn.contains(e.target) && !unhideBtn.contains(e.target)) {
-        revealUnhideButton();
-      }
-    });
-
-    tapBtn.addEventListener('pointerdown', (e) => {
-      e.stopPropagation();
-      e.preventDefault();
-      handleTapAction();
-    });
-
-    window.addEventListener('keydown', (e) => {
-      if (e.code === 'Space' && settingsModal.style.display !== 'flex' && inputModal.style.display !== 'flex' && confirmModal.style.display !== 'flex' && offsetsModal.style.display !== 'flex') {
-        e.preventDefault();
-        handleTapAction();
-      }
-    });
-
-    presetSelect.addEventListener('change', (e) => {
-      if (e.target.value === '__custom__') {
-        showCustomInputModal('Add Custom Dhikr Phrase', '', 'text', (input) => {
-          if (input && input.trim().length > 0) {
-            const formatted = input.trim();
-            if (!allDhikrList.includes(formatted)) {
-              allDhikrList.push(formatted);
-              localStorage.setItem('tasbih_all_dhikrs', JSON.stringify(allDhikrList));
+        // Web Audio API Synthesizer (Zero External Dependencies)
+        class AudioFeedback {
+            constructor() {
+                this.ctx = null;
             }
-            currentDhikr = formatted;
-          }
-          renderDhikrOptions();
-          updateUI();
-        });
-      } else {
-        currentDhikr = e.target.value;
-        count = 0;
-        renderDhikrOptions();
-        updateUI();
-      }
-    });
-
-    resetBtn.addEventListener('click', () => {
-      showCustomConfirmModal(
-        'Reset Session',
-        'Reset active session counter for this dhikr?',
-        () => {
-          count = 0;
-          updateUI();
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playClick() {
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(200, this.ctx.currentTime + 0.04);
+                gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.04);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start();
+                osc.stop(this.ctx.currentTime + 0.04);
+            }
+            playCompletion() {
+                this.init();
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, index) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'triangle';
+                    osc.frequency.value = freq;
+                    const startTime = this.ctx.currentTime + (index * 0.08);
+                    gain.gain.setValueAtTime(0.2, startTime);
+                    gain.gain.exponentialRampToValueAtTime(0.001, startTime + 0.3);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(startTime);
+                    osc.stop(startTime + 0.3);
+                });
+            }
         }
-      );
-    });
 
-    targetBtn.addEventListener('click', () => {
-      if (target === 33) target = 100;
-      else if (target === 100) target = 1000;
-      else target = 33;
-      updateUI();
-    });
+        // App State Manager
+        const state = {
+            count: 0,
+            target: 33,
+            laps: 0,
+            total: 0,
+            dhikr: DHIKR_PRESETS[0],
+            soundEnabled: true,
+            vibrateEnabled: false,
+            pulseEnabled: true,
+            darkMode: false,
+            history: JSON.parse(localStorage.getItem('tasbih_history') || '[]')
+        };
 
-    targetInfoLabel.addEventListener('click', promptCustomTarget);
+        const audio = new AudioFeedback();
 
-    settingsOpenBtn.addEventListener('click', () => settingsModal.style.display = 'flex');
-    settingsCloseBtn.addEventListener('click', () => settingsModal.style.display = 'none');
-    themeSelect.addEventListener('change', (e) => applyTheme(e.target.value));
+        // DOM Elements
+        const elDisplayCount = document.getElementById('display-count');
+        const elDisplayTarget = document.getElementById('display-target');
+        const elDisplayLaps = document.getElementById('display-laps');
+        const elDisplayTotal = document.getElementById('display-total');
+        const elDhikrLabel = document.getElementById('dhikr-label');
+        const elProgressBar = document.getElementById('progress-bar');
+        const elCounterRingContainer = document.getElementById('counter-ring-container');
 
-    soundToggle.addEventListener('change', (e) => {
-      soundEnabled = e.target.checked;
-      localStorage.setItem('tasbih_sound', soundEnabled);
-    });
+        const btnCount = document.getElementById('btn-count');
+        const btnReset = document.getElementById('btn-reset');
+        const btnSound = document.getElementById('btn-sound');
+        const iconSound = document.getElementById('icon-sound');
+        const labelSound = document.getElementById('label-sound');
+        const btnDhikrSelect = document.getElementById('btn-dhikr-select');
+        const btnSettings = document.getElementById('btn-settings');
+        const btnHistory = document.getElementById('btn-history');
 
-    toneSelect.value = alertTone;
-    toneSelect.addEventListener('change', (e) => {
-      alertTone = e.target.value;
-      localStorage.setItem('tasbih_alert_tone', alertTone);
-      playGoalTone();
-    });
+        // Modals & Overlays
+        const modalSettings = document.getElementById('modal-settings');
+        const closeSettings = document.getElementById('close-settings');
+        const modalDhikr = document.getElementById('modal-dhikr');
+        const closeDhikr = document.getElementById('close-dhikr');
+        const modalHistory = document.getElementById('modal-history');
+        const closeHistory = document.getElementById('close-history');
+        const modalManualLog = document.getElementById('modal-manual-log');
 
-    volumeRange.value = alertVolume;
-    volumeRange.addEventListener('input', (e) => {
-      alertVolume = parseFloat(e.target.value);
-      localStorage.setItem('tasbih_volume', alertVolume);
-    });
+        const privacyOverlay = document.getElementById('privacy-overlay');
+        const btnActivatePrivacy = document.getElementById('btn-activate-privacy');
+        const btnExitPrivacy = document.getElementById('btn-exit-privacy');
+        const privacyTapArea = document.getElementById('privacy-tap-area');
 
-    visualHapticToggle.checked = visualHapticEnabled;
-    visualHapticToggle.addEventListener('change', (e) => {
-      visualHapticEnabled = e.target.checked;
-      localStorage.setItem('tasbih_visual_pulse', visualHapticEnabled);
-    });
+        const inputTarget = document.getElementById('input-target');
+        const toggleVibrate = document.getElementById('toggle-vibrate');
+        const togglePulse = document.getElementById('toggle-pulse');
+        const toggleTheme = document.getElementById('toggle-theme');
 
-    vibeToggle.addEventListener('change', (e) => {
-      vibeEnabled = e.target.checked;
-      localStorage.setItem('tasbih_vibe', vibeEnabled);
-    });
+        // Initialize App
+        function init() {
+            lucide.createIcons();
+            loadSettings();
+            renderDhikrList();
+            updateUI();
+        }
 
-    focusToggleBtn.addEventListener('click', () => toggleFocusMode(true));
-    unhideBtn.addEventListener('click', () => toggleFocusMode(false));
-    focusToggleSetting.addEventListener('change', (e) => toggleFocusMode(e.target.checked));
+        function loadSettings() {
+            const saved = localStorage.getItem('tasbih_settings');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state.target = parsed.target || 33;
+                state.soundEnabled = parsed.soundEnabled ?? true;
+                state.vibrateEnabled = parsed.vibrateEnabled ?? false;
+                state.pulseEnabled = parsed.pulseEnabled ?? true;
+                state.darkMode = parsed.darkMode ?? false;
+            }
+            if (state.darkMode || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                document.documentElement.classList.add('dark');
+                toggleTheme.checked = true;
+                state.darkMode = true;
+            }
+            toggleVibrate.checked = state.vibrateEnabled;
+            togglePulse.checked = state.pulseEnabled;
+            inputTarget.value = state.target;
+            updateSoundIcon();
+        }
 
-    resetTodayBtn.addEventListener('click', resetTodayLogs);
-    masterResetBtn.addEventListener('click', performMasterReset);
+        function saveSettings() {
+            localStorage.setItem('tasbih_settings', JSON.stringify({
+                target: state.target,
+                soundEnabled: state.soundEnabled,
+                vibrateEnabled: state.vibrateEnabled,
+                pulseEnabled: state.pulseEnabled,
+                darkMode: state.darkMode
+            }));
+        }
 
-    historyDatePicker.value = new Date().toISOString().split('T')[0];
-    historyDatePicker.addEventListener('change', updateHistoryView);
-    historyDhikrSelect.addEventListener('change', updateHistoryView);
+        function updateUI() {
+            elDisplayCount.textContent = state.count;
+            elDisplayTarget.textContent = state.target;
+            elDisplayLaps.textContent = state.laps;
+            elDisplayTotal.textContent = state.total;
+            elDhikrLabel.textContent = state.dhikr.name;
 
-    soundToggle.checked = soundEnabled;
-    vibeToggle.checked = vibeEnabled;
-    renderDhikrOptions();
-    applyTheme(currentTheme);
-    renderDates();
-    updateUI();
-  </script>
+            // Progress Ring Calculation (276.46 circumference)
+            const circumference = 2 * Math.PI * 44;
+            const progress = Math.min(state.count / state.target, 1);
+            const offset = circumference - (progress * circumference);
+            elProgressBar.style.strokeDashoffset = offset;
+
+            // Visual Ring Pulse Check
+            if (state.count >= state.target && state.pulseEnabled) {
+                elCounterRingContainer.classList.add('pulse-active');
+            } else {
+                elCounterRingContainer.classList.remove('pulse-active');
+            }
+        }
+
+        // Increment Action Core Logic
+        function increment() {
+            state.count++;
+            state.total++;
+
+            if (state.soundEnabled) audio.playClick();
+            if (state.vibrateEnabled && navigator.vibrate) navigator.vibrate(40);
+
+            if (state.count >= state.target) {
+                state.laps++;
+                if (state.soundEnabled) audio.playCompletion();
+                if (state.vibrateEnabled && navigator.vibrate) navigator.vibrate([60, 100, 60]);
+                logHistory(state.dhikr.name, state.target);
+            }
+
+            updateUI();
+        }
+
+        function updateSoundIcon() {
+            if (state.soundEnabled) {
+                iconSound.setAttribute('data-lucide', 'volume-2');
+                labelSound.textContent = 'Sound On';
+            } else {
+                iconSound.setAttribute('data-lucide', 'volume-x');
+                labelSound.textContent = 'Mute';
+            }
+            lucide.createIcons();
+        }
+
+        // Tap Handlers
+        btnCount.addEventListener('click', () => {
+            if (state.count >= state.target) {
+                state.count = 0; // Auto reset loop on next tap after reaching goal
+            }
+            increment();
+        });
+
+        // Privacy Mode Taps
+        privacyTapArea.addEventListener('click', () => {
+            if (state.count >= state.target) state.count = 0;
+            increment();
+        });
+
+        btnActivatePrivacy.addEventListener('click', () => {
+            modalSettings.classList.add('hidden');
+            privacyOverlay.classList.remove('hidden');
+            privacyOverlay.classList.add('flex');
+        });
+
+        btnExitPrivacy.addEventListener('click', (e) => {
+            e.stopPropagation();
+            privacyOverlay.classList.add('hidden');
+            privacyOverlay.classList.remove('flex');
+        });
+
+        // Controls Handlers
+        btnReset.addEventListener('click', () => {
+            if (state.count > 0 && state.count < state.target) {
+                logHistory(state.dhikr.name + " (Partial)", state.count);
+            }
+            state.count = 0;
+            state.laps = 0;
+            updateUI();
+        });
+
+        btnSound.addEventListener('click', () => {
+            state.soundEnabled = !state.soundEnabled;
+            updateSoundIcon();
+            saveSettings();
+        });
+
+        // Dhikr List Management
+        function renderDhikrList() {
+            const container = document.getElementById('dhikr-list');
+            container.innerHTML = DHIKR_PRESETS.map((item, idx) => `
+                <button class="w-full text-left p-3 rounded-xl border border-slate-100 dark:border-slate-700 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 transition flex justify-between items-center group ${state.dhikr.name === item.name ? 'bg-indigo-50/70 dark:bg-indigo-900/40 border-indigo-300 dark:border-indigo-600' : ''}" data-idx="${idx}">
+                    <div>
+                        <div class="font-bold text-slate-800 dark:text-slate-100">${item.name}</div>
+                        <div class="text-xs text-slate-400">${item.translation}</div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-serif text-lg text-indigo-600 dark:text-indigo-400">${item.arabic}</div>
+                    </div>
+                </button>
+            `).join('');
+
+            container.querySelectorAll('button').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const idx = btn.getAttribute('data-idx');
+                    state.dhikr = DHIKR_PRESETS[idx];
+                    state.count = 0;
+                    updateUI();
+                    modalDhikr.classList.add('hidden');
+                });
+            });
+        }
+
+        // History System
+        function logHistory(name, count) {
+            if (count <= 0) return;
+            const entry = {
+                id: Date.now(),
+                name: name,
+                count: count,
+                timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                date: new Date().toLocaleDateString()
+            };
+            state.history.unshift(entry);
+            localStorage.setItem('tasbih_history', JSON.stringify(state.history));
+        }
+
+        function renderHistory() {
+            const container = document.getElementById('history-container');
+            if (state.history.length === 0) {
+                container.innerHTML = `<div class="text-center py-8 text-slate-400 text-sm">No history entries logged yet.</div>`;
+                return;
+            }
+            container.innerHTML = state.history.map(item => `
+                <div class="flex justify-between items-center p-3 bg-slate-50 dark:bg-slate-900/60 rounded-xl border border-slate-100 dark:border-slate-700/50">
+                    <div>
+                        <div class="font-semibold text-sm text-slate-800 dark:text-slate-200">${item.name}</div>
+                        <div class="text-xs text-slate-400">${item.date} • ${item.timestamp}</div>
+                    </div>
+                    <div class="font-bold text-indigo-600 dark:text-indigo-400 text-lg">
+                        +${item.count}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Modal Triggers
+        btnSettings.addEventListener('click', () => modalSettings.classList.remove('hidden'));
+        closeSettings.addEventListener('click', () => modalSettings.classList.add('hidden'));
+
+        btnDhikrSelect.addEventListener('click', () => {
+            renderDhikrList();
+            modalDhikr.classList.remove('hidden');
+        });
+        closeDhikr.addEventListener('click', () => modalDhikr.classList.add('hidden'));
+
+        btnHistory.addEventListener('click', () => {
+            renderHistory();
+            modalHistory.classList.remove('hidden');
+        });
+        closeHistory.addEventListener('click', () => modalHistory.classList.add('hidden'));
+
+        document.getElementById('btn-clear-history').addEventListener('click', () => {
+            state.history = [];
+            localStorage.removeItem('tasbih_history');
+            renderHistory();
+        });
+
+        // Settings Inputs
+        document.querySelectorAll('.target-preset-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = parseInt(btn.getAttribute('data-target'));
+                state.target = target;
+                inputTarget.value = target;
+                saveSettings();
+                updateUI();
+            });
+        });
+
+        inputTarget.addEventListener('change', (e) => {
+            const val = parseInt(e.target.value);
+            if (val > 0) {
+                state.target = val;
+                saveSettings();
+                updateUI();
+            }
+        });
+
+        toggleVibrate.addEventListener('change', (e) => {
+            state.vibrateEnabled = e.target.checked;
+            saveSettings();
+        });
+
+        togglePulse.addEventListener('change', (e) => {
+            state.pulseEnabled = e.target.checked;
+            saveSettings();
+            updateUI();
+        });
+
+        toggleTheme.addEventListener('change', (e) => {
+            state.darkMode = e.target.checked;
+            if (state.darkMode) {
+                document.documentElement.classList.add('dark');
+            } else {
+                document.documentElement.classList.remove('dark');
+            }
+            saveSettings();
+        });
+
+        // Manual History Entry Modal Setup
+        const btnManualLog = document.getElementById('btn-manual-log');
+        const btnSaveManual = document.getElementById('btn-save-manual');
+        const btnCancelManual = document.getElementById('btn-cancel-manual');
+
+        btnManualLog.addEventListener('click', () => modalManualLog.classList.remove('hidden'));
+        btnCancelManual.addEventListener('click', () => modalManualLog.classList.add('hidden'));
+        btnSaveManual.addEventListener('click', () => {
+            const name = document.getElementById('manual-name').value || 'Custom Dhikr';
+            const count = parseInt(document.getElementById('manual-count').value) || 0;
+            if (count > 0) {
+                logHistory(name, count);
+                renderHistory();
+                modalManualLog.classList.add('hidden');
+                document.getElementById('manual-count').value = '';
+            }
+        });
+
+        // Startup Call
+        init();
+    </script>
 </body>
 </html>
