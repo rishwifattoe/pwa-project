@@ -1,25 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="indigo">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Digital Tasbih</title>
-    
-    <!-- PWA Primary Meta Tags -->
-    <meta name="title" content="Digital Tasbih">
-    <meta name="description" content="Offline Digital Tasbih and Dhikr Counter PWA">
-    <meta name="theme-color" content="#4f46e5">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Tasbih">
-    
-    <!-- Manifest & Icons -->
-    <link rel="manifest" id="manifest-placeholder">
-    <link rel="apple-touch-icon" id="apple-touch-icon">
-    <link rel="icon" type="image/svg+xml" id="favicon">
-
-    <!-- Tailwind CSS -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Tasbih Counter</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -27,411 +13,249 @@
                 extend: {
                     colors: {
                         theme: {
-                            50: 'var(--color-theme-50)',
-                            100: 'var(--color-theme-100)',
-                            200: 'var(--color-theme-200)',
-                            300: 'var(--color-theme-300)',
-                            400: 'var(--color-theme-400)',
-                            500: 'var(--color-theme-500)',
-                            600: 'var(--color-theme-600)',
-                            700: 'var(--color-theme-700)',
-                            800: 'var(--color-theme-800)',
-                            900: 'var(--color-theme-900)',
+                            50: 'var(--color-50)',
+                            100: 'var(--color-100)',
+                            300: 'var(--color-300)',
+                            400: 'var(--color-400)',
+                            500: 'var(--color-500)',
+                            600: 'var(--color-600)',
+                            700: 'var(--color-700)',
+                            800: 'var(--color-800)',
+                            900: 'var(--color-900)',
                         }
                     }
                 }
             }
         }
     </script>
-    
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-
     <style>
-        /* CSS Variables for Dynamic Color Themes */
         :root[data-theme="indigo"] {
-            --color-theme-50: #eep2ff; --color-theme-100: #e0e7ff; --color-theme-200: #c7d2fe;
-            --color-theme-300: #a5b4fc; --color-theme-400: #818cf8; --color-theme-500: #6366f1;
-            --color-theme-600: #4f46e5; --color-theme-700: #4338ca; --color-theme-800: #3730a3;
-            --color-theme-900: #312e81;
+            --color-50: #eef2ff; --color-100: #e0e7ff; --color-300: #a5b4fc;
+            --color-400: #818cf8; --color-500: #6366f1; --color-600: #4f46e5;
+            --color-700: #4338ca; --color-800: #3730a3; --color-900: #312e81;
         }
         :root[data-theme="emerald"] {
-            --color-theme-50: #ecfdf5; --color-theme-100: #d1fae5; --color-theme-200: #a7f3d0;
-            --color-theme-300: #6ee7b7; --color-theme-400: #34d399; --color-theme-500: #10b981;
-            --color-theme-600: #059669; --color-theme-700: #047857; --color-theme-800: #065f46;
-            --color-theme-900: #064e3b;
+            --color-50: #ecfdf5; --color-100: #d1fae5; --color-300: #6ee7b7;
+            --color-400: #34d399; --color-500: #10b981; --color-600: #059669;
+            --color-700: #047857; --color-800: #065f46; --color-900: #064e3b;
         }
-        :root[data-theme="sunset"] {
-            --color-theme-50: #fff7ed; --color-theme-100: #ffedd5; --color-theme-200: #fed7aa;
-            --color-theme-300: #fdba74; --color-theme-400: #fb923c; --color-theme-500: #f97316;
-            --color-theme-600: #ea580c; --color-theme-700: #c2410c; --color-theme-800: #9a3412;
-            --color-theme-900: #7c2d12;
+        :root[data-theme="amber"] {
+            --color-50: #fffbeb; --color-100: #fef3c7; --color-300: #fcd34d;
+            --color-400: #fbbf24; --color-500: #f59e0b; --color-600: #d97706;
+            --color-700: #b45309; --color-800: #92400e; --color-900: #78350f;
         }
-        :root[data-theme="crimson"] {
-            --color-theme-50: #fff1f2; --color-theme-100: #ffe4e6; --color-theme-200: #fecdd3;
-            --color-theme-300: #fda4af; --color-theme-400: #fb7185; --color-theme-500: #f43f5e;
-            --color-theme-600: #e11d48; --color-theme-700: #be123c; --color-theme-800: #9f1239;
-            --color-theme-900: #881337;
-        }
-        :root[data-theme="royal"] {
-            --color-theme-50: #faf5ff; --color-theme-100: #f3e8ff; --color-theme-200: #e9d5ff;
-            --color-theme-300: #d8b4fe; --color-theme-400: #c084fc; --color-theme-500: #a855f7;
-            --color-theme-600: #9333ea; --color-theme-700: #7e22ce; --color-theme-800: #6b21a8;
-            --color-theme-900: #581c87;
-        }
-        :root[data-theme="dark"] {
-            --color-theme-50: #f8fafc; --color-theme-100: #f1f5f9; --color-theme-200: #e2e8f0;
-            --color-theme-300: #cbd5e1; --color-theme-400: #94a3b8; --color-theme-500: #64748b;
-            --color-theme-600: #475569; --color-theme-700: #334155; --color-theme-800: #1e293b;
-            --color-theme-900: #0f172a;
+        :root[data-theme="rose"] {
+            --color-50: #fff1f2; --color-100: #ffe4e6; --color-300: #fda4af;
+            --color-400: #fb7185; --color-500: #f43f5e; --color-600: #e11d48;
+            --color-700: #be123c; --color-800: #9f1239; --color-900: #881337;
         }
 
-        * {
-            -webkit-tap-highlight-color: transparent !important;
-            -webkit-touch-callout: none;
-            user-select: none;
-        }
-
-        @keyframes ringPulse {
+        @keyframes pulse-ring {
             0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px var(--color-theme-500)); }
+            50% { transform: scale(1.04); opacity: 0.4; }
             100% { transform: scale(1); opacity: 0.8; }
         }
-
         .pulse-active {
-            animation: ringPulse 0.8s ease-in-out infinite;
-        }
-
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.05);
-        }
-        ::-webkit-scrollbar-thumb {
-            background: var(--color-theme-400);
-            border-radius: 3px;
-        }
-        .dark ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        .dark ::-webkit-scrollbar-thumb {
-            background: var(--color-theme-600);
+            animation: pulse-ring 2s infinite ease-in-out;
         }
     </style>
 </head>
-<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex flex-col font-sans transition-colors duration-300 select-none overflow-x-hidden">
+<body class="bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-100 min-h-screen flex items-center justify-center p-4 selection:bg-theme-500 selection:text-white">
 
-    <!-- App Header -->
-    <header class="w-full max-w-md mx-auto p-4 flex justify-between items-center z-10">
-        <div class="flex items-center gap-2">
-            <svg class="w-8 h-8 text-theme-600 dark:text-theme-400 transition-colors" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="9" r="6" stroke-dasharray="2 2" />
-                <circle cx="12" cy="15" r="1.5" fill="currentColor" />
-                <path d="M12 16.5 V21" />
-                <path d="M10 21 L14 21" />
-                <path d="M10.5 19.5 L13.5 19.5" />
-            </svg>
-            <h1 class="text-xl font-bold tracking-wide">Tasbih</h1>
-        </div>
-        <div class="flex items-center gap-2">
-            <button id="btn-history" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition">
-                <i data-lucide="history" class="w-6 h-6"></i>
-            </button>
-            <button id="btn-settings" class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition">
-                <i data-lucide="settings" class="w-6 h-6"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- Main Content Area -->
-    <main class="flex-1 max-w-md w-full mx-auto flex flex-col justify-between items-center px-4 pb-6">
+    <div class="w-full max-w-md bg-white dark:bg-slate-800 rounded-3xl shadow-xl overflow-hidden border border-slate-200/60 dark:border-slate-700/60 transition-colors flex flex-col min-h-[640px]">
         
-        <!-- Top Stats / Target Indicator -->
-        <div class="w-full flex justify-between items-center bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mt-2">
-            <div class="flex flex-col">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Target</span>
-                <span id="display-target" class="text-lg font-bold text-theme-600 dark:text-theme-400 transition-colors">33</span>
-            </div>
-            <div class="flex flex-col items-center">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Laps</span>
-                <span id="display-laps" class="text-lg font-bold">0</span>
-            </div>
-            <div class="flex flex-col items-end">
-                <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total</span>
-                <span id="display-total" class="text-lg font-bold text-slate-600 dark:text-slate-300">0</span>
-            </div>
-        </div>
-
-        <!-- Counter Center Display & Clicker Zone -->
-        <div class="my-auto py-8 flex flex-col items-center justify-center w-full">
-            <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center rounded-full">
-                <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="8" fill="transparent"></circle>
-                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-theme-600 dark:text-theme-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
-                </svg>
-
-                <button id="btn-count" class="absolute inset-4 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center active:scale-95 transition-transform duration-100 focus:outline-none cursor-pointer">
-                    <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white">0</span>
-                    <span id="dhikr-label" class="text-sm font-medium text-slate-400 mt-2 max-w-[140px] truncate text-center">SubhanAllah</span>
+        <!-- Header -->
+        <header class="p-4 flex items-center justify-between border-b border-slate-100 dark:border-slate-700/50">
+            <button id="btn-dhikr-select" class="flex items-center gap-2 text-sm font-medium hover:text-theme-600 dark:hover:text-theme-400 transition py-1 px-3 rounded-xl bg-slate-50 dark:bg-slate-700/40 border border-slate-200/50 dark:border-slate-600/50">
+                <i data-lucide="book-open" class="w-4 h-4 text-theme-500"></i>
+                <span>Select Dhikr</span>
+            </button>
+            <div class="flex items-center gap-1">
+                <button id="btn-sound" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="Toggle Sound">
+                    <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5"></i>
+                    <span id="label-sound" class="sr-only">Sound On</span>
+                </button>
+                <button id="btn-history" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="History">
+                    <i data-lucide="history" class="w-5 h-5"></i>
+                </button>
+                <button id="btn-settings" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="Settings">
+                    <i data-lucide="settings" class="w-5 h-5"></i>
                 </button>
             </div>
-        </div>
+        </header>
 
-        <!-- Controls Bottom Bar -->
-        <div class="w-full grid grid-cols-3 gap-3">
-            <button id="btn-reset" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
-                <i data-lucide="rotate-ccw" class="w-5 h-5 text-slate-600 dark:text-slate-300 mb-1"></i>
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Reset</span>
-            </button>
+        <!-- Main Display Area -->
+        <main class="flex-1 p-6 flex flex-col items-center justify-between text-center gap-4">
+            
+            <!-- Bigger Counter Ring -->
+            <div class="relative flex items-center justify-center my-2">
+                <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 rounded-full flex items-center justify-center transition-all">
+                    <svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+                        <circle cx="80" cy="80" r="72" stroke="currentColor" stroke-width="8" class="text-slate-100 dark:text-slate-700/60" fill="transparent" />
+                        <circle id="progress-bar" cx="80" cy="80" r="72" stroke="currentColor" stroke-width="8" class="text-theme-500 transition-all duration-300" stroke-dasharray="452.39" stroke-dashoffset="452.39" stroke-linecap="round" fill="transparent" />
+                    </svg>
 
-            <button id="btn-sound" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
-                <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5 text-theme-600 dark:text-theme-400 mb-1 transition-colors"></i>
-                <span id="label-sound" class="text-xs font-medium text-slate-500 dark:text-slate-400">Sound</span>
-            </button>
-
-            <button id="btn-dhikr-select" class="flex flex-col items-center justify-center py-3 px-4 bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 active:scale-95 transition">
-                <i data-lucide="book-open" class="w-5 h-5 text-slate-600 dark:text-slate-300 mb-1"></i>
-                <span class="text-xs font-medium text-slate-500 dark:text-slate-400">Preset</span>
-            </button>
-        </div>
-    </main>
-
-    <!-- PRIVACY MODE OVERLAY (Full Pitch-Black Cover with Double-Tap Reveal) -->
-    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6 touch-none">
-        <div class="flex justify-end w-full">
-            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full text-sm font-medium transition-opacity duration-300 opacity-0 pointer-events-none">
-                <i data-lucide="eye-off" class="w-4 h-4"></i>
-                <span>Exit Privacy Mode</span>
-            </button>
-        </div>
-        <div id="privacy-tap-area" class="flex-1 w-full h-full cursor-pointer"></div>
-    </div>
-
-    <!-- SETTINGS MODAL -->
-    <div id="modal-settings" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] overflow-y-auto">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="settings" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
-                    Settings
-                </h2>
-                <button id="close-settings" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
-            </div>
-
-            <div class="space-y-6">
-                <!-- Color Themes Palette -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Color Theme</label>
-                    <div class="grid grid-cols-3 gap-2" id="theme-selector">
-                        <button data-theme-id="indigo" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-indigo-50 border-indigo-200 text-indigo-700">
-                            <span class="w-4 h-4 rounded-full bg-indigo-600"></span> Indigo
-                        </button>
-                        <button data-theme-id="emerald" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-emerald-50 border-emerald-200 text-emerald-700">
-                            <span class="w-4 h-4 rounded-full bg-emerald-600"></span> Emerald
-                        </button>
-                        <button data-theme-id="sunset" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-orange-50 border-orange-200 text-orange-700">
-                            <span class="w-4 h-4 rounded-full bg-orange-600"></span> Sunset
-                        </button>
-                        <button data-theme-id="crimson" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-rose-50 border-rose-200 text-rose-700">
-                            <span class="w-4 h-4 rounded-full bg-rose-600"></span> Crimson
-                        </button>
-                        <button data-theme-id="royal" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-purple-50 border-purple-200 text-purple-700">
-                            <span class="w-4 h-4 rounded-full bg-purple-600"></span> Royal
-                        </button>
-                        <button data-theme-id="dark" class="theme-btn p-2 rounded-xl border flex items-center gap-2 text-xs font-semibold bg-slate-100 border-slate-300 text-slate-800">
-                            <span class="w-4 h-4 rounded-full bg-slate-800"></span> Dark
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Target Setting -->
-                <div>
-                    <label class="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">Target Count</label>
-                    <div class="grid grid-cols-4 gap-2 mb-2">
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="33">33</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="99">99</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="100">100</button>
-                        <button class="target-preset-btn py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-sm font-semibold hover:bg-theme-50 dark:hover:bg-theme-900/40 border border-transparent hover:border-theme-500 transition" data-target="1000">1000</button>
-                    </div>
-                    <input type="number" id="input-target" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none transition" placeholder="Custom Target">
-                </div>
-
-                <!-- Toggles -->
-                <div class="space-y-4 pt-2 border-t border-slate-100 dark:border-slate-700">
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="font-medium text-sm">Haptic Feedback</div>
-                            <div class="text-xs text-slate-400">Vibrate on each tap</div>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-vibrate" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="font-medium text-sm">Visual Ring Pulse Alert</div>
-                            <div class="text-xs text-slate-400">Glow/Pulse ring when target reached</div>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-pulse" class="sr-only peer" checked>
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
-                        </label>
-                    </div>
-
-                    <div class="flex justify-between items-center">
-                        <div>
-                            <div class="font-medium text-sm">Dark Mode</div>
-                            <div class="text-xs text-slate-400">Toggle dark interface style</div>
-                        </div>
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" id="toggle-theme" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer dark:bg-slate-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:after:border-slate-600 peer-checked:bg-theme-600"></div>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="pt-4 border-t border-slate-100 dark:border-slate-700">
-                    <button id="btn-activate-privacy" class="w-full py-3 bg-slate-900 dark:bg-slate-700 text-white rounded-xl font-medium flex items-center justify-center gap-2 hover:bg-slate-800 dark:hover:bg-slate-600 transition">
-                        <i data-lucide="eye-off" class="w-5 h-5"></i>
-                        <span>Enter Privacy Mode</span>
+                    <!-- Large Count Display Inside Circle -->
+                    <button id="btn-count" class="absolute inset-4 rounded-full flex flex-col items-center justify-center focus:outline-none select-none hover:bg-theme-50/20 dark:hover:bg-theme-900/10 active:scale-95 transition">
+                        <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-800 dark:text-white">0</span>
+                        <span class="text-xs uppercase tracking-widest font-semibold text-slate-400 mt-1">Target: <span id="display-target">33</span></span>
                     </button>
                 </div>
             </div>
+
+            <!-- Neatly Aligned Dhikr Info Box Below Circle -->
+            <div class="w-full max-w-sm px-4 py-3 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center justify-center text-center">
+                <div id="dhikr-arabic" class="text-2xl font-serif text-theme-600 dark:text-theme-400 mb-1">SubhanAllah</div>
+                <div id="dhikr-title" class="font-bold text-slate-800 dark:text-slate-200 text-sm">Glory be to Allah</div>
+                <div id="dhikr-translation" class="text-xs text-slate-400 mt-0.5 min-h-[1rem]">Allah is free from all imperfections</div>
+            </div>
+
+            <!-- Global Stats Bar -->
+            <div class="w-full grid grid-cols-2 gap-3 pt-2">
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center">
+                    <span class="text-xs text-slate-400 font-medium">Laps</span>
+                    <span id="display-laps" class="text-xl font-bold text-slate-700 dark:text-slate-200">0</span>
+                </div>
+                <div class="p-3 bg-slate-50 dark:bg-slate-900/40 rounded-2xl border border-slate-100 dark:border-slate-700/50 flex flex-col items-center">
+                    <span class="text-xs text-slate-400 font-medium">Total Count</span>
+                    <span id="display-total" class="text-xl font-bold text-slate-700 dark:text-slate-200">0</span>
+                </div>
+            </div>
+
+            <button id="btn-reset" class="w-full py-3 bg-slate-100 dark:bg-slate-700/50 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-2xl transition flex items-center justify-center gap-2">
+                <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                Reset Counter
+            </button>
+        </main>
+    </div>
+
+    <!-- Privacy Mode Overlay -->
+    <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between items-center p-6 text-white select-none">
+        <div id="privacy-tap-area" class="absolute inset-0 z-10"></div>
+        
+        <div class="relative z-20 pointer-events-none text-center mt-12 opacity-30">
+            <i data-lucide="eye-off" class="w-8 h-8 mx-auto mb-2"></i>
+            <p class="text-xs">Privacy Mode Active</p>
+        </div>
+
+        <!-- Custom Worker Banner at Bottom -->
+        <div id="privacy-instruction-banner" class="relative z-20 transition-opacity duration-300 opacity-0 mb-4 px-4 py-2.5 bg-slate-800/90 border border-slate-700/80 rounded-xl text-slate-300 text-xs font-mono flex items-center gap-3 shadow-2xl backdrop-blur-md">
+            <span class="flex h-2 w-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span>pwa-project.app.workers.dev</span>
+            <button id="btn-exit-privacy" class="ml-2 px-2.5 py-1 bg-red-600/80 hover:bg-red-600 text-white rounded-lg text-xs font-sans transition opacity-0 pointer-events-none">Exit</button>
         </div>
     </div>
 
-    <!-- DHIKR PRESETS & MANAGEMENT MODAL -->
-    <div id="modal-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="book-open" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
-                    Select Dhikr
-                </h2>
-                <button id="close-dhikr" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <!-- Modal: Dhikr List -->
+    <div id="modal-dhikr" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold">Select Dhikr</h3>
+                <button id="close-dhikr" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
-            
-            <div class="space-y-2 overflow-y-auto flex-1 pr-1" id="dhikr-list">
-                <!-- Injected dynamically -->
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700">
-                <button id="btn-open-add-dhikr" class="w-full py-2.5 bg-theme-50 dark:bg-theme-900/30 text-theme-600 dark:text-theme-400 rounded-xl text-sm font-semibold hover:bg-theme-100 dark:hover:bg-theme-900/50 transition flex items-center justify-center gap-2">
-                    <i data-lucide="plus" class="w-4 h-4"></i> Add Custom Dhikr
-                </button>
-            </div>
+            <div id="dhikr-list" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+            <button id="btn-open-add-dhikr" class="mt-4 w-full py-3 bg-theme-600 hover:bg-theme-700 text-white font-semibold rounded-2xl transition flex items-center justify-center gap-2">
+                <i data-lucide="plus" class="w-4 h-4"></i>
+                Add Custom Dhikr
+            </button>
         </div>
     </div>
 
-    <!-- ADD / EDIT DHIKR MODAL -->
-    <div id="modal-add-dhikr" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-sm p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
+    <!-- Modal: Add/Edit Dhikr -->
+    <div id="modal-add-dhikr" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700">
             <h3 id="dhikr-modal-title" class="text-lg font-bold mb-4">Add Custom Dhikr</h3>
-            <input type="hidden" id="edit-dhikr-id" value="">
+            <input type="hidden" id="edit-dhikr-id">
             <div class="space-y-3">
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Title / Name</label>
-                    <input type="text" id="add-dhikr-name" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none" placeholder="e.g. Astaghfirullah">
+                    <label class="text-xs font-medium text-slate-400 mb-1 block">Title / Phrase</label>
+                    <input type="text" id="add-dhikr-name" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-theme-500 outline-none">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Arabic Text (Optional)</label>
-                    <input type="text" id="add-dhikr-arabic" dir="rtl" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none font-serif" placeholder="أَسْتَغْفِرُ ٱللَّٰهَ">
+                    <label class="text-xs font-medium text-slate-400 mb-1 block">Arabic Script (Optional)</label>
+                    <input type="text" id="add-dhikr-arabic" dir="rtl" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-theme-500 outline-none font-serif text-right">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-slate-400 uppercase mb-1">Translation (Optional)</label>
-                    <input type="text" id="add-dhikr-trans" class="w-full px-4 py-2 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-theme-500 outline-none" placeholder="I seek forgiveness from Allah">
+                    <label class="text-xs font-medium text-slate-400 mb-1 block">Translation / Meaning (Optional)</label>
+                    <input type="text" id="add-dhikr-trans" class="w-full px-4 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-theme-500 outline-none">
                 </div>
-                <div class="flex gap-2 pt-2">
-                    <button id="btn-save-dhikr" class="flex-1 py-2 bg-theme-600 text-white rounded-xl font-semibold hover:bg-theme-700 transition">Save</button>
-                    <button id="btn-cancel-dhikr" class="flex-1 py-2 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-xl font-semibold hover:bg-slate-200 dark:hover:bg-slate-600 transition">Cancel</button>
-                </div>
+            </div>
+            <div class="flex gap-2 mt-6">
+                <button id="btn-cancel-dhikr" class="flex-1 py-2.5 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold rounded-xl">Cancel</button>
+                <button id="btn-save-dhikr" class="flex-1 py-2.5 bg-theme-600 text-white font-semibold rounded-xl">Save</button>
             </div>
         </div>
     </div>
 
-    <!-- HISTORY MODAL -->
-    <div id="modal-history" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-3xl w-full max-w-md p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[90vh] flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="history" class="w-5 h-5 text-theme-600 dark:text-theme-400"></i>
-                    Dhikr History
-                </h2>
-                <button id="close-history" class="p-1 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200">
-                    <i data-lucide="x" class="w-6 h-6"></i>
-                </button>
+    <!-- Modal: Settings -->
+    <div id="modal-settings" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 space-y-5 max-h-[85vh] overflow-y-auto">
+            <div class="flex items-center justify-between">
+                <h3 class="text-lg font-bold">Settings</h3>
+                <button id="close-settings" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            
+            <div>
+                <label class="text-xs font-medium text-slate-400 mb-2 block">Target Goal</label>
+                <input type="number" id="input-target" min="1" class="w-full px-4 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-transparent focus:ring-2 focus:ring-theme-500 outline-none mb-2">
+                <div class="flex gap-2">
+                    <button class="target-preset-btn flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-semibold" data-target="33">33</button>
+                    <button class="target-preset-btn flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-semibold" data-target="99">99</button>
+                    <button class="target-preset-btn flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-semibold" data-target="100">100</button>
+                    <button class="target-preset-btn flex-1 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-lg text-xs font-semibold" data-target="1000">1000</button>
+                </div>
             </div>
 
-            <div id="history-container" class="space-y-3 overflow-y-auto flex-1 pr-1">
-                <!-- History logs loaded by JS -->
+            <div class="space-y-3 pt-2">
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium">Vibration Feedback</span>
+                    <input type="checkbox" id="toggle-vibrate" class="w-5 h-5 accent-theme-600 rounded">
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium">Target Completion Pulse</span>
+                    <input type="checkbox" id="toggle-pulse" class="w-5 h-5 accent-theme-600 rounded">
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm font-medium">Dark Theme</span>
+                    <input type="checkbox" id="toggle-theme" class="w-5 h-5 accent-theme-600 rounded">
+                </div>
             </div>
 
-            <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-700 flex justify-end">
-                <button id="btn-clear-history" class="w-full py-2.5 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400 rounded-xl text-sm font-semibold hover:bg-red-100 dark:hover:bg-red-900/40 transition">
-                    Clear History
-                </button>
+            <div>
+                <label class="text-xs font-medium text-slate-400 mb-2 block">Accent Color</label>
+                <div class="flex gap-3">
+                    <button class="theme-btn w-8 h-8 rounded-full bg-indigo-600" data-theme-id="indigo"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-emerald-600" data-theme-id="emerald"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-amber-600" data-theme-id="amber"></button>
+                    <button class="theme-btn w-8 h-8 rounded-full bg-rose-600" data-theme-id="rose"></button>
+                </div>
             </div>
+
+            <button id="btn-activate-privacy" class="w-full py-3 bg-slate-900 dark:bg-slate-100 text-white dark:text-slate-900 font-semibold rounded-2xl transition flex items-center justify-center gap-2">
+                <i data-lucide="eye-off" class="w-4 h-4"></i>
+                Enter Privacy Mode
+            </button>
         </div>
     </div>
 
-    <!-- Application Script -->
+    <!-- Modal: History -->
+    <div id="modal-history" class="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 hidden flex items-center justify-center p-4">
+        <div class="bg-white dark:bg-slate-800 w-full max-w-md rounded-3xl p-6 shadow-2xl border border-slate-100 dark:border-slate-700 max-h-[85vh] flex flex-col">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-bold">Dhikr History</h3>
+                <button id="close-history" class="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div id="history-container" class="space-y-2 overflow-y-auto flex-1 pr-1"></div>
+            <button id="btn-clear-history" class="mt-4 w-full py-2.5 bg-red-50 dark:bg-red-950/40 text-red-600 dark:text-red-400 font-semibold rounded-xl hover:bg-red-100 transition">Clear History</button>
+        </div>
+    </div>
+
     <script>
-        // PWA Manifest with Icon Padding & Safe-Zone Scaling Fix
-        const manifestData = {
-            name: "Digital Tasbih & Dhikr Counter",
-            short_name: "Tasbih",
-            description: "Offline Digital Tasbih PWA App",
-            start_url: "./",
-            display: "standalone",
-            background_color: "#0f172a",
-            theme_color: "#4f46e5",
-            icons: [
-                {
-                    src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%234f46e5'/><g transform='translate(15, 15) scale(0.7)'><circle cx='50' cy='40' r='24' stroke='%23ffffff' stroke-width='6' fill='none' stroke-dasharray='8 8'/><circle cx='50' cy='64' r='5' fill='%23ffffff'/><path d='M50 69 L50 88 M43 88 L57 88 M45 82 L55 82' stroke='%23ffffff' stroke-width='5' stroke-linecap='round'/></g></svg>",
-                    sizes: "512x512",
-                    type: "image/svg+xml",
-                    purpose: "any maskable"
-                }
-            ]
-        };
-        const manifestBlob = new Blob([JSON.stringify(manifestData)], { type: 'application/json' });
-        document.getElementById('manifest-placeholder').setAttribute('href', URL.createObjectURL(manifestBlob));
-        document.getElementById('favicon').setAttribute('href', manifestData.icons[0].src);
-        document.getElementById('apple-touch-icon').setAttribute('href', manifestData.icons[0].src);
-
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                const swCode = `
-                    const CACHE_NAME = 'tasbih-v4';
-                    const ASSETS = ['./'];
-                    self.addEventListener('install', (e) => {
-                        e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
-                    });
-                    self.addEventListener('fetch', (e) => {
-                        e.respondWith(caches.match(e.request).then((res) => res || fetch(e.request)));
-                    });
-                `;
-                const blob = new Blob([swCode], { type: 'application/javascript' });
-                navigator.serviceWorker.register(URL.createObjectURL(blob)).catch(() => {});
-            });
-        }
-
         const DEFAULT_DHIKRS = [
-            { id: '1', name: "SubhanAllah", arabic: "سُبْحَانَ ٱللَّٰهِ", translation: "Glory be to Allah" },
-            { id: '2', name: "Alhamdulillah", arabic: "ٱلْحَمْدُ لِلَّٰهِ", translation: "Praise be to Allah" },
-            { id: '3', name: "Allahu Akbar", arabic: "ٱللَّٰهُ أَكْبَرُ", translation: "Allah is the Greatest" },
-            { id: '4', name: "La ilaha illallah", arabic: "لَا إِلَٰهَ إِلَّا ٱللَّٰهُ", translation: "There is no god but Allah" },
-            { id: '5', name: "Astaghfirullah", arabic: "أَسْتَغْفِرُ ٱللَّٰهَ", translation: "I seek forgiveness from Allah" },
-            { id: '6', name: "La hawla wa la quwwata illa billah", arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِٱللَّٰهِ", translation: "There is no power except with Allah" },
-            { id: '7', name: "SubhanAllahi wa bihamdihi", arabic: "سُبْحَانَ ٱللَّٰهِ وَبِحَمْدِهِ", translation: "Glory and praise be to Allah" },
-            { id: '8', name: "Salawat", arabic: "اللَّهُمَّ صَلِّ عَلَىٰ مُحَمَّدٍ", translation: "Blessings upon Muhammad" }
+            { id: '1', name: 'SubhanAllah', arabic: 'سُبْحَانَ ٱللَّهِ', translation: 'Glory be to Allah' },
+            { id: '2', name: 'Alhamdulillah', arabic: 'ٱلْحَمْدُ لِلَّهِ', translation: 'Praise be to Allah' },
+            { id: '3', name: 'Allahu Akbar', arabic: 'ٱللَّهُ أَكْبَرُ', translation: 'Allah is the Greatest' },
+            { id: '4', name: 'Astaghfirullah', arabic: 'أَسْتَغْفِرُ ٱللَّهَ', translation: 'I seek forgiveness from Allah' }
         ];
 
         class AudioFeedback {
@@ -497,7 +321,9 @@
         const elDisplayTarget = document.getElementById('display-target');
         const elDisplayLaps = document.getElementById('display-laps');
         const elDisplayTotal = document.getElementById('display-total');
-        const elDhikrLabel = document.getElementById('dhikr-label');
+        const elDhikrTitle = document.getElementById('dhikr-title');
+        const elDhikrArabic = document.getElementById('dhikr-arabic');
+        const elDhikrTranslation = document.getElementById('dhikr-translation');
         const elProgressBar = document.getElementById('progress-bar');
         const elCounterRingContainer = document.getElementById('counter-ring-container');
 
@@ -521,6 +347,7 @@
         const btnActivatePrivacy = document.getElementById('btn-activate-privacy');
         const btnExitPrivacy = document.getElementById('btn-exit-privacy');
         const privacyTapArea = document.getElementById('privacy-tap-area');
+        const privacyInstructionBanner = document.getElementById('privacy-instruction-banner');
 
         const inputTarget = document.getElementById('input-target');
         const toggleVibrate = document.getElementById('toggle-vibrate');
@@ -533,10 +360,15 @@
         function showPrivacyExitButton() {
             btnExitPrivacy.classList.remove('opacity-0', 'pointer-events-none');
             btnExitPrivacy.classList.add('opacity-100');
+            privacyInstructionBanner.classList.remove('opacity-0');
+            privacyInstructionBanner.classList.add('opacity-100');
+
             clearTimeout(privacyExitTimer);
             privacyExitTimer = setTimeout(() => {
                 btnExitPrivacy.classList.remove('opacity-100');
                 btnExitPrivacy.classList.add('opacity-0', 'pointer-events-none');
+                privacyInstructionBanner.classList.remove('opacity-100');
+                privacyInstructionBanner.classList.add('opacity-0');
             }, 3000);
         }
 
@@ -599,11 +431,21 @@
             elDisplayTarget.textContent = state.target;
             elDisplayLaps.textContent = state.laps;
             elDisplayTotal.textContent = state.total;
-            elDhikrLabel.textContent = state.dhikr ? state.dhikr.name : 'Select Dhikr';
 
-            const circumference = 2 * Math.PI * 44;
+            if (state.dhikr) {
+                elDhikrTitle.textContent = state.dhikr.name || '';
+                elDhikrArabic.textContent = state.dhikr.arabic || '';
+                elDhikrTranslation.textContent = state.dhikr.translation || '';
+            } else {
+                elDhikrTitle.textContent = 'Select Dhikr';
+                elDhikrArabic.textContent = '';
+                elDhikrTranslation.textContent = '';
+            }
+
+            const circumference = 2 * Math.PI * 72;
             const progress = Math.min(state.count / state.target, 1);
             const offset = circumference - (progress * circumference);
+            elProgressBar.style.strokeDasharray = circumference;
             elProgressBar.style.strokeDashoffset = offset;
 
             if (state.count >= state.target && state.pulseEnabled) {
@@ -646,13 +488,11 @@
             increment();
         });
 
-        // Stealth Privacy Tapping & Fullscreen Setup
         privacyTapArea.addEventListener('click', (e) => {
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTapTime;
             
-            // Double Tap or Top-Area Tap Reveals Exit Button
-            if ((tapLength < 300 && tapLength > 0) || e.clientY < 80) {
+            if (tapLength < 300 && tapLength > 0) {
                 showPrivacyExitButton();
             } else {
                 if (state.count >= state.target) state.count = 0;
@@ -666,7 +506,8 @@
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
             
-            // Request Native Fullscreen to hide device battery/time bar
+            showPrivacyExitButton();
+
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(() => {});
             } else if (document.documentElement.webkitRequestFullscreen) {
@@ -702,7 +543,6 @@
             saveSettings();
         });
 
-        // Full Dhikr Management: Select, Add, Edit, and Delete Default/Custom Dhikrs
         function renderDhikrList() {
             const container = document.getElementById('dhikr-list');
             container.innerHTML = state.dhikrs.map((item) => `
