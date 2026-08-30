@@ -48,6 +48,7 @@
     <script src="https://unpkg.com/lucide@latest"></script>
 
     <style>
+        /* CSS Variables for Dynamic Color Themes */
         :root[data-theme="indigo"] {
             --color-theme-50: #eep2ff; --color-theme-100: #e0e7ff; --color-theme-200: #c7d2fe;
             --color-theme-300: #a5b4fc; --color-theme-400: #818cf8; --color-theme-500: #6366f1;
@@ -93,7 +94,7 @@
 
         @keyframes ringPulse {
             0% { transform: scale(1); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 15px var(--color-theme-500)); }
+            50% { transform: scale(1.08); opacity: 1; filter: drop-shadow(0 0 15px var(--color-theme-500)); }
             100% { transform: scale(1); opacity: 0.8; }
         }
 
@@ -147,7 +148,7 @@
     <main class="flex-1 max-w-md w-full mx-auto flex flex-col justify-between items-center px-4 pb-6">
         
         <!-- Top Stats / Target Indicator -->
-        <div class="w-full flex justify-between items-center bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mt-1">
+        <div class="w-full flex justify-between items-center bg-white dark:bg-slate-800 px-4 py-3 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700/50 mt-2">
             <div class="flex flex-col">
                 <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Target</span>
                 <span id="display-target" class="text-lg font-bold text-theme-600 dark:text-theme-400 transition-colors">33</span>
@@ -162,25 +163,19 @@
             </div>
         </div>
 
-        <!-- Counter Center Display (Enlarged Circle) -->
-        <div class="my-auto py-4 flex flex-col items-center justify-center w-full">
-            <div id="counter-ring-container" class="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 flex items-center justify-center rounded-full transition-all">
+        <!-- Counter Center Display & Clicker Zone -->
+        <div class="my-auto py-8 flex flex-col items-center justify-center w-full">
+            <div id="counter-ring-container" class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center rounded-full">
                 <svg class="w-full h-full transform -rotate-90 overflow-visible" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="6" fill="transparent"></circle>
-                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-theme-600 dark:text-theme-500 stroke-current transition-all duration-150 ease-out" stroke-width="6" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
+                    <circle cx="50" cy="50" r="44" class="text-slate-200 dark:text-slate-700 stroke-current" stroke-width="8" fill="transparent"></circle>
+                    <circle id="progress-bar" cx="50" cy="50" r="44" class="text-theme-600 dark:text-theme-500 stroke-current transition-all duration-150 ease-out" stroke-width="8" stroke-linecap="round" fill="transparent" stroke-dasharray="276.46" stroke-dashoffset="276.46"></circle>
                 </svg>
 
-                <button id="btn-count" class="absolute inset-3 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center active:scale-95 transition-transform duration-100 focus:outline-none cursor-pointer">
-                    <span id="display-count" class="text-7xl sm:text-8xl md:text-9xl font-extrabold tracking-tight text-slate-900 dark:text-white">0</span>
+                <button id="btn-count" class="absolute inset-4 rounded-full bg-white dark:bg-slate-800 shadow-xl border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center active:scale-95 transition-transform duration-100 focus:outline-none cursor-pointer">
+                    <span id="display-count" class="text-6xl sm:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white">0</span>
+                    <span id="dhikr-label" class="text-sm font-medium text-slate-400 mt-2 max-w-[140px] truncate text-center">SubhanAllah</span>
                 </button>
             </div>
-        </div>
-
-        <!-- Full Dhikr Information Area Under Circle -->
-        <div class="w-full text-center px-4 py-3 min-h-[90px] flex flex-col items-center justify-center mb-2">
-            <div id="dhikr-title" class="text-xl font-bold text-slate-800 dark:text-slate-100 mb-0.5">SubhanAllah</div>
-            <div id="dhikr-arabic" class="font-serif text-2xl text-theme-600 dark:text-theme-400 my-1" dir="rtl">سُبْحَانَ ٱللَّٰهِ</div>
-            <div id="dhikr-translation" class="text-xs text-slate-400 max-w-xs truncate">Glory be to Allah</div>
         </div>
 
         <!-- Controls Bottom Bar -->
@@ -202,13 +197,10 @@
         </div>
     </main>
 
-    <!-- PRIVACY MODE OVERLAY -->
+    <!-- PRIVACY MODE OVERLAY (Full Pitch-Black Cover with Double-Tap Reveal) -->
     <div id="privacy-overlay" class="fixed inset-0 bg-black z-50 hidden flex-col justify-between p-6 touch-none">
-        <div class="w-full flex justify-between items-center">
-            <div id="privacy-instruction-banner" class="text-xs text-slate-500 bg-slate-900/80 px-3 py-1.5 rounded-full border border-slate-800 transition-opacity duration-300 opacity-100">
-                Double-tap screen or tap top area to exit
-            </div>
-            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900 border border-slate-800 px-4 py-2 rounded-full text-xs font-medium transition-opacity duration-300 opacity-0 pointer-events-none">
+        <div class="flex justify-end w-full">
+            <button id="btn-exit-privacy" class="flex items-center gap-2 text-slate-400 hover:text-white bg-slate-900/90 border border-slate-800 px-4 py-2 rounded-full text-sm font-medium transition-opacity duration-300 opacity-0 pointer-events-none">
                 <i data-lucide="eye-off" class="w-4 h-4"></i>
                 <span>Exit Privacy Mode</span>
             </button>
@@ -391,6 +383,7 @@
 
     <!-- Application Script -->
     <script>
+        // PWA Manifest with Icon Padding & Safe-Zone Scaling Fix
         const manifestData = {
             name: "Digital Tasbih & Dhikr Counter",
             short_name: "Tasbih",
@@ -416,7 +409,7 @@
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 const swCode = `
-                    const CACHE_NAME = 'tasbih-v5';
+                    const CACHE_NAME = 'tasbih-v4';
                     const ASSETS = ['./'];
                     self.addEventListener('install', (e) => {
                         e.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS)));
@@ -504,9 +497,7 @@
         const elDisplayTarget = document.getElementById('display-target');
         const elDisplayLaps = document.getElementById('display-laps');
         const elDisplayTotal = document.getElementById('display-total');
-        const elDhikrTitle = document.getElementById('dhikr-title');
-        const elDhikrArabic = document.getElementById('dhikr-arabic');
-        const elDhikrTranslation = document.getElementById('dhikr-translation');
+        const elDhikrLabel = document.getElementById('dhikr-label');
         const elProgressBar = document.getElementById('progress-bar');
         const elCounterRingContainer = document.getElementById('counter-ring-container');
 
@@ -530,7 +521,6 @@
         const btnActivatePrivacy = document.getElementById('btn-activate-privacy');
         const btnExitPrivacy = document.getElementById('btn-exit-privacy');
         const privacyTapArea = document.getElementById('privacy-tap-area');
-        const privacyInstructionBanner = document.getElementById('privacy-instruction-banner');
 
         const inputTarget = document.getElementById('input-target');
         const toggleVibrate = document.getElementById('toggle-vibrate');
@@ -543,15 +533,10 @@
         function showPrivacyExitButton() {
             btnExitPrivacy.classList.remove('opacity-0', 'pointer-events-none');
             btnExitPrivacy.classList.add('opacity-100');
-            privacyInstructionBanner.classList.remove('opacity-0');
-            privacyInstructionBanner.classList.add('opacity-100');
-
             clearTimeout(privacyExitTimer);
             privacyExitTimer = setTimeout(() => {
                 btnExitPrivacy.classList.remove('opacity-100');
                 btnExitPrivacy.classList.add('opacity-0', 'pointer-events-none');
-                privacyInstructionBanner.classList.remove('opacity-100');
-                privacyInstructionBanner.classList.add('opacity-0');
             }, 3000);
         }
 
@@ -614,16 +599,7 @@
             elDisplayTarget.textContent = state.target;
             elDisplayLaps.textContent = state.laps;
             elDisplayTotal.textContent = state.total;
-
-            if (state.dhikr) {
-                elDhikrTitle.textContent = state.dhikr.name || '';
-                elDhikrArabic.textContent = state.dhikr.arabic || '';
-                elDhikrTranslation.textContent = state.dhikr.translation || '';
-            } else {
-                elDhikrTitle.textContent = 'Select Dhikr';
-                elDhikrArabic.textContent = '';
-                elDhikrTranslation.textContent = '';
-            }
+            elDhikrLabel.textContent = state.dhikr ? state.dhikr.name : 'Select Dhikr';
 
             const circumference = 2 * Math.PI * 44;
             const progress = Math.min(state.count / state.target, 1);
@@ -670,11 +646,13 @@
             increment();
         });
 
+        // Stealth Privacy Tapping & Fullscreen Setup
         privacyTapArea.addEventListener('click', (e) => {
             const currentTime = new Date().getTime();
             const tapLength = currentTime - lastTapTime;
             
-            if ((tapLength < 300 && tapLength > 0) || e.clientY < 90) {
+            // Double Tap or Top-Area Tap Reveals Exit Button
+            if ((tapLength < 300 && tapLength > 0) || e.clientY < 80) {
                 showPrivacyExitButton();
             } else {
                 if (state.count >= state.target) state.count = 0;
@@ -688,8 +666,7 @@
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
             
-            showPrivacyExitButton();
-
+            // Request Native Fullscreen to hide device battery/time bar
             if (document.documentElement.requestFullscreen) {
                 document.documentElement.requestFullscreen().catch(() => {});
             } else if (document.documentElement.webkitRequestFullscreen) {
@@ -725,6 +702,7 @@
             saveSettings();
         });
 
+        // Full Dhikr Management: Select, Add, Edit, and Delete Default/Custom Dhikrs
         function renderDhikrList() {
             const container = document.getElementById('dhikr-list');
             container.innerHTML = state.dhikrs.map((item) => `
