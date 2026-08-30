@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="indigo">
+<html lang="en" data-theme="charcoal">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Digital Tasbih Counter</title>
     
     <!-- PWA Meta Tags -->
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#1e293b">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -14,23 +14,23 @@
     
     <!-- Dynamic PWA Manifest & App Icons -->
     <script>
-        // Generate Black Icon with White Beads via Canvas
+        // Generate Charcoal Background Icon with White Beads & Detailed Tassel
         (function() {
             const canvas = document.createElement('canvas');
             canvas.width = 512;
             canvas.height = 512;
             const ctx = canvas.getContext('2d');
 
-            // Black Background
-            ctx.fillStyle = '#0f172a';
+            // Charcoal / Dark Slate Background
+            ctx.fillStyle = '#1e293b';
             ctx.beginPath();
             ctx.roundRect(0, 0, 512, 512, 112);
             ctx.fill();
 
             // White Beads Loop
             const centerX = 256;
-            const centerY = 240;
-            const radius = 140;
+            const centerY = 210;
+            const radius = 125;
             const beadCount = 11;
 
             for (let i = 0; i < beadCount; i++) {
@@ -38,26 +38,57 @@
                 const x = centerX + radius * Math.cos(angle);
                 const y = centerY + radius * Math.sin(angle);
                 ctx.beginPath();
-                ctx.arc(x, y, 18, 0, 2 * Math.PI);
+                ctx.arc(x, y, 16, 0, 2 * Math.PI);
                 ctx.fillStyle = '#ffffff';
                 ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
                 ctx.shadowBlur = 8;
                 ctx.fill();
             }
 
-            // Tassel Details
+            // Tassel Assembly at Bottom Bead
             ctx.shadowBlur = 0;
+            const joinX = centerX;
+            const joinY = centerY + radius;
+
+            // Connector Ring/Bead
             ctx.beginPath();
-            ctx.arc(centerX, centerY + radius, 12, 0, 2 * Math.PI);
-            ctx.fillStyle = '#e2e8f0';
+            ctx.arc(joinX, joinY + 12, 10, 0, 2 * Math.PI);
+            ctx.fillStyle = '#cbd5e1';
             ctx.fill();
 
+            // Tassel Cord
             ctx.beginPath();
-            ctx.moveTo(centerX, centerY + radius + 12);
-            ctx.lineTo(centerX, centerY + radius + 60);
+            ctx.moveTo(joinX, joinY + 22);
+            ctx.lineTo(joinX, joinY + 55);
             ctx.strokeStyle = '#ffffff';
-            ctx.lineWidth = 6;
+            ctx.lineWidth = 5;
             ctx.stroke();
+
+            // Tassel Crown / Cap
+            ctx.beginPath();
+            ctx.arc(joinX, joinY + 60, 14, 0, Math.PI, true);
+            ctx.fillStyle = '#94a3b8';
+            ctx.fill();
+
+            // Tassel Fringe Threads
+            const fringeStartY = joinY + 60;
+            const fringeEndY = joinY + 130;
+            const spread = 28;
+
+            for (let offset = -spread; offset <= spread; offset += 5) {
+                ctx.beginPath();
+                ctx.moveTo(joinX, fringeStartY);
+                ctx.lineTo(joinX + offset, fringeEndY);
+                ctx.strokeStyle = offset === 0 ? '#ffffff' : '#f1f5f9';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+            }
+
+            // Tassel Wrap Accent Ring
+            ctx.beginPath();
+            ctx.rect(joinX - 10, fringeStartY + 4, 20, 6);
+            ctx.fillStyle = '#64748b';
+            ctx.fill();
 
             const iconUrl = canvas.toDataURL('image/png');
 
@@ -79,8 +110,8 @@
                 short_name: "Tasbih",
                 start_url: "./",
                 display: "standalone",
-                background_color: "#0f172a",
-                theme_color: "#0f172a",
+                background_color: "#1e293b",
+                theme_color: "#1e293b",
                 icons: [
                     { src: iconUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
                 ]
@@ -119,6 +150,11 @@
         }
     </script>
     <style>
+        :root[data-theme="charcoal"] {
+            --color-50: #f8fafc; --color-100: #f1f5f9; --color-300: #cbd5e1;
+            --color-400: #94a3b8; --color-500: #64748b; --color-600: #475569;
+            --color-700: #334155; --color-800: #1e293b; --color-900: #0f172a;
+        }
         :root[data-theme="indigo"] {
             --color-50: #eef2ff; --color-100: #e0e7ff; --color-300: #a5b4fc;
             --color-400: #818cf8; --color-500: #6366f1; --color-600: #4f46e5;
@@ -171,7 +207,7 @@
                 <span>Select Dhikr</span>
             </button>
             <div class="flex items-center gap-1.5">
-                <!-- Improved Visual Sound Button -->
+                <!-- Sound Button -->
                 <button id="btn-sound" class="p-2.5 rounded-xl transition flex items-center gap-1.5 border" title="Toggle Sound">
                     <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5"></i>
                     <span id="label-sound" class="text-xs font-bold hidden sm:inline">ON</span>
@@ -200,7 +236,7 @@
                 <div id="counter-ring-container" class="relative w-56 h-56 rounded-full flex items-center justify-center transition-all">
                     <svg class="w-full h-full transform -rotate-90" viewBox="0 0 120 120">
                         <circle cx="60" cy="60" r="52" stroke="currentColor" stroke-width="6" class="text-slate-100 dark:text-slate-700/60" fill="transparent" />
-                        <circle id="progress-bar" cx="60" cy="60" r="52" stroke="currentColor" stroke-width="6" class="text-theme-500 transition-all duration-300" stroke-dasharray="326.72" stroke-dashoffset="326.72" stroke-linecap="round" fill="transparent" />
+                        <circle id="progress-bar" cx="60" cy="60" r="52" stroke="currentColor" stroke-width="6" class="text-theme-600 dark:text-theme-400 transition-all duration-300" stroke-dasharray="326.72" stroke-dashoffset="326.72" stroke-linecap="round" fill="transparent" />
                     </svg>
 
                     <!-- Clickable Area Inside Ring -->
@@ -315,10 +351,11 @@
                 </div>
             </div>
 
-            <!-- Theme Options -->
+            <!-- Theme Options including Charcoal -->
             <div>
                 <label class="text-xs font-medium text-slate-400 mb-2 block">Accent Color</label>
-                <div class="grid grid-cols-6 gap-2">
+                <div class="grid grid-cols-7 gap-2">
+                    <button class="theme-btn w-8 h-8 rounded-full bg-slate-700 mx-auto" data-theme-id="charcoal" title="Charcoal"></button>
                     <button class="theme-btn w-8 h-8 rounded-full bg-indigo-600 mx-auto" data-theme-id="indigo" title="Indigo"></button>
                     <button class="theme-btn w-8 h-8 rounded-full bg-emerald-600 mx-auto" data-theme-id="emerald" title="Emerald"></button>
                     <button class="theme-btn w-8 h-8 rounded-full bg-amber-600 mx-auto" data-theme-id="amber" title="Amber"></button>
@@ -417,7 +454,7 @@
             vibrateEnabled: false,
             pulseEnabled: true,
             darkMode: false,
-            theme: 'indigo',
+            theme: 'charcoal',
             history: JSON.parse(localStorage.getItem('tasbih_history') || '[]')
         };
 
@@ -491,7 +528,7 @@
                 state.vibrateEnabled = parsed.vibrateEnabled ?? false;
                 state.pulseEnabled = parsed.pulseEnabled ?? true;
                 state.darkMode = parsed.darkMode ?? false;
-                state.theme = parsed.theme || 'indigo';
+                state.theme = parsed.theme || 'charcoal';
             }
             if (state.darkMode || window.matchMedia('(prefers-color-scheme: dark)').matches) {
                 document.documentElement.classList.add('dark');
@@ -562,7 +599,6 @@
             updateUI();
         }
 
-        // Distinct Visual Styling for Sound Mute vs Active
         function updateSoundIcon() {
             iconSound.setAttribute('data-lucide', state.soundEnabled ? 'volume-2' : 'volume-x');
             labelSound.textContent = state.soundEnabled ? 'ON' : 'MUTED';
