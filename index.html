@@ -82,9 +82,9 @@
             </button>
             <div class="flex items-center gap-1">
                 <button id="btn-sound" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="Toggle Sound">
-    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
-    <span id="label-sound" class="sr-only">Sound On</span>
-</button>
+                    <i id="icon-sound" data-lucide="volume-2" class="w-5 h-5"></i>
+                    <span id="label-sound" class="sr-only">Sound On</span>
+                </button>
                 <button id="btn-history" class="p-2.5 rounded-xl hover:bg-slate-100 dark:hover:bg-slate-700 transition text-slate-600 dark:text-slate-300" title="History">
                     <i data-lucide="history" class="w-5 h-5"></i>
                 </button>
@@ -460,17 +460,12 @@
             updateUI();
         }
 
-        // Sound Icon SVGs
-const SVG_VOLUME_ON = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>`;
+        function updateSoundIcon() {
+            iconSound.setAttribute('data-lucide', state.soundEnabled ? 'volume-2' : 'volume-x');
+            labelSound.textContent = state.soundEnabled ? 'Sound On' : 'Mute';
+            lucide.createIcons();
+        }
 
-const SVG_VOLUME_MUTED = `<svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="1" y1="1" x2="23" y2="23"></line><path d="M9 9v6a1 1 0 0 0 1 1h4l5 5V4.5"></path><path d="M15.54 8.46a5 5 0 0 1 .46 5.54"></path></svg>`;
-
-function updateSoundIcon() {
-    btnSound.innerHTML = `
-        ${state.soundEnabled ? SVG_VOLUME_ON : SVG_VOLUME_MUTED}
-        <span id="label-sound" class="sr-only">${state.soundEnabled ? 'Sound On' : 'Mute'}</span>
-    `;
-}
         btnCount.addEventListener('click', () => {
             if (state.count >= state.target) state.count = 0;
             increment();
