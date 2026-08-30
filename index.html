@@ -190,6 +190,16 @@
         }
     </script>
     <style>
+        /* Remove default element focus borders and canvas/img borders */
+*:focus, *:focus-visible {
+    outline: none !important;
+}
+
+canvas, img, svg {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
         :root[data-theme="charcoal"] {
             --color-50: #f8fafc; --color-100: #f1f5f9; --color-300: #cbd5e1;
             --color-400: #94a3b8; --color-500: #64748b; --color-600: #475569;
