@@ -650,12 +650,6 @@
             modalSettings.classList.add('hidden');
             privacyOverlay.classList.remove('hidden');
             privacyOverlay.classList.add('flex');
-
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen().catch(() => {});
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                document.documentElement.webkitRequestFullscreen();
-            }
         });
 
         btnReset.addEventListener('click', () => {
