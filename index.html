@@ -410,7 +410,7 @@
         <select id="history-dhikr-select"></select>
       </div>
       <div class="stat-row">
-        <span>Selected Phrase:</span>
+        <span>Selected Phrase (<span id="history-dhikr-label"></span>):</span>
         <strong id="history-count-selected">0</strong>
       </div>
       <div class="stat-row">
@@ -566,6 +566,7 @@
     const presetSelect = document.getElementById('preset-select');
     const historyDatePicker = document.getElementById('history-date-picker');
     const historyDhikrSelect = document.getElementById('history-dhikr-select');
+    const historyDhikrLabel = document.getElementById('history-dhikr-label');
     const historyCountSelected = document.getElementById('history-count-selected');
     const historyCountTotal = document.getElementById('history-count-total');
     const lifetimeListEl = document.getElementById('lifetime-list-el');
@@ -672,7 +673,7 @@
       presetSelect.appendChild(customOpt);
     }
 
-    // --- Logic Implementation ---
+    // --- Exact Code from User Prompt ---
     function deleteDhikr(dhikrToDelete) {
       showCustomConfirmModal(
         'Delete Dhikr',
@@ -884,6 +885,7 @@
       const selectedDate = historyDatePicker.value;
       const selectedDhikr = historyDhikrSelect.value || currentDhikr;
 
+      // Visual Highlight indicator if selected date has recorded activity
       const hasActivityOnDate = logs[selectedDate] && Object.values(logs[selectedDate]).some(val => val > 0);
       if (hasActivityOnDate) {
         historyDatePicker.classList.add('has-data');
@@ -896,9 +898,11 @@
         Object.values(logs[selectedDate]).forEach(val => dayTotal += val);
 
         const selectedCount = logs[selectedDate][selectedDhikr] || 0;
+        historyDhikrLabel.textContent = selectedDhikr;
         historyCountSelected.textContent = selectedCount.toLocaleString();
         historyCountTotal.textContent = dayTotal.toLocaleString();
       } else {
+        historyDhikrLabel.textContent = selectedDhikr;
         historyCountSelected.textContent = '0';
         historyCountTotal.textContent = '0';
       }
